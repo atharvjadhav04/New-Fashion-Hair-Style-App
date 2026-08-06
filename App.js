@@ -1,16 +1,5 @@
-import React from "react";
-import { SafeAreaView, Text } from "react-native";
+import AppNavigator from "./src/navigation/AppNavigator";
 
 export default function App() {
-  return (
-    <SafeAreaView
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <Text>New Fashion Hair Style</Text>
-    </SafeAreaView>
-  );
+  return <AppNavigator />;
 }
