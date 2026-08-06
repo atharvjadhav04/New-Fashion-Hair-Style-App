@@ -28,5 +28,10 @@
     "react-native-screens": "~4.16.0",
     "zod": "^4.4.3"
   },
-  "private": true
+  "private": true,
+  "devDependencies": {
+    "eslint": "^10.8.0",
+    "eslint-config-prettier": "^10.1.8",
+    "prettier": "^3.9.6"
+  }
 }
