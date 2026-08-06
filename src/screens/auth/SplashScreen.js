@@ -6,7 +6,10 @@ import {
     StatusBar,
 } from "react-native";
 
-import { COLORS } from "../../theme";
+import { Image } from "expo-image";
+
+import { COLORS, SPACING } from "../../theme";
+import Images from "../../constants/Images";
 
 export default function SplashScreen({ navigation }) {
 
@@ -24,24 +27,26 @@ export default function SplashScreen({ navigation }) {
         <View style={styles.container}>
 
             <StatusBar
+                backgroundColor="#000"
                 barStyle="light-content"
-                backgroundColor={COLORS.black}
             />
 
-            <Text style={styles.logo}>
-                ✂️
-            </Text>
+            <Image
+                source={Images.logo}
+                style={styles.logo}
+                contentFit="contain"
+            />
 
             <Text style={styles.title}>
-                न्यू फॅशन
+                NEW FASHION
             </Text>
 
             <Text style={styles.subtitle}>
-                हेअर स्टाईल
+                HAIR STYLE
             </Text>
 
             <Text style={styles.tagline}>
-                Premium Men's Salon
+                Premium Grooming Experience
             </Text>
 
         </View>
@@ -52,33 +57,37 @@ const styles = StyleSheet.create({
 
     container: {
         flex: 1,
-        backgroundColor: COLORS.black,
+        backgroundColor: "#000",
         justifyContent: "center",
         alignItems: "center",
+        paddingHorizontal: SPACING.lg,
     },
 
     logo: {
-        fontSize: 70,
+        width: 180,
+        height: 180,
     },
 
     title: {
-        marginTop: 20,
-        fontSize: 34,
-        color: COLORS.white,
+        color: "#FFFFFF",
+        fontSize: 30,
         fontWeight: "700",
+        marginTop: 10,
+        letterSpacing: 2,
     },
 
     subtitle: {
-        marginTop: 8,
-        fontSize: 24,
         color: COLORS.primary,
+        fontSize: 20,
         fontWeight: "600",
+        letterSpacing: 4,
+        marginTop: 5,
     },
 
     tagline: {
-        marginTop: 16,
-        color: "#AAAAAA",
-        fontSize: 16,
+        color: "#888",
+        marginTop: 25,
+        fontSize: 15,
     },
 
 });

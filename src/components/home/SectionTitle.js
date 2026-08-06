@@ -1,8 +1,7 @@
 import React from "react";
 import { Text, StyleSheet } from "react-native";
 
-import COLORS from "../../theme/colors";
-import SPACING from "../../theme/spacing";
+import { COLORS, SPACING } from "../../theme";
 
 export default function SectionTitle({ title }) {
     return (
@@ -16,7 +15,7 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 22,
         fontWeight: "700",
-        color: COLORS.text,
-        marginVertical: SPACING.md,
+        color: COLORS.black,
+        marginVertical: SPACING.lg,
     },
 });

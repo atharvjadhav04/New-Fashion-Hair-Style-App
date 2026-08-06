@@ -3,6 +3,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import SplashScreen from "../screens/auth/SplashScreen";
 import LoginScreen from "../screens/auth/LoginScreen";
 import OtpScreen from "../screens/auth/OtpScreen";
+import CompleteProfileScreen from "../screens/auth/CompleteProfileScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -27,6 +28,10 @@ export default function AuthNavigator() {
             <Stack.Screen
                 name="Otp"
                 component={OtpScreen}
+            />
+            <Stack.Screen
+                name="CompleteProfile"
+                component={CompleteProfileScreen}
             />
         </Stack.Navigator>
     );
