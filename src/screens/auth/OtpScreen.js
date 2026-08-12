@@ -14,14 +14,14 @@ import {
 } from "../../theme";
 
 import PrimaryButton from "../../components/common/PrimaryButton";
-
+import AppScreen from "../../components/common/AppScreen";
 export default function OtpScreen({ navigation }) {
 
     const [otp, setOtp] = useState("");
 
     return (
 
-        <View style={styles.container}>
+        <AppScreen style={styles.container}>
 
             <StatusBar
                 backgroundColor={COLORS.black}
@@ -60,7 +60,7 @@ export default function OtpScreen({ navigation }) {
                 }
             />
 
-        </View>
+        </AppScreen>
 
     );
 }

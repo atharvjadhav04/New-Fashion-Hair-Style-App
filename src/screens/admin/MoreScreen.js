@@ -1,6 +1,7 @@
+import React from "react";
 import { View, Text } from "react-native";
 
-export default function BookingScreen() {
+export default function MoreScreen() {
     return (
         <View
             style={{
@@ -9,7 +10,7 @@ export default function BookingScreen() {
                 alignItems: "center",
             }}
         >
-            <Text>Booking Screen</Text>
+            <Text>Admin More</Text>
         </View>
     );
 }

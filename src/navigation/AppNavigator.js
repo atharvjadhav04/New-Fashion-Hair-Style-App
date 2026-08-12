@@ -1,11 +1,21 @@
+import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
-import AuthNavigator from "./AuthNavigator";
-import BottomTabs from "./BottomTabs";
+
+import CustomerNavigator from "./CustomerNavigator";
+import AdminNavigator from "./AdminNavigator";
+
 export default function AppNavigator() {
+
+    // TEMPORARY TEST
+    const role = "ADMIN";
+
     return (
         <NavigationContainer>
-            {/* <AuthNavigator /> */}
-            <BottomTabs />
+            {role === "ADMIN" ? (
+                <AdminNavigator />
+            ) : (
+                <CustomerNavigator />
+            )}
         </NavigationContainer>
     );
 }

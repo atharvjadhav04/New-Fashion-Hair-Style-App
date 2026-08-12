@@ -1,32 +1,49 @@
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
-
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import HomeScreen from "../screens/home/HomeScreen";
 import ServicesScreen from "../screens/services/ServicesScreen";
-import BookingScreen from "../screens/booking/BookingScreen";
 import ReviewsScreen from "../screens/reviews/ReviewsScreen";
 import ProfileScreen from "../screens/profile/ProfileScreen";
-
+import BookingNavigator from "../navigation/BookingNavigator";
+import MyBookingsScreen from "../screens/booking/MyBookingsScreen";
+import {
+    House,
+    Scissors,
+    CalendarDays,
+    Star,
+    User
+} from "lucide-react-native";
 import { COLORS } from "../theme";
 
 const Tab = createBottomTabNavigator();
 
 export default function BottomTabs() {
+    const insets = useSafeAreaInsets();
+
     return (
         <Tab.Navigator
             screenOptions={({ route }) => ({
                 headerShown: false,
-
+                animation: "shift",
+                tabBarLabelStyle: {
+                    fontSize: 11,
+                    fontWeight: "600",
+                },
+                tabBarHideOnKeyboard: true,
                 tabBarActiveTintColor: COLORS.primary,
                 tabBarInactiveTintColor: "#888",
-
                 tabBarStyle: {
                     backgroundColor: COLORS.black,
-                    height: 65,
-                    paddingBottom: 8,
-                    paddingTop: 8,
                     borderTopWidth: 0,
+                    elevation: 0,
+
+                    height: 70 + insets.bottom,
+                    paddingBottom: Math.max(insets.bottom, 10),
+                    paddingTop: 8,
+
+                    shadowOpacity: 0,
                 },
 
                 tabBarIcon: ({ color, size }) => {
@@ -55,7 +72,7 @@ export default function BottomTabs() {
                     return (
                         <Ionicons
                             name={icon}
-                            size={22}
+                            size={24}
                             color={color}
                         />
                     );
@@ -76,8 +93,8 @@ export default function BottomTabs() {
 
             <Tab.Screen
                 name="Bookings"
-                component={BookingScreen}
-                options={{ title: "बुकिंग" }}
+                component={MyBookingsScreen}
+                options={{ title: "माझ्या बुकिंग" }}
             />
 
             <Tab.Screen

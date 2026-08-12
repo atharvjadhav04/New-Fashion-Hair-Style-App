@@ -18,14 +18,13 @@ import {
 import AuthCard from "../../components/auth/AuthCard";
 import InputField from "../../components/common/InputField";
 import PrimaryButton from "../../components/common/PrimaryButton";
-
+import AppScreen from "../../components/common/AppScreen";
 export default function LoginScreen({ navigation }) {
 
     const [phone, setPhone] = useState("");
 
     return (
-        <View style={styles.container}>
-
+        <AppScreen style={styles.container}>
             <StatusBar
                 backgroundColor="#000"
                 barStyle="light-content"
@@ -70,7 +69,7 @@ export default function LoginScreen({ navigation }) {
                 सुरक्षित • जलद • विश्वासार्ह
             </Text>
 
-        </View>
+        </AppScreen>
     );
 }
 
