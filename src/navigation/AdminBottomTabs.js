@@ -8,7 +8,7 @@ import AdminDashboardScreen from "../screens/admin/DashboardScreen";
 import AdminAppointmentsScreen from "../screens/admin/AppointmentsScreen";
 import ServicesNavigator from "./ServicesNavigator";
 import SetupNavigator from "./SetupNavigator";
-import AdminFinanceScreen from "../screens/admin/FinanceScreen";
+import FinanceNavigator from "./FinanceNavigator";
 
 import { COLORS } from "../theme";
 
@@ -154,7 +154,7 @@ export default function AdminBottomTabs() {
 
             <Tab.Screen
                 name="AdminFinance"
-                component={AdminFinanceScreen}
+                component={FinanceNavigator}
                 options={{
                     title: "Finance",
                 }}

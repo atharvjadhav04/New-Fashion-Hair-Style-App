@@ -233,7 +233,9 @@ export default function DashboardScreen({ navigation }) {
                         title="Salon Status"
                         subtitle="Holiday / Open"
                         onPress={() =>
-                            navigation.navigate("AdminSetup")
+                            navigation.navigate("AdminSetup", {
+                                screen: "SalonStatus",
+                            })
                         }
                     />
 
@@ -255,7 +257,9 @@ export default function DashboardScreen({ navigation }) {
 
                     <TouchableOpacity
                         onPress={() =>
-                            navigation.navigate("AdminMore")
+                            navigation.navigate("AdminSetup", {
+                                screen: "SalonSetup",
+                            })
                         }
                     >
                         <Text style={styles.viewAll}>

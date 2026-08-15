@@ -1,4 +1,8 @@
-import React, { useMemo, useState } from "react";
+import React, {
+    useEffect,
+    useMemo,
+    useState,
+} from "react";
 import {
     ScrollView,
     View,
@@ -22,41 +26,77 @@ const INITIAL_TRANSACTIONS = [
         id: "1",
         type: "Income",
         title: "Hair Cut",
-        customer: "Rahul",
+        source: "Offline",
+        payment_method: "Cash",
         amount: 200,
-        date: "Today",
+        transaction_date:
+            new Date().toISOString(),
     },
+
     {
         id: "2",
         type: "Income",
         title: "Hair + Beard",
-        customer: "Amit",
+        source: "Online",
+        payment_method: "UPI",
         amount: 300,
-        date: "Today",
+        transaction_date:
+            new Date().toISOString(),
     },
+
     {
         id: "3",
         type: "Expense",
         title: "Hair Products",
-        customer: "Salon",
+        source: "Offline",
+        payment_method: "UPI",
         amount: 450,
-        date: "Today",
+        transaction_date:
+            new Date().toISOString(),
     },
+
     {
         id: "4",
         type: "Income",
         title: "Hair Spa",
-        customer: "Sneha",
+        source: "Online",
+        payment_method: "Online Gateway",
         amount: 500,
-        date: "Yesterday",
+        transaction_date:
+            new Date().toISOString(),
     },
 ];
 
-export default function FinanceScreen() {
+export default function FinanceScreen({
+    navigation,
+    route,
+}) {
 
-    const [transactions] = useState(
-        INITIAL_TRANSACTIONS
-    );
+    const [transactions, setTransactions] =
+        useState(INITIAL_TRANSACTIONS);
+
+    useEffect(() => {
+        const newTransaction =
+            route?.params?.newTransaction;
+
+        if (!newTransaction) {
+            return;
+        }
+
+        console.log(
+            "RECEIVED TRANSACTION:",
+            newTransaction
+        );
+
+        setTransactions((current) => [
+            newTransaction,
+            ...current,
+        ]);
+
+        navigation.setParams({
+            newTransaction: undefined,
+        });
+    }, [route?.params?.newTransaction]);
 
     const [filter, setFilter] = useState("All");
 
@@ -148,14 +188,25 @@ export default function FinanceScreen() {
                             Salon income आणि expenses व्यवस्थापित करा
                         </Text>
                     </View>
-
-                    <View style={styles.headerIcon}>
+                    <TouchableOpacity
+                        style={styles.addTransactionButton}
+                        onPress={() =>
+                            navigation.navigate(
+                                "AddTransaction"
+                            )
+                        }
+                    >
                         <Ionicons
-                            name="wallet-outline"
-                            size={24}
-                            color={COLORS.primary}
+                            name="add"
+                            size={22}
+                            color={COLORS.black}
                         />
-                    </View>
+
+                        <Text style={styles.addTransactionText}>
+                            Add
+                        </Text>
+                    </TouchableOpacity>
+
 
                 </View>
 
@@ -260,7 +311,13 @@ export default function FinanceScreen() {
                         </Text>
                     </View>
 
-                    <TouchableOpacity>
+                    <TouchableOpacity
+                        onPress={() =>
+                            navigation.navigate(
+                                "TransactionHistory"
+                            )
+                        }
+                    >
                         <Text style={styles.viewAll}>
                             View All
                         </Text>
@@ -382,6 +439,16 @@ function MonthRow({
     );
 }
 
+const formatTransactionDate = (date) => {
+    return new Date(date).toLocaleDateString(
+        "en-IN",
+        {
+            day: "2-digit",
+            month: "short",
+        }
+    );
+};
+
 function TransactionCard({
     transaction,
 }) {
@@ -421,8 +488,11 @@ function TransactionCard({
                 </Text>
 
                 <Text style={styles.transactionCustomer}>
-                    {transaction.customer} •{" "}
-                    {transaction.date}
+                    {transaction.source} •{" "}
+                    {transaction.payment_method} •{" "}
+                    {formatTransactionDate(
+                        transaction.transaction_date
+                    )}
                 </Text>
 
             </View>
@@ -706,6 +776,22 @@ const styles = StyleSheet.create({
 
     expenseText: {
         color: "#DC2626",
+    },
+    addTransactionButton: {
+        height: 42,
+        paddingHorizontal: 14,
+        borderRadius: 14,
+        backgroundColor: COLORS.primary,
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+    },
+
+    addTransactionText: {
+        marginLeft: 4,
+        color: COLORS.black,
+        fontSize: 11,
+        fontWeight: "800",
     },
 
 });
