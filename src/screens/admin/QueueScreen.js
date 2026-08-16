@@ -5,6 +5,7 @@ import {
     Text,
     TouchableOpacity,
     StyleSheet,
+    Platform,
 } from "react-native";
 
 import { Ionicons } from "@expo/vector-icons";
@@ -72,11 +73,8 @@ const WAITING_CUSTOMERS = [
 ];
 
 export default function QueueScreen() {
-    const [chairs, setChairs] =
-        useState(INITIAL_CHAIRS);
-
-    const [waitingCustomers, setWaitingCustomers] =
-        useState(WAITING_CUSTOMERS);
+    const [chairs, setChairs] = useState(INITIAL_CHAIRS);
+    const [waitingCustomers, setWaitingCustomers] = useState(WAITING_CUSTOMERS);
 
     const markDone = (chairId) => {
         setChairs((current) =>
@@ -97,34 +95,24 @@ export default function QueueScreen() {
     };
 
     const servingCount = chairs.filter(
-        (chair) =>
-            chair.status === "SERVING"
+        (chair) => chair.status === "SERVING"
     ).length;
 
     const waitingCount =
         chairs.filter(
-            (chair) =>
-                chair.status === "WAITING"
-        ).length +
-        waitingCustomers.length;
+            (chair) => chair.status === "WAITING"
+        ).length + waitingCustomers.length;
 
     return (
         <AppScreen style={styles.screen}>
-
             <ScrollView
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={styles.content}
             >
-
                 {/* Header */}
-
                 <View style={styles.header}>
-
                     <View>
-                        <Text style={styles.heading}>
-                            Live Queue
-                        </Text>
-
+                        <Text style={styles.heading}>Live Queue</Text>
                         <Text style={styles.subtitle}>
                             आजची Queue व्यवस्थापित करा
                         </Text>
@@ -132,18 +120,12 @@ export default function QueueScreen() {
 
                     <View style={styles.liveBadge}>
                         <View style={styles.liveDot} />
-
-                        <Text style={styles.liveText}>
-                            LIVE
-                        </Text>
+                        <Text style={styles.liveText}>LIVE</Text>
                     </View>
-
                 </View>
 
                 {/* Summary */}
-
                 <View style={styles.summaryRow}>
-
                     <SummaryCard
                         value={servingCount}
                         label="Serving"
@@ -161,44 +143,30 @@ export default function QueueScreen() {
                         label="Chairs"
                         icon="business-outline"
                     />
-
                 </View>
 
                 {/* Active Chairs */}
-
                 <View style={styles.sectionHeader}>
-
                     <View>
-                        <Text style={styles.sectionTitle}>
-                            Chairs
-                        </Text>
-
+                        <Text style={styles.sectionTitle}>Chairs</Text>
                         <Text style={styles.sectionSubtitle}>
                             सध्या प्रत्येक चेअरची स्थिती
                         </Text>
                     </View>
-
                 </View>
 
                 {chairs.map((chair) => (
                     <ChairQueueCard
                         key={chair.id}
                         chair={chair}
-                        onDone={() =>
-                            markDone(chair.id)
-                        }
+                        onDone={() => markDone(chair.id)}
                     />
                 ))}
 
                 {/* Waiting Customers */}
-
                 <View style={styles.sectionHeader}>
-
                     <View>
-                        <Text style={styles.sectionTitle}>
-                            Waiting Queue
-                        </Text>
-
+                        <Text style={styles.sectionTitle}>Waiting Queue</Text>
                         <Text style={styles.sectionSubtitle}>
                             पुढील ग्राहक
                         </Text>
@@ -209,72 +177,46 @@ export default function QueueScreen() {
                             {waitingCustomers.length}
                         </Text>
                     </View>
-
                 </View>
 
-                {waitingCustomers.map(
-                    (customer, index) => (
-                        <WaitingCard
-                            key={customer.id}
-                            customer={customer}
-                            position={index + 1}
-                        />
-                    )
-                )}
-
+                {waitingCustomers.map((customer, index) => (
+                    <WaitingCard
+                        key={customer.id}
+                        customer={customer}
+                        position={index + 1}
+                    />
+                ))}
             </ScrollView>
-
         </AppScreen>
     );
 }
 
-function SummaryCard({
-    value,
-    label,
-    icon,
-}) {
+function SummaryCard({ value, label, icon }) {
     return (
         <View style={styles.summaryCard}>
-
             <View style={styles.summaryIcon}>
                 <Ionicons
                     name={icon}
-                    size={19}
+                    size={20}
                     color={COLORS.primary}
                 />
             </View>
 
-            <Text style={styles.summaryValue}>
-                {value}
-            </Text>
-
-            <Text style={styles.summaryLabel}>
-                {label}
-            </Text>
-
+            <Text style={styles.summaryValue}>{value}</Text>
+            <Text style={styles.summaryLabel}>{label}</Text>
         </View>
     );
 }
 
-function ChairQueueCard({
-    chair,
-    onDone,
-}) {
-    const isServing =
-        chair.status === "SERVING";
-
-    const isWaiting =
-        chair.status === "WAITING";
+function ChairQueueCard({ chair, onDone }) {
+    const isServing = chair.status === "SERVING";
+    const isWaiting = chair.status === "WAITING";
 
     return (
         <View style={styles.chairCard}>
-
             {/* Chair Header */}
-
             <View style={styles.chairHeader}>
-
                 <View style={styles.chairTitleRow}>
-
                     <View style={styles.chairIcon}>
                         <Ionicons
                             name="business-outline"
@@ -284,75 +226,46 @@ function ChairQueueCard({
                     </View>
 
                     <View>
-                        <Text style={styles.chairTitle}>
-                            Chair {chair.id}
-                        </Text>
-
-                        <Text style={styles.barber}>
-                            {chair.barber}
-                        </Text>
+                        <Text style={styles.chairTitle}>Chair {chair.id}</Text>
+                        <Text style={styles.barber}>{chair.barber}</Text>
                     </View>
-
                 </View>
 
-                <StatusBadge
-                    status={chair.status}
-                />
-
+                <StatusBadge status={chair.status} />
             </View>
 
             {/* Customer */}
-
             <View style={styles.customerSection}>
-
                 {chair.token ? (
                     <View style={styles.tokenBox}>
-
-                        <Text style={styles.tokenLabel}>
-                            TOKEN
-                        </Text>
-
-                        <Text style={styles.token}>
-                            #{chair.token}
-                        </Text>
-
+                        <Text style={styles.tokenLabel}>TOKEN</Text>
+                        <Text style={styles.token}>#{chair.token}</Text>
                     </View>
                 ) : (
                     <View style={styles.availableIcon}>
                         <Ionicons
-                            name="checkmark"
-                            size={25}
+                            name="checkmark-circle-outline"
+                            size={28}
                             color="#16A34A"
                         />
                     </View>
                 )}
 
                 <View style={styles.customerInfo}>
-
-                    <Text style={styles.customerLabel}>
-                        ग्राहक
-                    </Text>
-
-                    <Text style={styles.customerName}>
-                        {chair.customer}
-                    </Text>
+                    <Text style={styles.customerLabel}>ग्राहक</Text>
+                    <Text style={styles.customerName}>{chair.customer}</Text>
 
                     {chair.service && (
-                        <Text style={styles.service}>
-                            {chair.service}
-                        </Text>
+                        <Text style={styles.service}>{chair.service}</Text>
                     )}
-
                 </View>
-
             </View>
 
             {/* Action */}
-
             {isServing && (
                 <TouchableOpacity
                     style={styles.doneButton}
-                    activeOpacity={0.8}
+                    activeOpacity={0.85}
                     onPress={onDone}
                 >
                     <Ionicons
@@ -360,10 +273,7 @@ function ChairQueueCard({
                         size={20}
                         color={COLORS.black}
                     />
-
-                    <Text style={styles.doneText}>
-                        Customer Done
-                    </Text>
+                    <Text style={styles.doneText}>Customer Done</Text>
                 </TouchableOpacity>
             )}
 
@@ -374,7 +284,6 @@ function ChairQueueCard({
                         size={18}
                         color="#A16207"
                     />
-
                     <Text style={styles.waitingMessageText}>
                         Customer waiting for service
                     </Text>
@@ -384,17 +293,15 @@ function ChairQueueCard({
             {chair.status === "AVAILABLE" && (
                 <View style={styles.availableMessage}>
                     <Ionicons
-                        name="checkmark-circle"
+                        name="checkmark-circle-outline"
                         size={18}
                         color="#16A34A"
                     />
-
                     <Text style={styles.availableMessageText}>
                         Chair available
                     </Text>
                 </View>
             )}
-
         </View>
     );
 }
@@ -421,77 +328,40 @@ function StatusBadge({ status }) {
 
     return (
         <View style={[styles.statusBadge, badgeStyle]}>
-
-            <View
-                style={[
-                    styles.statusDot,
-                    dotStyle,
-                ]}
-            />
-
-            <Text
-                style={[
-                    styles.statusText,
-                    textStyle,
-                ]}
-            >
-                {label}
-            </Text>
-
+            <View style={[styles.statusDot, dotStyle]} />
+            <Text style={[styles.statusText, textStyle]}>{label}</Text>
         </View>
     );
 }
 
-function WaitingCard({
-    customer,
-    position,
-}) {
+function WaitingCard({ customer, position }) {
     return (
         <View style={styles.waitingCard}>
-
             <View style={styles.positionCircle}>
-                <Text style={styles.positionText}>
-                    {position}
-                </Text>
+                <Text style={styles.positionText}>{position}</Text>
             </View>
 
             <View style={styles.waitingCustomerInfo}>
-
-                <Text style={styles.waitingCustomerName}>
-                    {customer.name}
-                </Text>
-
-                <Text style={styles.waitingService}>
-                    {customer.service}
-                </Text>
-
+                <Text style={styles.waitingCustomerName}>{customer.name}</Text>
+                <Text style={styles.waitingService}>{customer.service}</Text>
             </View>
 
             <View style={styles.waitingRight}>
-
-                <Text style={styles.waitingToken}>
-                    #{customer.token}
-                </Text>
-
-                <Text style={styles.estimated}>
-                    ~{customer.estimated} min
-                </Text>
-
+                <Text style={styles.waitingToken}>#{customer.token}</Text>
+                <Text style={styles.estimated}>~{customer.estimated} min</Text>
             </View>
-
         </View>
     );
 }
 
 const styles = StyleSheet.create({
-
     screen: {
         flex: 1,
-        backgroundColor: COLORS.background,
+        backgroundColor: COLORS.background || "#F8F9FA",
     },
 
     content: {
-        padding: SPACING.lg,
+        padding: SPACING.lg || 16,
         paddingBottom: 50,
     },
 
@@ -499,27 +369,32 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
+        marginBottom: 4,
     },
 
     heading: {
-        fontSize: 30,
+        fontSize: 28,
         fontWeight: "800",
         color: COLORS.black,
+        letterSpacing: -0.5,
     },
 
     subtitle: {
-        marginTop: 5,
-        color: "#888",
+        marginTop: 4,
+        color: "#6B7280",
         fontSize: 13,
+        fontWeight: "500",
     },
 
     liveBadge: {
         flexDirection: "row",
         alignItems: "center",
-        backgroundColor: "#EAF8EF",
+        backgroundColor: "#DCFCE7",
         paddingHorizontal: 10,
-        paddingVertical: 7,
+        paddingVertical: 6,
         borderRadius: 20,
+        borderWidth: 1,
+        borderColor: "#86EFAC",
     },
 
     liveDot: {
@@ -527,48 +402,64 @@ const styles = StyleSheet.create({
         height: 7,
         borderRadius: 4,
         backgroundColor: "#22C55E",
-        marginRight: 5,
+        marginRight: 6,
     },
 
     liveText: {
-        color: "#16A34A",
-        fontSize: 10,
+        color: "#15803D",
+        fontSize: 11,
         fontWeight: "800",
+        letterSpacing: 0.5,
     },
 
     summaryRow: {
         flexDirection: "row",
         justifyContent: "space-between",
-        marginTop: 22,
+        marginTop: 20,
     },
 
     summaryCard: {
         width: "31.5%",
         backgroundColor: COLORS.white,
-        borderRadius: RADIUS.xl,
-        padding: 13,
+        borderRadius: RADIUS.xl || 16,
+        padding: 14,
+        borderWidth: 1,
+        borderColor: "#F1F5F9",
+        ...Platform.select({
+            ios: {
+                shadowColor: "#000",
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.04,
+                shadowRadius: 8,
+            },
+            android: {
+                elevation: 2,
+            },
+        }),
     },
 
     summaryIcon: {
-        width: 35,
-        height: 35,
-        borderRadius: 11,
-        backgroundColor: "#F7F3E7",
+        width: 36,
+        height: 36,
+        borderRadius: 10,
+        backgroundColor: "#FDF8EA",
         alignItems: "center",
         justifyContent: "center",
     },
 
     summaryValue: {
-        marginTop: 8,
-        fontSize: 23,
+        marginTop: 10,
+        fontSize: 24,
         fontWeight: "800",
         color: COLORS.black,
+        letterSpacing: -0.5,
     },
 
     summaryLabel: {
         marginTop: 2,
-        fontSize: 10,
-        color: "#888",
+        fontSize: 11,
+        fontWeight: "600",
+        color: "#6B7280",
     },
 
     sectionHeader: {
@@ -576,32 +467,49 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         alignItems: "center",
         marginTop: 26,
-        marginBottom: 12,
+        marginBottom: 14,
     },
 
     sectionTitle: {
         fontSize: 19,
         fontWeight: "800",
         color: COLORS.black,
+        letterSpacing: -0.3,
     },
 
     sectionSubtitle: {
-        marginTop: 3,
-        fontSize: 11,
-        color: "#999",
+        marginTop: 2,
+        fontSize: 12,
+        color: "#6B7280",
     },
 
     chairCard: {
         backgroundColor: COLORS.white,
-        borderRadius: RADIUS.xl,
+        borderRadius: RADIUS.xl || 16,
         padding: 16,
-        marginBottom: 12,
+        marginBottom: 14,
+        borderWidth: 1,
+        borderColor: "#F1F5F9",
+        ...Platform.select({
+            ios: {
+                shadowColor: "#000",
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.05,
+                shadowRadius: 10,
+            },
+            android: {
+                elevation: 3,
+            },
+        }),
     },
 
     chairHeader: {
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
+        borderBottomWidth: 1,
+        borderBottomColor: "#F3F4F6",
+        paddingBottom: 12,
     },
 
     chairTitleRow: {
@@ -610,53 +518,58 @@ const styles = StyleSheet.create({
     },
 
     chairIcon: {
-        width: 44,
-        height: 44,
-        borderRadius: 14,
+        width: 42,
+        height: 42,
+        borderRadius: 12,
         backgroundColor: COLORS.black,
         alignItems: "center",
         justifyContent: "center",
     },
 
     chairTitle: {
-        marginLeft: 10,
-        fontSize: 15,
+        marginLeft: 12,
+        fontSize: 16,
         fontWeight: "800",
         color: COLORS.black,
     },
 
     barber: {
-        marginLeft: 10,
-        marginTop: 2,
-        color: "#888",
-        fontSize: 11,
+        marginLeft: 12,
+        marginTop: 1,
+        color: "#6B7280",
+        fontSize: 12,
+        fontWeight: "500",
     },
 
     statusBadge: {
         flexDirection: "row",
         alignItems: "center",
-        paddingHorizontal: 9,
-        paddingVertical: 6,
+        paddingHorizontal: 10,
+        paddingVertical: 5,
         borderRadius: 20,
+        borderWidth: 1,
     },
 
     servingBadge: {
-        backgroundColor: "#EAF8EF",
+        backgroundColor: "#DCFCE7",
+        borderColor: "#86EFAC",
     },
 
     waitingBadge: {
-        backgroundColor: "#FFF7E0",
+        backgroundColor: "#FEF3C7",
+        borderColor: "#FDE68A",
     },
 
     availableBadge: {
-        backgroundColor: "#F1F1F1",
+        backgroundColor: "#F3F4F6",
+        borderColor: "#E5E7EB",
     },
 
     statusDot: {
         width: 6,
         height: 6,
         borderRadius: 3,
-        marginRight: 5,
+        marginRight: 6,
     },
 
     servingDot: {
@@ -664,134 +577,155 @@ const styles = StyleSheet.create({
     },
 
     waitingDot: {
-        backgroundColor: "#EAB308",
+        backgroundColor: "#D97706",
     },
 
     availableDot: {
-        backgroundColor: "#999",
+        backgroundColor: "#6B7280",
     },
 
     statusText: {
-        fontSize: 9,
-        fontWeight: "700",
+        fontSize: 10,
+        fontWeight: "800",
+        letterSpacing: 0.4,
+        textTransform: "uppercase",
     },
 
     servingText: {
-        color: "#16A34A",
+        color: "#15803D",
     },
 
     waitingText: {
-        color: "#A16207",
+        color: "#B45309",
     },
 
     availableText: {
-        color: "#777",
+        color: "#4B5563",
     },
 
     customerSection: {
         flexDirection: "row",
         alignItems: "center",
-        marginTop: 18,
+        marginTop: 16,
     },
 
     tokenBox: {
-        width: 65,
-        height: 65,
-        borderRadius: 18,
+        width: 62,
+        height: 62,
+        borderRadius: 16,
         backgroundColor: COLORS.black,
         alignItems: "center",
         justifyContent: "center",
     },
 
     tokenLabel: {
-        color: "#888",
+        color: "#9CA3AF",
         fontSize: 9,
+        fontWeight: "700",
+        letterSpacing: 0.8,
     },
 
     token: {
         color: COLORS.primary,
-        fontSize: 24,
+        fontSize: 22,
         fontWeight: "800",
-        marginTop: 2,
+        marginTop: 1,
     },
 
     availableIcon: {
-        width: 65,
-        height: 65,
-        borderRadius: 18,
-        backgroundColor: "#EAF8EF",
+        width: 62,
+        height: 62,
+        borderRadius: 16,
+        backgroundColor: "#F0FDF4",
         alignItems: "center",
         justifyContent: "center",
+        borderWidth: 1,
+        borderColor: "#DCFCE7",
     },
 
     customerInfo: {
         flex: 1,
-        marginLeft: 13,
+        marginLeft: 14,
     },
 
     customerLabel: {
-        color: "#999",
-        fontSize: 10,
+        color: "#9CA3AF",
+        fontSize: 11,
+        fontWeight: "600",
     },
 
     customerName: {
         color: COLORS.black,
         fontSize: 16,
         fontWeight: "700",
-        marginTop: 3,
+        marginTop: 2,
     },
 
     service: {
-        color: "#777",
-        fontSize: 11,
-        marginTop: 3,
+        color: "#4B5563",
+        fontSize: 12,
+        fontWeight: "500",
+        marginTop: 2,
     },
 
     doneButton: {
         marginTop: 16,
-        height: 48,
-        borderRadius: 15,
+        height: 46,
+        borderRadius: 14,
         backgroundColor: COLORS.primary,
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "center",
+        ...Platform.select({
+            ios: {
+                shadowColor: "#000",
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.1,
+                shadowRadius: 4,
+            },
+            android: {
+                elevation: 2,
+            },
+        }),
     },
 
     doneText: {
-        marginLeft: 7,
+        marginLeft: 8,
         color: COLORS.black,
-        fontSize: 13,
+        fontSize: 14,
         fontWeight: "800",
     },
 
     waitingMessage: {
-        marginTop: 15,
+        marginTop: 14,
         padding: 12,
-        borderRadius: 13,
-        backgroundColor: "#FFF7E0",
+        borderRadius: 12,
+        backgroundColor: "#FEF3C7",
         flexDirection: "row",
         alignItems: "center",
     },
 
     waitingMessageText: {
-        marginLeft: 7,
-        color: "#A16207",
-        fontSize: 11,
+        marginLeft: 8,
+        color: "#B45309",
+        fontSize: 12,
+        fontWeight: "600",
     },
 
     availableMessage: {
-        marginTop: 15,
+        marginTop: 14,
         padding: 12,
-        borderRadius: 13,
-        backgroundColor: "#EAF8EF",
+        borderRadius: 12,
+        backgroundColor: "#F0FDF4",
         flexDirection: "row",
         alignItems: "center",
     },
 
     availableMessageText: {
-        marginLeft: 7,
-        color: "#16A34A",
-        fontSize: 11,
+        marginLeft: 8,
+        color: "#15803D",
+        fontSize: 12,
+        fontWeight: "600",
     },
 
     countBadge: {
@@ -801,6 +735,7 @@ const styles = StyleSheet.create({
         backgroundColor: COLORS.black,
         alignItems: "center",
         justifyContent: "center",
+        paddingHorizontal: 8,
     },
 
     countText: {
@@ -811,11 +746,24 @@ const styles = StyleSheet.create({
 
     waitingCard: {
         backgroundColor: COLORS.white,
-        borderRadius: RADIUS.xl,
+        borderRadius: RADIUS.xl || 16,
         padding: 14,
         marginBottom: 10,
         flexDirection: "row",
         alignItems: "center",
+        borderWidth: 1,
+        borderColor: "#F1F5F9",
+        ...Platform.select({
+            ios: {
+                shadowColor: "#000",
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.03,
+                shadowRadius: 6,
+            },
+            android: {
+                elevation: 2,
+            },
+        }),
     },
 
     positionCircle: {
@@ -835,19 +783,20 @@ const styles = StyleSheet.create({
 
     waitingCustomerInfo: {
         flex: 1,
-        marginLeft: 11,
+        marginLeft: 12,
     },
 
     waitingCustomerName: {
         color: COLORS.black,
-        fontSize: 14,
+        fontSize: 15,
         fontWeight: "700",
     },
 
     waitingService: {
-        marginTop: 3,
-        color: "#888",
-        fontSize: 11,
+        marginTop: 2,
+        color: "#6B7280",
+        fontSize: 12,
+        fontWeight: "500",
     },
 
     waitingRight: {
@@ -861,9 +810,9 @@ const styles = StyleSheet.create({
     },
 
     estimated: {
-        marginTop: 3,
-        color: "#999",
-        fontSize: 10,
+        marginTop: 2,
+        color: "#9CA3AF",
+        fontSize: 11,
+        fontWeight: "500",
     },
-
 });

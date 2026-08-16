@@ -56,18 +56,8 @@ export default function ServiceCard({
 
             <TouchableOpacity
                 style={styles.button}
-                onPress={() => {
-
-                    updateBooking({
-                        service: service,
-                        amount: service.price,
-                        duration: service.duration,
-                        serviceId: service.id,
-                    });
-
-                    onBook(service);
-
-                }}
+                activeOpacity={0.8}
+                onPress={() => onBook(service)}
             >
                 <Text style={styles.buttonText}>
                     Book

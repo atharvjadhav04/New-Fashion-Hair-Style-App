@@ -4,6 +4,7 @@ import {
     View,
     Text,
     StyleSheet,
+    Platform,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -64,7 +65,7 @@ export default function QueueScreen() {
                     <View style={styles.barberIcon}>
                         <Ionicons
                             name="person"
-                            size={24}
+                            size={22}
                             color={COLORS.primary}
                         />
                     </View>
@@ -90,7 +91,9 @@ export default function QueueScreen() {
 
                 <View style={styles.queueCard}>
                     <View style={styles.liveRow}>
-                        <View style={styles.liveDot} />
+                        <View style={styles.liveDotOuter}>
+                            <View style={styles.liveDot} />
+                        </View>
 
                         <Text style={styles.liveText}>
                             LIVE QUEUE
@@ -101,9 +104,11 @@ export default function QueueScreen() {
                         सध्या सुरू असलेला टोकन
                     </Text>
 
-                    <Text style={styles.currentToken}>
-                        {queue.currentToken}
-                    </Text>
+                    <View style={styles.tokenDisplayBox}>
+                        <Text style={styles.currentToken}>
+                            {queue.currentToken}
+                        </Text>
+                    </View>
 
                     <View style={styles.divider} />
 
@@ -135,7 +140,7 @@ export default function QueueScreen() {
                             </Text>
 
                             <Text style={styles.tokenValue}>
-                                {queue.currentToken}
+                                #{queue.currentToken}
                             </Text>
                         </View>
 
@@ -145,7 +150,7 @@ export default function QueueScreen() {
                             </Text>
 
                             <Text style={styles.yourToken}>
-                                {queue.yourToken}
+                                #{queue.yourToken}
                             </Text>
                         </View>
                     </View>
@@ -199,7 +204,7 @@ export default function QueueScreen() {
                     <View style={styles.statusIcon}>
                         <Ionicons
                             name="notifications-outline"
-                            size={22}
+                            size={20}
                             color="#16A34A"
                         />
                     </View>
@@ -221,8 +226,8 @@ export default function QueueScreen() {
                 <View style={styles.refreshRow}>
                     <Ionicons
                         name="sync-outline"
-                        size={15}
-                        color="#999"
+                        size={14}
+                        color="#9CA3AF"
                     />
 
                     <Text style={styles.refreshText}>
@@ -246,30 +251,45 @@ const styles = StyleSheet.create({
     },
 
     heading: {
-        fontSize: 30,
-        fontWeight: "700",
+        fontSize: 28,
+        fontWeight: "800",
         color: COLORS.black,
+        letterSpacing: -0.5,
     },
 
     subtitle: {
-        marginTop: 6,
-        color: "#777",
-        fontSize: 15,
+        marginTop: 4,
+        color: "#6B7280",
+        fontSize: 14,
+        fontWeight: "400",
     },
 
     barberCard: {
         backgroundColor: COLORS.white,
         borderRadius: RADIUS.xl,
         padding: SPACING.lg,
-        marginTop: 24,
+        marginTop: 20,
         flexDirection: "row",
         alignItems: "center",
+        borderWidth: 1,
+        borderColor: "#F0F0F0",
+        ...Platform.select({
+            ios: {
+                shadowColor: "#000",
+                shadowOffset: { width: 0, height: 3 },
+                shadowOpacity: 0.05,
+                shadowRadius: 8,
+            },
+            android: {
+                elevation: 2,
+            },
+        }),
     },
 
     barberIcon: {
-        width: 50,
-        height: 50,
-        borderRadius: 16,
+        width: 46,
+        height: 46,
+        borderRadius: 14,
         backgroundColor: COLORS.black,
         alignItems: "center",
         justifyContent: "center",
@@ -277,26 +297,30 @@ const styles = StyleSheet.create({
 
     barberInfo: {
         flex: 1,
-        marginLeft: 12,
+        marginLeft: 14,
     },
 
     smallLabel: {
-        color: "#888",
-        fontSize: 12,
+        color: "#8E8E93",
+        fontSize: 11,
+        fontWeight: "500",
     },
 
     barberName: {
-        marginTop: 3,
-        fontSize: 18,
+        marginTop: 2,
+        fontSize: 17,
         fontWeight: "700",
         color: COLORS.black,
+        letterSpacing: -0.2,
     },
 
     chairBadge: {
-        backgroundColor: "#F7F3E7",
+        backgroundColor: "#F8F6EF",
         paddingHorizontal: 12,
-        paddingVertical: 7,
-        borderRadius: 20,
+        paddingVertical: 6,
+        borderRadius: 16,
+        borderWidth: 1,
+        borderColor: "rgba(0,0,0,0.04)",
     },
 
     chairText: {
@@ -308,8 +332,21 @@ const styles = StyleSheet.create({
     queueCard: {
         backgroundColor: COLORS.black,
         borderRadius: RADIUS.xl,
-        padding: 24,
+        padding: 22,
         marginTop: 16,
+        borderWidth: 1,
+        borderColor: "#222222",
+        ...Platform.select({
+            ios: {
+                shadowColor: "#000",
+                shadowOffset: { width: 0, height: 8 },
+                shadowOpacity: 0.18,
+                shadowRadius: 12,
+            },
+            android: {
+                elevation: 6,
+            },
+        }),
     },
 
     liveRow: {
@@ -317,51 +354,68 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
 
+    liveDotOuter: {
+        width: 14,
+        height: 14,
+        borderRadius: 7,
+        backgroundColor: "rgba(34, 197, 94, 0.2)",
+        alignItems: "center",
+        justifyContent: "center",
+    },
+
     liveDot: {
-        width: 8,
-        height: 8,
-        borderRadius: 4,
+        width: 7,
+        height: 7,
+        borderRadius: 3.5,
         backgroundColor: "#22C55E",
     },
 
     liveText: {
-        marginLeft: 7,
+        marginLeft: 8,
         color: "#22C55E",
-        fontSize: 12,
+        fontSize: 11,
         fontWeight: "800",
-        letterSpacing: 1,
+        letterSpacing: 1.2,
     },
 
     currentLabel: {
-        marginTop: 24,
-        color: "#999",
+        marginTop: 20,
+        color: "#9CA3AF",
         textAlign: "center",
         fontSize: 13,
+        fontWeight: "500",
+    },
+
+    tokenDisplayBox: {
+        alignItems: "center",
+        justifyContent: "center",
+        paddingVertical: 6,
     },
 
     currentToken: {
-        marginTop: 4,
         color: COLORS.primary,
-        fontSize: 58,
+        fontSize: 62,
         fontWeight: "800",
         textAlign: "center",
+        letterSpacing: -1,
     },
 
     divider: {
         height: 1,
-        backgroundColor: "#333",
-        marginVertical: 20,
+        backgroundColor: "rgba(255, 255, 255, 0.1)",
+        marginVertical: 18,
     },
 
     progressHeader: {
         flexDirection: "row",
         justifyContent: "space-between",
-        marginBottom: 9,
+        marginBottom: 8,
     },
 
     progressLabel: {
-        color: "#AAA",
+        color: "#9CA3AF",
         fontSize: 12,
+        fontWeight: "500",
     },
 
     progressPercent: {
@@ -371,34 +425,35 @@ const styles = StyleSheet.create({
     },
 
     progressBackground: {
-        height: 9,
-        backgroundColor: "#333",
-        borderRadius: 10,
+        height: 8,
+        backgroundColor: "#262626",
+        borderRadius: 4,
         overflow: "hidden",
     },
 
     progressFill: {
         height: "100%",
         backgroundColor: COLORS.primary,
-        borderRadius: 10,
+        borderRadius: 4,
     },
 
     tokenRow: {
         flexDirection: "row",
         justifyContent: "space-between",
-        marginTop: 22,
+        marginTop: 20,
     },
 
     tokenLabel: {
-        color: "#888",
-        fontSize: 12,
+        color: "#9CA3AF",
+        fontSize: 11,
+        fontWeight: "500",
     },
 
     tokenValue: {
         color: COLORS.white,
-        fontSize: 25,
+        fontSize: 22,
         fontWeight: "700",
-        marginTop: 3,
+        marginTop: 2,
     },
 
     youContainer: {
@@ -407,24 +462,39 @@ const styles = StyleSheet.create({
 
     youLabel: {
         color: COLORS.primary,
-        fontSize: 12,
+        fontSize: 11,
         fontWeight: "800",
+        letterSpacing: 0.5,
     },
 
     yourToken: {
         color: COLORS.primary,
-        fontSize: 25,
+        fontSize: 22,
         fontWeight: "800",
-        marginTop: 3,
+        marginTop: 2,
     },
 
     waitingCard: {
         backgroundColor: COLORS.white,
         borderRadius: RADIUS.xl,
-        padding: SPACING.lg,
+        paddingVertical: 18,
+        paddingHorizontal: SPACING.lg,
         marginTop: 16,
         flexDirection: "row",
         alignItems: "center",
+        borderWidth: 1,
+        borderColor: "#F0F0F0",
+        ...Platform.select({
+            ios: {
+                shadowColor: "#000",
+                shadowOffset: { width: 0, height: 3 },
+                shadowOpacity: 0.04,
+                shadowRadius: 8,
+            },
+            android: {
+                elevation: 2,
+            },
+        }),
     },
 
     waitingItem: {
@@ -433,47 +503,51 @@ const styles = StyleSheet.create({
     },
 
     waitingIcon: {
-        width: 42,
-        height: 42,
-        borderRadius: 14,
-        backgroundColor: "#F7F3E7",
+        width: 40,
+        height: 40,
+        borderRadius: 12,
+        backgroundColor: "#F8F6EF",
         alignItems: "center",
         justifyContent: "center",
     },
 
     waitingNumber: {
-        marginTop: 8,
-        fontSize: 23,
+        marginTop: 6,
+        fontSize: 22,
         fontWeight: "800",
         color: COLORS.black,
+        letterSpacing: -0.5,
     },
 
     waitingLabel: {
-        marginTop: 3,
-        color: "#888",
+        marginTop: 2,
+        color: "#8E8E93",
         fontSize: 11,
+        fontWeight: "500",
         textAlign: "center",
     },
 
     verticalLine: {
         width: 1,
-        height: 70,
-        backgroundColor: "#EEEEEE",
+        height: 55,
+        backgroundColor: "#F3F4F6",
     },
 
     statusCard: {
-        backgroundColor: "#EAF8EF",
+        backgroundColor: "#F0FDF4",
         borderRadius: RADIUS.xl,
         padding: SPACING.lg,
         marginTop: 16,
         flexDirection: "row",
+        borderWidth: 1,
+        borderColor: "#DCFCE7",
     },
 
     statusIcon: {
-        width: 42,
-        height: 42,
-        borderRadius: 14,
-        backgroundColor: "#D8F3E1",
+        width: 38,
+        height: 38,
+        borderRadius: 12,
+        backgroundColor: "#DCFCE7",
         alignItems: "center",
         justifyContent: "center",
     },
@@ -484,28 +558,29 @@ const styles = StyleSheet.create({
     },
 
     statusTitle: {
-        color: "#166534",
+        color: "#15803D",
         fontWeight: "700",
         fontSize: 14,
     },
 
     statusText: {
-        color: "#34704A",
+        color: "#166534",
         fontSize: 12,
         lineHeight: 18,
-        marginTop: 4,
+        marginTop: 3,
     },
 
     refreshRow: {
         flexDirection: "row",
         justifyContent: "center",
         alignItems: "center",
-        marginTop: 18,
+        marginTop: 20,
     },
 
     refreshText: {
-        marginLeft: 5,
-        color: "#999",
+        marginLeft: 6,
+        color: "#9CA3AF",
         fontSize: 11,
+        fontWeight: "500",
     },
 });

@@ -6,11 +6,9 @@ import {
     TouchableOpacity,
     StyleSheet,
 } from "react-native";
-
 import { Ionicons } from "@expo/vector-icons";
 
 import AppScreen from "../../components/common/AppScreen";
-
 import {
     COLORS,
     SPACING,
@@ -53,53 +51,46 @@ const CHAIRS = [
 export default function DashboardScreen({ navigation }) {
     return (
         <AppScreen style={styles.screen}>
-
             <ScrollView
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={styles.content}
             >
-
                 {/* Header */}
-
                 <View style={styles.header}>
-
                     <View>
                         <Text style={styles.greeting}>
                             नमस्कार 👋
                         </Text>
-
                         <Text style={styles.shopName}>
                             New Fashion Hair Style
                         </Text>
-
                         <Text style={styles.headerSubtitle}>
                             आजच्या सलूनचा आढावा
                         </Text>
                     </View>
 
-                    <View style={styles.notificationButton}>
+                    <TouchableOpacity
+                        activeOpacity={0.7}
+                        style={styles.notificationButton}
+                    >
                         <Ionicons
                             name="notifications-outline"
                             size={22}
                             color={COLORS.primary}
                         />
-
                         <View style={styles.notificationDot} />
-                    </View>
-
+                    </TouchableOpacity>
                 </View>
 
                 {/* Income Main Card */}
-
                 <View style={styles.incomeCard}>
-
                     <View style={styles.incomeHeader}>
-
                         <View>
-                            <Text style={styles.incomeLabel}>
-                                आजचे उत्पन्न
-                            </Text>
-
+                            <View style={styles.incomeTag}>
+                                <Text style={styles.incomeLabel}>
+                                    आजचे उत्पन्न
+                                </Text>
+                            </View>
                             <Text style={styles.incomeAmount}>
                                 ₹{STATS.todayIncome.toLocaleString("en-IN")}
                             </Text>
@@ -112,27 +103,20 @@ export default function DashboardScreen({ navigation }) {
                                 color={COLORS.black}
                             />
                         </View>
-
                     </View>
 
                     <View style={styles.incomeFooter}>
-
                         <Text style={styles.incomeFooterText}>
                             या महिन्यात
                         </Text>
-
                         <Text style={styles.monthlyAmount}>
                             ₹{STATS.monthlyIncome.toLocaleString("en-IN")}
                         </Text>
-
                     </View>
-
                 </View>
 
                 {/* Statistics */}
-
                 <View style={styles.statsGrid}>
-
                     <StatCard
                         icon="people-outline"
                         value={STATS.todayCustomers}
@@ -156,37 +140,30 @@ export default function DashboardScreen({ navigation }) {
                         value="18"
                         label="आजच्या बुकिंग"
                     />
-
                 </View>
 
                 {/* Queue Header */}
-
                 <View style={styles.sectionHeader}>
-
                     <View>
                         <Text style={styles.sectionTitle}>
                             Live Queue
                         </Text>
-
                         <Text style={styles.sectionSubtitle}>
                             सध्या सलूनमध्ये सुरू असलेली सेवा
                         </Text>
                     </View>
 
                     <TouchableOpacity
-                        onPress={() =>
-                            navigation.navigate("AdminQueue")
-                        }
+                        activeOpacity={0.7}
+                        onPress={() => navigation.navigate("AdminQueue")}
                     >
                         <Text style={styles.viewAll}>
                             सर्व पहा
                         </Text>
                     </TouchableOpacity>
-
                 </View>
 
                 {/* Chairs */}
-
                 {CHAIRS.map((chair) => (
                     <ChairCard
                         key={chair.id}
@@ -195,39 +172,32 @@ export default function DashboardScreen({ navigation }) {
                 ))}
 
                 {/* Quick Actions */}
-
                 <Text style={styles.quickTitle}>
                     Quick Actions
                 </Text>
 
                 <View style={styles.quickGrid}>
-
                     <QuickAction
                         icon="business-outline"
                         title="Salon Setup"
                         subtitle="Barber & Chair"
-                        onPress={() =>
-                            navigation.navigate("AdminSetup")
-                        }
+                        onPress={() => navigation.navigate("AdminSetup")}
                     />
 
                     <QuickAction
                         icon="cut-outline"
                         title="सेवा"
                         subtitle="Add / Edit"
-                        onPress={() =>
-                            navigation.navigate("AdminServices")
-                        }
+                        onPress={() => navigation.navigate("AdminServices")}
                     />
 
                     <QuickAction
                         icon="bar-chart-outline"
                         title="रिपोर्ट"
                         subtitle="Income"
-                        onPress={() =>
-                            navigation.navigate("AdminFinance")
-                        }
+                        onPress={() => navigation.navigate("AdminFinance")}
                     />
+
                     <QuickAction
                         icon="calendar-outline"
                         title="Salon Status"
@@ -238,24 +208,21 @@ export default function DashboardScreen({ navigation }) {
                             })
                         }
                     />
-
                 </View>
 
                 {/* Today's Barbers */}
-
                 <View style={styles.barberHeader}>
-
                     <View>
                         <Text style={styles.sectionTitle}>
                             आजचे बार्बर
                         </Text>
-
                         <Text style={styles.sectionSubtitle}>
                             {STATS.activeBarbers} बार्बर आज उपलब्ध
                         </Text>
                     </View>
 
                     <TouchableOpacity
+                        activeOpacity={0.7}
                         onPress={() =>
                             navigation.navigate("AdminSetup", {
                                 screen: "SalonSetup",
@@ -266,11 +233,9 @@ export default function DashboardScreen({ navigation }) {
                             Manage
                         </Text>
                     </TouchableOpacity>
-
                 </View>
 
                 <View style={styles.barberCard}>
-
                     <Barber
                         name="Rajesh"
                         chair="Chair 1"
@@ -284,24 +249,17 @@ export default function DashboardScreen({ navigation }) {
                     <Barber
                         name="Amit"
                         chair="Chair 3"
+                        isLast
                     />
-
                 </View>
-
             </ScrollView>
-
         </AppScreen>
     );
 }
 
-function StatCard({
-    icon,
-    value,
-    label,
-}) {
+function StatCard({ icon, value, label }) {
     return (
         <View style={styles.statCard}>
-
             <View style={styles.statIcon}>
                 <Ionicons
                     name={icon}
@@ -317,7 +275,6 @@ function StatCard({
             <Text style={styles.statLabel}>
                 {label}
             </Text>
-
         </View>
     );
 }
@@ -327,21 +284,18 @@ function ChairCard({ chair }) {
 
     return (
         <View style={styles.chairCard}>
-
             <View style={styles.chairNumber}>
                 <Ionicons
                     name="business-outline"
                     size={20}
                     color={COLORS.primary}
                 />
-
                 <Text style={styles.chairNumberText}>
                     {chair.id}
                 </Text>
             </View>
 
             <View style={styles.chairInfo}>
-
                 <Text style={styles.chairLabel}>
                     Chair {chair.id}
                 </Text>
@@ -353,11 +307,9 @@ function ChairCard({ chair }) {
                 <Text style={styles.customerName}>
                     {chair.customer}
                 </Text>
-
             </View>
 
             <View style={styles.chairRight}>
-
                 <View
                     style={[
                         styles.statusBadge,
@@ -374,7 +326,6 @@ function ChairCard({ chair }) {
                                 : styles.waitingDot,
                         ]}
                     />
-
                     <Text
                         style={[
                             styles.statusText,
@@ -383,39 +334,29 @@ function ChairCard({ chair }) {
                                 : styles.waitingText,
                         ]}
                     >
-                        {serving
-                            ? "Serving"
-                            : "Waiting"}
+                        {serving ? "Serving" : "Waiting"}
                     </Text>
                 </View>
 
                 <Text style={styles.tokenText}>
                     #{chair.token}
                 </Text>
-
             </View>
-
         </View>
     );
 }
 
-function QuickAction({
-    icon,
-    title,
-    subtitle,
-    onPress,
-}) {
+function QuickAction({ icon, title, subtitle, onPress }) {
     return (
         <TouchableOpacity
-            activeOpacity={0.8}
+            activeOpacity={0.7}
             style={styles.quickAction}
             onPress={onPress}
         >
-
             <View style={styles.quickIcon}>
                 <Ionicons
                     name={icon}
-                    size={22}
+                    size={20}
                     color={COLORS.primary}
                 />
             </View>
@@ -427,18 +368,13 @@ function QuickAction({
             <Text style={styles.quickActionSubtitle}>
                 {subtitle}
             </Text>
-
         </TouchableOpacity>
     );
 }
 
-function Barber({
-    name,
-    chair,
-}) {
+function Barber({ name, chair, isLast }) {
     return (
-        <View style={styles.barber}>
-
+        <View style={[styles.barber, isLast && styles.barberNoBorder]}>
             <View style={styles.barberAvatar}>
                 <Text style={styles.barberInitial}>
                     {name.charAt(0)}
@@ -462,13 +398,11 @@ function Barber({
                     Available
                 </Text>
             </View>
-
         </View>
     );
 }
 
 const styles = StyleSheet.create({
-
     screen: {
         flex: 1,
         backgroundColor: COLORS.background,
@@ -476,76 +410,103 @@ const styles = StyleSheet.create({
 
     content: {
         padding: SPACING.lg,
-        paddingBottom: 50,
+        paddingBottom: 60,
     },
 
     header: {
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
+        marginBottom: 8,
     },
 
     greeting: {
-        color: "#777",
-        fontSize: 14,
+        color: "#6B7280",
+        fontSize: 13,
+        fontWeight: "600",
+        letterSpacing: 0.2,
     },
 
     shopName: {
-        marginTop: 4,
+        marginTop: 2,
         color: COLORS.black,
-        fontSize: 23,
+        fontSize: 24,
         fontWeight: "800",
+        letterSpacing: -0.5,
     },
 
     headerSubtitle: {
         marginTop: 3,
-        color: "#999",
+        color: "#9CA3AF",
         fontSize: 12,
+        fontWeight: "500",
     },
 
     notificationButton: {
-        width: 45,
-        height: 45,
-        borderRadius: 16,
+        width: 46,
+        height: 46,
+        borderRadius: 15,
         backgroundColor: COLORS.black,
         alignItems: "center",
         justifyContent: "center",
         position: "relative",
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.15,
+        shadowRadius: 10,
+        elevation: 4,
     },
 
     notificationDot: {
         position: "absolute",
-        top: 10,
-        right: 10,
-        width: 7,
-        height: 7,
+        top: 11,
+        right: 11,
+        width: 8,
+        height: 8,
         borderRadius: 4,
         backgroundColor: "#EF4444",
+        borderWidth: 1.5,
+        borderColor: COLORS.black,
     },
 
     incomeCard: {
-        marginTop: 24,
+        marginTop: 20,
         backgroundColor: COLORS.black,
         borderRadius: RADIUS.xl,
         padding: 22,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 8 },
+        shadowOpacity: 0.25,
+        shadowRadius: 16,
+        elevation: 8,
     },
 
     incomeHeader: {
         flexDirection: "row",
         justifyContent: "space-between",
-        alignItems: "center",
+        alignItems: "flex-start",
+    },
+
+    incomeTag: {
+        backgroundColor: "rgba(255, 255, 255, 0.08)",
+        paddingHorizontal: 10,
+        paddingVertical: 4,
+        borderRadius: 12,
+        alignSelf: "flex-start",
     },
 
     incomeLabel: {
-        color: "#999",
-        fontSize: 13,
+        color: "#9CA3AF",
+        fontSize: 12,
+        fontWeight: "600",
     },
 
     incomeAmount: {
         color: COLORS.primary,
         fontSize: 34,
-        fontWeight: "800",
-        marginTop: 5,
+        fontWeight: "900",
+        marginTop: 8,
+        letterSpacing: -0.5,
     },
 
     incomeIcon: {
@@ -555,25 +516,32 @@ const styles = StyleSheet.create({
         backgroundColor: COLORS.primary,
         alignItems: "center",
         justifyContent: "center",
+        shadowColor: COLORS.primary,
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 8,
+        elevation: 4,
     },
 
     incomeFooter: {
         marginTop: 20,
-        paddingTop: 15,
+        paddingTop: 16,
         borderTopWidth: 1,
-        borderTopColor: "#333",
+        borderTopColor: "rgba(255, 255, 255, 0.1)",
         flexDirection: "row",
         justifyContent: "space-between",
+        alignItems: "center",
     },
 
     incomeFooterText: {
-        color: "#888",
-        fontSize: 12,
+        color: "#9CA3AF",
+        fontSize: 13,
+        fontWeight: "500",
     },
 
     monthlyAmount: {
         color: COLORS.white,
-        fontSize: 14,
+        fontSize: 15,
         fontWeight: "700",
     },
 
@@ -581,7 +549,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         flexWrap: "wrap",
         justifyContent: "space-between",
-        marginTop: 16,
+        marginTop: 20,
     },
 
     statCard: {
@@ -589,7 +557,14 @@ const styles = StyleSheet.create({
         backgroundColor: COLORS.white,
         borderRadius: RADIUS.xl,
         padding: 16,
-        marginBottom: 12,
+        marginBottom: 14,
+        borderWidth: 1,
+        borderColor: "rgba(0, 0, 0, 0.03)",
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.04,
+        shadowRadius: 10,
+        elevation: 2,
     },
 
     statIcon: {
@@ -602,57 +577,68 @@ const styles = StyleSheet.create({
     },
 
     statValue: {
-        marginTop: 10,
+        marginTop: 12,
         color: COLORS.black,
-        fontSize: 23,
+        fontSize: 22,
         fontWeight: "800",
+        letterSpacing: -0.5,
     },
 
     statLabel: {
-        marginTop: 3,
-        color: "#888",
+        marginTop: 2,
+        color: "#6B7280",
         fontSize: 11,
+        fontWeight: "600",
     },
 
     sectionHeader: {
         flexDirection: "row",
         justifyContent: "space-between",
-        alignItems: "center",
-        marginTop: 20,
-        marginBottom: 12,
+        alignItems: "flex-end",
+        marginTop: 16,
+        marginBottom: 14,
     },
 
     sectionTitle: {
         color: COLORS.black,
         fontSize: 18,
         fontWeight: "800",
+        letterSpacing: -0.3,
     },
 
     sectionSubtitle: {
-        color: "#999",
-        fontSize: 11,
-        marginTop: 3,
+        color: "#9CA3AF",
+        fontSize: 12,
+        fontWeight: "500",
+        marginTop: 2,
     },
 
     viewAll: {
         color: COLORS.primary,
-        fontSize: 12,
+        fontSize: 13,
         fontWeight: "700",
     },
 
     chairCard: {
         backgroundColor: COLORS.white,
         borderRadius: RADIUS.xl,
-        padding: 15,
-        marginBottom: 10,
+        padding: 16,
+        marginBottom: 12,
         flexDirection: "row",
         alignItems: "center",
+        borderWidth: 1,
+        borderColor: "rgba(0, 0, 0, 0.03)",
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.04,
+        shadowRadius: 10,
+        elevation: 2,
     },
 
     chairNumber: {
-        width: 48,
-        height: 48,
-        borderRadius: 15,
+        width: 46,
+        height: 46,
+        borderRadius: 14,
         backgroundColor: COLORS.black,
         alignItems: "center",
         justifyContent: "center",
@@ -667,24 +653,28 @@ const styles = StyleSheet.create({
 
     chairInfo: {
         flex: 1,
-        marginLeft: 12,
+        marginLeft: 14,
     },
 
     chairLabel: {
-        color: "#999",
-        fontSize: 10,
+        color: "#9CA3AF",
+        fontSize: 11,
+        fontWeight: "600",
+        textTransform: "uppercase",
+        letterSpacing: 0.5,
     },
 
     barberName: {
         color: COLORS.black,
-        fontSize: 14,
+        fontSize: 15,
         fontWeight: "700",
         marginTop: 2,
     },
 
     customerName: {
-        color: "#777",
-        fontSize: 11,
+        color: "#6B7280",
+        fontSize: 12,
+        fontWeight: "500",
         marginTop: 2,
     },
 
@@ -695,9 +685,9 @@ const styles = StyleSheet.create({
     statusBadge: {
         flexDirection: "row",
         alignItems: "center",
-        paddingHorizontal: 8,
+        paddingHorizontal: 10,
         paddingVertical: 5,
-        borderRadius: 15,
+        borderRadius: 20,
     },
 
     servingBadge: {
@@ -712,7 +702,7 @@ const styles = StyleSheet.create({
         width: 6,
         height: 6,
         borderRadius: 3,
-        marginRight: 5,
+        marginRight: 6,
     },
 
     servingDot: {
@@ -724,12 +714,12 @@ const styles = StyleSheet.create({
     },
 
     statusText: {
-        fontSize: 9,
+        fontSize: 10,
         fontWeight: "700",
     },
 
     servingText: {
-        color: "#16A34A",
+        color: "#15803D",
     },
 
     waitingText: {
@@ -744,75 +734,96 @@ const styles = StyleSheet.create({
     },
 
     quickTitle: {
-        marginTop: 22,
-        marginBottom: 12,
+        marginTop: 18,
+        marginBottom: 14,
         fontSize: 18,
         fontWeight: "800",
+        color: COLORS.black,
+        letterSpacing: -0.3,
     },
 
     quickGrid: {
         flexDirection: "row",
         flexWrap: "wrap",
         justifyContent: "space-between",
-        width: "100%"
+        width: "100%",
     },
 
     quickAction: {
         width: "48%",
         backgroundColor: COLORS.white,
         borderRadius: RADIUS.xl,
-        padding: 15,
-        marginBottom: 12,
+        padding: 16,
+        marginBottom: 14,
+        borderWidth: 1,
+        borderColor: "rgba(0, 0, 0, 0.03)",
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.04,
+        shadowRadius: 10,
+        elevation: 2,
     },
 
     quickIcon: {
-        width: 40,
-        height: 40,
-        borderRadius: 13,
+        width: 42,
+        height: 42,
+        borderRadius: 14,
         backgroundColor: COLORS.black,
         alignItems: "center",
         justifyContent: "center",
     },
 
     quickActionTitle: {
-        marginTop: 10,
+        marginTop: 12,
         color: COLORS.black,
         fontSize: 14,
         fontWeight: "700",
     },
 
     quickActionSubtitle: {
-        marginTop: 3,
-        color: "#999",
-        fontSize: 10,
+        marginTop: 2,
+        color: "#9CA3AF",
+        fontSize: 11,
+        fontWeight: "500",
     },
 
     barberHeader: {
-        marginTop: 12,
-        marginBottom: 12,
+        marginTop: 10,
+        marginBottom: 14,
         flexDirection: "row",
         justifyContent: "space-between",
-        alignItems: "center",
+        alignItems: "flex-end",
     },
 
     barberCard: {
         backgroundColor: COLORS.white,
         borderRadius: RADIUS.xl,
-        paddingHorizontal: 15,
+        paddingHorizontal: 16,
+        borderWidth: 1,
+        borderColor: "rgba(0, 0, 0, 0.03)",
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.04,
+        shadowRadius: 10,
+        elevation: 2,
     },
 
     barber: {
-        minHeight: 65,
+        minHeight: 68,
         flexDirection: "row",
         alignItems: "center",
         borderBottomWidth: 1,
-        borderBottomColor: "#EEEEEE",
+        borderBottomColor: "#F3F4F6",
+    },
+
+    barberNoBorder: {
+        borderBottomWidth: 0,
     },
 
     barberAvatar: {
-        width: 40,
-        height: 40,
-        borderRadius: 20,
+        width: 42,
+        height: 42,
+        borderRadius: 21,
         backgroundColor: COLORS.black,
         alignItems: "center",
         justifyContent: "center",
@@ -827,7 +838,7 @@ const styles = StyleSheet.create({
 
     onlineDot: {
         position: "absolute",
-        right: -1,
+        right: 0,
         bottom: 0,
         width: 10,
         height: 10,
@@ -839,26 +850,26 @@ const styles = StyleSheet.create({
 
     barberInfo: {
         flex: 1,
-        marginLeft: 10,
+        marginLeft: 12,
     },
 
     barberChair: {
-        color: "#999",
-        fontSize: 10,
+        color: "#9CA3AF",
+        fontSize: 11,
+        fontWeight: "500",
         marginTop: 2,
     },
 
     availableBadge: {
         backgroundColor: "#EAF8EF",
-        paddingHorizontal: 8,
+        paddingHorizontal: 10,
         paddingVertical: 5,
         borderRadius: 15,
     },
 
     availableText: {
-        color: "#16A34A",
-        fontSize: 9,
+        color: "#15803D",
+        fontSize: 10,
         fontWeight: "700",
     },
-
 });

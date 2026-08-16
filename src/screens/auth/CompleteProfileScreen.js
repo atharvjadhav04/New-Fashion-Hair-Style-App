@@ -4,187 +4,357 @@ import {
     Text,
     StyleSheet,
     TouchableOpacity,
+    StatusBar,
+    ScrollView,
+    KeyboardAvoidingView,
+    Platform,
+    TouchableWithoutFeedback,
+    Keyboard,
 } from "react-native";
-
 import DateTimePicker from "@react-native-community/datetimepicker";
+import { Ionicons } from "@expo/vector-icons";
 
-import {
-    COLORS,
-    SPACING,
-    RADIUS,
-} from "../../theme";
+import { COLORS, SPACING, RADIUS } from "../../theme";
 
 import AuthCard from "../../components/auth/AuthCard";
 import InputField from "../../components/common/InputField";
 import PrimaryButton from "../../components/common/PrimaryButton";
+import AppScreen from "../../components/common/AppScreen";
+
+const GENDER_OPTIONS = [
+    { label: "पुरुष", value: "Male", icon: "male-outline" },
+    { label: "स्त्री", value: "Female", icon: "female-outline" },
+    { label: "इतर", value: "Other", icon: "transgender-outline" },
+];
 
 export default function CompleteProfileScreen({ navigation }) {
-
     const [name, setName] = useState("");
     const [gender, setGender] = useState("Male");
+    const [dob, setDob] = useState(null);
+    const [showDatePicker, setShowDatePicker] = useState(false);
 
-    const [dob, setDob] = useState(new Date());
+    const isFormValid = name.trim().length >= 2 && dob !== null;
 
-    const [showDatePicker, setShowDatePicker] =
-        useState(false);
+    const formatDate = (date) => {
+        if (!date) return "जन्म तारीख निवडा";
+        const day = date.getDate().toString().padStart(2, "0");
+        const month = (date.getMonth() + 1).toString().padStart(2, "0");
+        const year = date.getFullYear();
+        return `${day}/${month}/${year}`;
+    };
 
     return (
-        <View style={styles.container}>
+        <AppScreen style={styles.screen}>
+            <StatusBar
+                backgroundColor={COLORS.black}
+                barStyle="light-content"
+            />
 
-            <AuthCard>
-
-                <Text style={styles.title}>
-                    प्रोफाइल पूर्ण करा
-                </Text>
-
-                <Text style={styles.subtitle}>
-                    तुमची माहिती फक्त एकदाच भरावी लागेल.
-                </Text>
-
-                <InputField
-                    label="पूर्ण नाव"
-                    placeholder="तुमचे नाव"
-                    value={name}
-                    onChangeText={setName}
-                />
-
-                <TouchableOpacity
-                    style={styles.dateButton}
-                    onPress={() => setShowDatePicker(true)}
-                >
-
-                    <Text style={styles.dateText}>
-                        {dob.toLocaleDateString()}
-                    </Text>
-
-                </TouchableOpacity>
-
-                {showDatePicker && (
-
-                    <DateTimePicker
-                        value={dob}
-                        mode="date"
-                        display="default"
-                        onChange={(event, selectedDate) => {
-
-                            setShowDatePicker(false);
-
-                            if (selectedDate) {
-                                setDob(selectedDate);
-                            }
-
-                        }}
-                    />
-
-                )}
-
-                <Text style={styles.genderTitle}>
-                    लिंग
-                </Text>
-
-                <View style={styles.genderRow}>
-
-                    {["Male", "Female", "Other"].map((item) => (
-
-                        <TouchableOpacity
-                            key={item}
-                            style={[
-                                styles.genderButton,
-
-                                gender === item &&
-                                styles.selectedGender,
-                            ]}
-                            onPress={() => setGender(item)}
-                        >
-
-                            <Text
-                                style={{
-                                    color:
-                                        gender === item
-                                            ? COLORS.white
-                                            : COLORS.black,
-                                }}
-                            >
-                                {item}
+            <KeyboardAvoidingView
+                behavior={Platform.OS === "ios" ? "padding" : "height"}
+                style={styles.keyboardView}
+            >
+                <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                    <ScrollView
+                        contentContainerStyle={styles.scrollContent}
+                        showsVerticalScrollIndicator={false}
+                        bounces={false}
+                    >
+                        {/* Header Badge */}
+                        <View style={styles.header}>
+                            <View style={styles.iconBadge}>
+                                <Ionicons
+                                    name="person-add-outline"
+                                    size={30}
+                                    color={COLORS.primary}
+                                />
+                            </View>
+                            <Text style={styles.screenTitle}>
+                                प्रोफाइल पूर्ण करा
                             </Text>
+                            <Text style={styles.screenSubtitle}>
+                                तुमची माहिती फक्त एकदाच भरावी लागेल.
+                            </Text>
+                        </View>
 
-                        </TouchableOpacity>
+                        {/* Form Card */}
+                        <AuthCard style={styles.cardOverride}>
+                            {/* Full Name Input */}
+                            <InputField
+                                label="पूर्ण नाव"
+                                placeholder="उदा. राहुल पाटील"
+                                value={name}
+                                onChangeText={setName}
+                            />
 
-                    ))}
+                            {/* Date of Birth Picker Button */}
+                            <View style={styles.fieldGroup}>
+                                <Text style={styles.fieldLabel}>
+                                    जन्म तारीख
+                                </Text>
+                                <TouchableOpacity
+                                    activeOpacity={0.7}
+                                    style={[
+                                        styles.dateButton,
+                                        dob && styles.activeDateButton,
+                                    ]}
+                                    onPress={() => setShowDatePicker(true)}
+                                >
+                                    <View style={styles.dateLeft}>
+                                        <Ionicons
+                                            name="calendar-outline"
+                                            size={18}
+                                            color={
+                                                dob
+                                                    ? COLORS.black
+                                                    : "#9CA3AF"
+                                            }
+                                        />
+                                        <Text
+                                            style={[
+                                                styles.dateText,
+                                                !dob && styles.placeholderText,
+                                            ]}
+                                        >
+                                            {formatDate(dob)}
+                                        </Text>
+                                    </View>
+                                    <Ionicons
+                                        name="chevron-down-outline"
+                                        size={18}
+                                        color="#6B7280"
+                                    />
+                                </TouchableOpacity>
+                            </View>
 
-                </View>
+                            {/* Native Date Picker Component */}
+                            {showDatePicker && (
+                                <DateTimePicker
+                                    value={dob || new Date(2000, 0, 1)}
+                                    mode="date"
+                                    display="default"
+                                    maximumDate={new Date()}
+                                    onChange={(event, selectedDate) => {
+                                        setShowDatePicker(false);
+                                        if (selectedDate) {
+                                            setDob(selectedDate);
+                                        }
+                                    }}
+                                />
+                            )}
 
-                <PrimaryButton
-                    title="पुढे जा"
-                    onPress={() =>
-                        navigation.replace("Home")
-                    }
-                />
+                            {/* Gender Selection */}
+                            <View style={styles.fieldGroup}>
+                                <Text style={styles.fieldLabel}>लिंग</Text>
+                                <View style={styles.genderRow}>
+                                    {GENDER_OPTIONS.map((item) => {
+                                        const isSelected =
+                                            gender === item.value;
+                                        return (
+                                            <TouchableOpacity
+                                                key={item.value}
+                                                activeOpacity={0.8}
+                                                style={[
+                                                    styles.genderButton,
+                                                    isSelected &&
+                                                    styles.selectedGender,
+                                                ]}
+                                                onPress={() =>
+                                                    setGender(item.value)
+                                                }
+                                            >
+                                                <Ionicons
+                                                    name={item.icon}
+                                                    size={16}
+                                                    color={
+                                                        isSelected
+                                                            ? COLORS.primary
+                                                            : "#6B7280"
+                                                    }
+                                                />
+                                                <Text
+                                                    style={[
+                                                        styles.genderText,
+                                                        isSelected &&
+                                                        styles.selectedGenderText,
+                                                    ]}
+                                                >
+                                                    {item.label}
+                                                </Text>
+                                            </TouchableOpacity>
+                                        );
+                                    })}
+                                </View>
+                            </View>
 
-            </AuthCard>
+                            {/* Action Button */}
+                            <PrimaryButton
+                                title="पुढे जा"
+                                disabled={!isFormValid}
+                                onPress={() => navigation.replace("Home")}
+                            />
+                        </AuthCard>
 
-        </View>
+                        {/* Footer Guarantee */}
+                        <View style={styles.privacyNote}>
+                            <Ionicons
+                                name="shield-checkmark-outline"
+                                size={14}
+                                color="#6B7280"
+                            />
+                            <Text style={styles.privacyText}>
+                                तुमची माहिती पूर्णपणे सुरक्षित राहील
+                            </Text>
+                        </View>
+                    </ScrollView>
+                </TouchableWithoutFeedback>
+            </KeyboardAvoidingView>
+        </AppScreen>
     );
 }
 
 const styles = StyleSheet.create({
-
-    container: {
+    screen: {
         flex: 1,
         backgroundColor: COLORS.black,
+    },
+
+    keyboardView: {
+        flex: 1,
+    },
+
+    scrollContent: {
+        flexGrow: 1,
         justifyContent: "center",
+        padding: SPACING.lg,
+        paddingVertical: SPACING.xl,
+    },
+
+    header: {
+        alignItems: "center",
+        marginBottom: 24,
+    },
+
+    iconBadge: {
+        width: 64,
+        height: 64,
+        borderRadius: 32,
+        backgroundColor: "#1F1A0E",
+        alignItems: "center",
+        justifyContent: "center",
+        marginBottom: 16,
+        borderWidth: 1.5,
+        borderColor: "#3D3012",
+    },
+
+    screenTitle: {
+        fontSize: 26,
+        fontWeight: "800",
+        color: COLORS.white,
+        letterSpacing: -0.3,
+        textAlign: "center",
+    },
+
+    screenSubtitle: {
+        color: "#9CA3AF",
+        fontSize: 13,
+        marginTop: 4,
+        textAlign: "center",
+    },
+
+    cardOverride: {
         padding: SPACING.lg,
     },
 
-    title: {
-        fontSize: 28,
-        fontWeight: "700",
-        marginBottom: 10,
-    },
-
-    subtitle: {
-        color: "#777",
-        marginBottom: 30,
-    },
-
-    dateButton: {
-        height: 55,
-        justifyContent: "center",
-        borderWidth: 1,
-        borderColor: COLORS.border,
-        borderRadius: RADIUS.full,
-        paddingHorizontal: 20,
+    fieldGroup: {
         marginBottom: 20,
     },
 
-    dateText: {
-        fontSize: 16,
+    fieldLabel: {
+        fontSize: 13,
+        fontWeight: "700",
+        color: COLORS.text,
+        marginBottom: 8,
     },
 
-    genderTitle: {
-        marginBottom: 15,
+    dateButton: {
+        height: 52,
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        borderWidth: 1.5,
+        borderColor: "#E5E7EB",
+        borderRadius: RADIUS.xl,
+        paddingHorizontal: 16,
+        backgroundColor: "#F9FAFB",
+    },
+
+    activeDateButton: {
+        borderColor: COLORS.black,
+        backgroundColor: COLORS.white,
+    },
+
+    dateLeft: {
+        flexDirection: "row",
+        alignItems: "center",
+    },
+
+    dateText: {
+        fontSize: 14,
         fontWeight: "600",
+        color: COLORS.black,
+        marginLeft: 10,
+    },
+
+    placeholderText: {
+        color: "#9CA3AF",
+        fontWeight: "500",
     },
 
     genderRow: {
         flexDirection: "row",
-        justifyContent: "space-between",
-        marginBottom: 35,
+        gap: 8,
     },
 
     genderButton: {
         flex: 1,
-        marginHorizontal: 4,
-        height: 45,
-        borderRadius: RADIUS.full,
-        justifyContent: "center",
+        height: 48,
+        flexDirection: "row",
         alignItems: "center",
-        borderWidth: 1,
-        borderColor: COLORS.black,
+        justifyContent: "center",
+        borderRadius: RADIUS.xl,
+        borderWidth: 1.5,
+        borderColor: "#E5E7EB",
+        backgroundColor: "#F9FAFB",
     },
 
     selectedGender: {
         backgroundColor: COLORS.black,
+        borderColor: COLORS.black,
     },
 
+    genderText: {
+        fontSize: 13,
+        fontWeight: "700",
+        color: "#4B5563",
+        marginLeft: 6,
+    },
+
+    selectedGenderText: {
+        color: COLORS.white,
+    },
+
+    privacyNote: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+        marginTop: 24,
+    },
+
+    privacyText: {
+        color: "#6B7280",
+        fontSize: 12,
+        fontWeight: "600",
+        marginLeft: 6,
+    },
 });

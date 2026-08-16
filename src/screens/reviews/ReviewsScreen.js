@@ -1,53 +1,48 @@
-import React from "react";
+import React, {
+    useEffect,
+    useState,
+} from "react";
 import {
     ScrollView,
     View,
     Text,
     StyleSheet,
+    TouchableOpacity,
+    StatusBar,
 } from "react-native";
-
 import { Ionicons } from "@expo/vector-icons";
-
 import AppScreen from "../../components/common/AppScreen";
+import Stars from "../../components/reviews/Stars";
+import { COLORS, SPACING, RADIUS } from "../../theme";
 
-import {
-    COLORS,
-    SPACING,
-    RADIUS,
-} from "../../theme";
-
-const REVIEWS = [
+const INITIAL_REVIEWS = [
     {
         id: "1",
         name: "अमोल पाटील",
         rating: 5,
         date: "2 दिवसांपूर्वी",
-        comment:
-            "खूप छान सर्विस. स्टाफ खूप चांगला आहे आणि हेअर कट देखील एकदम मस्त झाला.",
+        comment: "खूप छान सर्विस. स्टाफ खूप चांगला आहे आणि हेअर कट देखील एकदम मस्त झाला.",
     },
     {
         id: "2",
         name: "रोहित जाधव",
         rating: 5,
         date: "5 दिवसांपूर्वी",
-        comment:
-            "वेळेवर सर्विस मिळाली. ऑनलाइन बुकिंग आणि Queue सुविधा खूप उपयोगी आहे.",
+        comment: "वेळेवर सर्विस मिळाली. ऑनलाइन बुकिंग आणि Queue सुविधा खूप उपयोगी आहे.",
     },
     {
         id: "3",
         name: "सचिन शिंदे",
         rating: 4,
         date: "1 आठवड्यापूर्वी",
-        comment:
-            "चांगला अनुभव. सलून स्वच्छ आहे आणि सर्विसची quality चांगली आहे.",
+        comment: "चांगला अनुभव. सलून स्वच्छ आहे आणि सर्विसची quality चांगली आहे.",
     },
     {
         id: "4",
         name: "प्रणव देशमुख",
         rating: 5,
         date: "2 आठवड्यांपूर्वी",
-        comment:
-            "New Fashion Hair Style मधली service नेहमीच चांगली असते. Highly recommended!",
+        comment: "New Fashion Hair Style मधली service नेहमीच चांगली असते. Highly recommended!",
     },
 ];
 
@@ -59,45 +54,77 @@ const RATING_DATA = [
     { stars: 1, percentage: 1 },
 ];
 
-export default function ReviewsScreen() {
+const FILTER_TAGS = ["सर्व", "5 ★", "4 ★", "3 ★", "2 ★", "1 ★"];
+
+export default function ReviewsScreen({
+    navigation,
+    route,
+}) {
+    const [selectedFilter, setSelectedFilter] = useState("सर्व");
+    const [reviews, setReviews] = useState(INITIAL_REVIEWS);
+    useEffect(() => {
+        const newReview =
+            route?.params?.newReview;
+
+        if (!newReview) {
+            return;
+        }
+
+        console.log(
+            "RECEIVED REVIEW:",
+            newReview
+        );
+
+        setReviews((current) => [
+            newReview,
+            ...current,
+        ]);
+
+        navigation.setParams({
+            newReview: undefined,
+        });
+    }, [route?.params?.newReview]);
+
+    const filteredReviews = reviews.filter((item) => {
+        if (selectedFilter === "सर्व") return true;
+        const starNum = parseInt(selectedFilter.charAt(0));
+        return item.rating === starNum;
+    });
+
     return (
         <AppScreen style={styles.screen}>
-
+            <StatusBar barStyle="dark-content" />
             <ScrollView
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={styles.content}
             >
+                {/* Screen Header */}
+                <View style={styles.headerRow}>
+                    <View>
+                        <Text style={styles.heading}>ग्राहकांचे रिव्ह्यू</Text>
+                        <Text style={styles.subtitle}>आमच्या ग्राहकांचा खरी अनुभव</Text>
+                    </View>
+                    <TouchableOpacity
+                        style={styles.writeButtonHeader}
+                        activeOpacity={0.8}
+                        onPress={() => navigation.navigate("AddReview")}
+                    >
+                        <Ionicons name="create-outline" size={18} color={COLORS.white || "#FFF"} />
+                        <Text style={styles.writeButtonHeaderText}>रिव्ह्यू द्या</Text>
+                    </TouchableOpacity>
+                </View>
 
-                <Text style={styles.heading}>
-                    ग्राहकांचे रिव्ह्यू
-                </Text>
-
-                <Text style={styles.subtitle}>
-                    आमच्या ग्राहकांचा अनुभव
-                </Text>
-
-                {/* Overall Rating */}
-
+                {/* Overall Rating Overview Card */}
                 <View style={styles.ratingCard}>
-
                     <View style={styles.ratingLeft}>
-
-                        <Text style={styles.ratingNumber}>
-                            4.8
-                        </Text>
-
-                        <View style={styles.starsRow}>
-                            <Stars rating={5} />
-                        </View>
-
-                        <Text style={styles.totalReviews}>
-                            128 Reviews
-                        </Text>
-
+                        <Text style={styles.ratingNumber}>4.8</Text>
+                        <Stars rating={5} size={16} />
+                        <Text style={styles.totalReviews}>{reviews.length + 124} रिव्ह्यूज</Text>
                     </View>
 
-                    <View style={styles.ratingBreakdown}>
+                    <View style={styles.divider} />
 
+                    <View style={styles.ratingBreakdown}>
                         {RATING_DATA.map((item) => (
                             <RatingRow
                                 key={item.stars}
@@ -105,91 +132,62 @@ export default function ReviewsScreen() {
                                 percentage={item.percentage}
                             />
                         ))}
-
                     </View>
-
                 </View>
 
-                {/* Reviews */}
+                {/* Filter Tags Bar */}
+                <ScrollView
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    contentContainerStyle={styles.filterContainer}
+                >
+                    {FILTER_TAGS.map((tag) => {
+                        const active = selectedFilter === tag;
+                        return (
+                            <TouchableOpacity
+                                key={tag}
+                                style={[styles.filterChip, active && styles.filterChipActive]}
+                                onPress={() => setSelectedFilter(tag)}
+                            >
+                                <Text style={[styles.filterText, active && styles.filterTextActive]}>
+                                    {tag}
+                                </Text>
+                            </TouchableOpacity>
+                        );
+                    })}
+                </ScrollView>
 
+                {/* Reviews List Header */}
                 <View style={styles.sectionHeader}>
-
-                    <Text style={styles.sectionTitle}>
-                        ग्राहकांचे अनुभव
-                    </Text>
-
-                    <Text style={styles.reviewCount}>
-                        128 Reviews
-                    </Text>
-
+                    <Text style={styles.sectionTitle}>ग्राहक अभिप्राय</Text>
+                    <Text style={styles.reviewCount}>{filteredReviews.length} दाखवत आहे</Text>
                 </View>
 
-                {REVIEWS.map((review) => (
-                    <ReviewCard
-                        key={review.id}
-                        review={review}
-                    />
-                ))}
-
+                {/* Review Cards */}
+                {filteredReviews.length > 0 ? (
+                    filteredReviews.map((review) => (
+                        <ReviewCard key={review.id} review={review} />
+                    ))
+                ) : (
+                    <View style={styles.emptyContainer}>
+                        <Ionicons name="chatbox-outline" size={48} color="#CCC" />
+                        <Text style={styles.emptyText}>या रेटिंगसाठी कोणतीही रिव्ह्यू उपलब्ध नाही.</Text>
+                    </View>
+                )}
             </ScrollView>
-
         </AppScreen>
     );
 }
 
-function Stars({ rating }) {
-    return (
-        <View style={styles.starsRow}>
-
-            {[1, 2, 3, 4, 5].map((star) => (
-                <Ionicons
-                    key={star}
-                    name={
-                        star <= rating
-                            ? "star"
-                            : "star-outline"
-                    }
-                    size={16}
-                    color={COLORS.primary}
-                />
-            ))}
-
-        </View>
-    );
-}
-
-function RatingRow({
-    stars,
-    percentage,
-}) {
+function RatingRow({ stars, percentage }) {
     return (
         <View style={styles.ratingRow}>
-
-            <Text style={styles.starNumber}>
-                {stars}
-            </Text>
-
-            <Ionicons
-                name="star"
-                size={12}
-                color={COLORS.primary}
-            />
-
+            <Text style={styles.starNumber}>{stars}</Text>
+            <Ionicons name="star" size={12} color={COLORS.primary || "#FFB800"} />
             <View style={styles.progressBackground}>
-                <View
-                    style={[
-                        styles.progress,
-                        {
-                            width: `${percentage}%`,
-                        },
-                    ]}
-                />
+                <View style={[styles.progress, { width: `${percentage}%` }]} />
             </View>
-
-            <Text style={styles.percentage}>
-                {percentage}%
-            </Text>
-
+            <Text style={styles.percentage}>{percentage}%</Text>
         </View>
     );
 }
@@ -197,212 +195,249 @@ function RatingRow({
 function ReviewCard({ review }) {
     return (
         <View style={styles.reviewCard}>
-
             <View style={styles.reviewHeader}>
-
                 <View style={styles.avatar}>
-                    <Text style={styles.avatarText}>
-                        {review.name.charAt(0)}
-                    </Text>
+                    <Text style={styles.avatarText}>{review.name.charAt(0)}</Text>
                 </View>
 
                 <View style={styles.reviewerInfo}>
-
-                    <Text style={styles.reviewerName}>
-                        {review.name}
-                    </Text>
-
-                    <View style={styles.reviewMeta}>
-
-                        <Stars rating={review.rating} />
-
-                        <Text style={styles.date}>
-                            {review.date}
-                        </Text>
-
+                    <View style={styles.nameBadgeRow}>
+                        <Text style={styles.reviewerName}>{review.name}</Text>
+                        <View style={styles.verifiedBadge}>
+                            <Ionicons name="checkmark-circle" size={13} color="#4CAF50" />
+                            <Text style={styles.verifiedText}>Verified</Text>
+                        </View>
                     </View>
-
+                    <View style={styles.reviewMeta}>
+                        <Stars rating={review.rating} size={14} />
+                        <Text style={styles.date}>{review.date}</Text>
+                    </View>
                 </View>
-
             </View>
 
-            <Text style={styles.comment}>
-                {review.comment}
-            </Text>
-
+            <Text style={styles.comment}>{review.comment}</Text>
         </View>
     );
 }
 
 const styles = StyleSheet.create({
-
     screen: {
         flex: 1,
-        backgroundColor: COLORS.background,
+        backgroundColor: COLORS.background || "#F8F9FA",
     },
-
     content: {
-        padding: SPACING.lg,
+        padding: SPACING.lg || 16,
         paddingBottom: 40,
     },
-
-    heading: {
-        fontSize: 30,
-        fontWeight: "700",
-        color: COLORS.black,
-    },
-
-    subtitle: {
-        marginTop: 6,
-        color: "#777",
-        fontSize: 14,
-    },
-
-    ratingCard: {
-        backgroundColor: COLORS.white,
-        borderRadius: RADIUS.xl,
-        padding: SPACING.lg,
-        marginTop: 24,
+    headerRow: {
         flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
     },
-
+    heading: {
+        fontSize: 26,
+        fontWeight: "800",
+        color: COLORS.black || "#111",
+    },
+    subtitle: {
+        marginTop: 2,
+        color: "#666",
+        fontSize: 13,
+    },
+    writeButtonHeader: {
+        flexDirection: "row",
+        alignItems: "center",
+        backgroundColor: COLORS.primary || "#2196F3",
+        paddingVertical: 8,
+        paddingHorizontal: 14,
+        borderRadius: RADIUS.md || 20,
+        gap: 6,
+    },
+    writeButtonHeaderText: {
+        color: COLORS.white || "#FFF",
+        fontWeight: "700",
+        fontSize: 13,
+    },
+    ratingCard: {
+        backgroundColor: COLORS.white || "#FFF",
+        borderRadius: RADIUS.xl || 16,
+        padding: SPACING.lg || 16,
+        marginTop: 18,
+        flexDirection: "row",
+        elevation: 3,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.08,
+        shadowRadius: 8,
+    },
     ratingLeft: {
-        width: "34%",
+        width: "32%",
         alignItems: "center",
         justifyContent: "center",
     },
-
+    divider: {
+        width: 1,
+        backgroundColor: "#EEE",
+        marginVertical: 4,
+    },
     ratingNumber: {
-        fontSize: 42,
+        fontSize: 38,
         fontWeight: "800",
-        color: COLORS.black,
+        color: COLORS.black || "#111",
+        marginBottom: 2,
     },
-
-    starsRow: {
-        flexDirection: "row",
-        alignItems: "center",
-    },
-
     totalReviews: {
         marginTop: 6,
         color: "#888",
         fontSize: 11,
     },
-
     ratingBreakdown: {
         flex: 1,
-        marginLeft: 18,
+        marginLeft: 14,
         justifyContent: "center",
     },
-
     ratingRow: {
         flexDirection: "row",
         alignItems: "center",
         marginVertical: 3,
     },
-
     starNumber: {
         width: 12,
         fontSize: 11,
         color: "#666",
+        fontWeight: "600",
     },
-
     progressBackground: {
         flex: 1,
         height: 6,
         backgroundColor: "#EEEEEE",
         borderRadius: 10,
-        marginHorizontal: 6,
+        marginHorizontal: 8,
         overflow: "hidden",
     },
-
     progress: {
         height: "100%",
-        backgroundColor: COLORS.primary,
+        backgroundColor: COLORS.primary || "#FFB800",
         borderRadius: 10,
     },
-
     percentage: {
-        width: 30,
+        width: 28,
         fontSize: 10,
         color: "#888",
         textAlign: "right",
     },
-
+    filterContainer: {
+        marginTop: 20,
+        gap: 8,
+    },
+    filterChip: {
+        paddingHorizontal: 16,
+        paddingVertical: 8,
+        borderRadius: 20,
+        backgroundColor: "#EAEAEA",
+    },
+    filterChipActive: {
+        backgroundColor: COLORS.black || "#111",
+    },
+    filterText: {
+        fontSize: 13,
+        fontWeight: "600",
+        color: "#555",
+    },
+    filterTextActive: {
+        color: "#FFF",
+    },
     sectionHeader: {
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        marginTop: 28,
-        marginBottom: 14,
+        marginTop: 22,
+        marginBottom: 12,
     },
-
     sectionTitle: {
-        fontSize: 19,
+        fontSize: 18,
         fontWeight: "700",
-        color: COLORS.black,
+        color: COLORS.black || "#111",
     },
-
     reviewCount: {
         fontSize: 12,
         color: "#888",
     },
-
     reviewCard: {
-        backgroundColor: COLORS.white,
-        borderRadius: RADIUS.xl,
-        padding: SPACING.lg,
-        marginBottom: 14,
+        backgroundColor: COLORS.white || "#FFF",
+        borderRadius: RADIUS.xl || 16,
+        padding: SPACING.lg || 16,
+        marginBottom: 12,
+        elevation: 2,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.05,
+        shadowRadius: 4,
     },
-
     reviewHeader: {
         flexDirection: "row",
         alignItems: "center",
     },
-
     avatar: {
-        width: 46,
-        height: 46,
-        borderRadius: 23,
-        backgroundColor: COLORS.black,
+        width: 44,
+        height: 44,
+        borderRadius: 22,
+        backgroundColor: "#1E293B",
         alignItems: "center",
         justifyContent: "center",
     },
-
     avatarText: {
-        color: COLORS.primary,
-        fontSize: 18,
+        color: "#FFF",
+        fontSize: 16,
         fontWeight: "700",
     },
-
     reviewerInfo: {
         marginLeft: 12,
         flex: 1,
     },
-
+    nameBadgeRow: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 6,
+    },
     reviewerName: {
         fontSize: 15,
         fontWeight: "700",
-        color: COLORS.black,
+        color: COLORS.black || "#111",
     },
-
+    verifiedBadge: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 2,
+    },
+    verifiedText: {
+        fontSize: 10,
+        color: "#4CAF50",
+        fontWeight: "600",
+    },
     reviewMeta: {
         flexDirection: "row",
         alignItems: "center",
-        marginTop: 5,
+        marginTop: 3,
     },
-
     date: {
-        marginLeft: 9,
+        marginLeft: 8,
         fontSize: 11,
         color: "#999",
     },
-
     comment: {
-        marginTop: 14,
-        color: "#555",
+        marginTop: 10,
+        color: "#444",
         fontSize: 14,
         lineHeight: 21,
     },
-
+    emptyContainer: {
+        alignItems: "center",
+        paddingVertical: 40,
+    },
+    emptyText: {
+        marginTop: 10,
+        color: "#999",
+        fontSize: 14,
+    },
 });

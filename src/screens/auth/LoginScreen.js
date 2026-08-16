@@ -4,117 +4,269 @@ import {
     Text,
     StyleSheet,
     StatusBar,
+    KeyboardAvoidingView,
+    ScrollView,
+    Platform,
+    TouchableWithoutFeedback,
+    Keyboard,
 } from "react-native";
-
 import { Image } from "expo-image";
+import { Ionicons } from "@expo/vector-icons";
 
 import Images from "../../constants/Images";
-
-import {
-    COLORS,
-    SPACING,
-} from "../../theme";
+import { COLORS, SPACING, RADIUS } from "../../theme";
 
 import AuthCard from "../../components/auth/AuthCard";
 import InputField from "../../components/common/InputField";
 import PrimaryButton from "../../components/common/PrimaryButton";
 import AppScreen from "../../components/common/AppScreen";
-export default function LoginScreen({ navigation }) {
 
+export default function LoginScreen({ navigation }) {
     const [phone, setPhone] = useState("");
 
+    const isPhoneValid = phone.trim().length === 10;
+
     return (
-        <AppScreen style={styles.container}>
-            <StatusBar
-                backgroundColor="#000"
-                barStyle="light-content"
-            />
+        <AppScreen style={styles.screen}>
+            <StatusBar backgroundColor={COLORS.black} barStyle="light-content" />
 
-            <Image
-                source={Images.logo}
-                style={styles.logo}
-                contentFit="contain"
-            />
+            <KeyboardAvoidingView
+                behavior={Platform.OS === "ios" ? "padding" : "height"}
+                style={styles.keyboardView}
+            >
+                <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                    <ScrollView
+                        contentContainerStyle={styles.scrollContent}
+                        showsVerticalScrollIndicator={false}
+                        bounces={false}
+                    >
+                        {/* Brand Header */}
+                        <View style={styles.header}>
+                            <View style={styles.logoWrapper}>
+                                <Image
+                                    source={Images.logo}
+                                    style={styles.logo}
+                                    contentFit="contain"
+                                />
+                            </View>
 
-            <Text style={styles.shop}>
-                न्यू फॅशन हेअर स्टाईल
-            </Text>
+                            <Text style={styles.shopName}>
+                                न्यू फॅशन हेअर स्टाईल
+                            </Text>
 
-            <Text style={styles.tag}>
-                Premium Grooming Experience
-            </Text>
+                            <View style={styles.tagBadge}>
+                                <Ionicons
+                                    name="sparkles"
+                                    size={12}
+                                    color={COLORS.primary}
+                                />
+                                <Text style={styles.tagText}>
+                                    PREMIUM GROOMING EXPERIENCE
+                                </Text>
+                            </View>
+                        </View>
 
-            <AuthCard>
+                        {/* Login Form Card */}
+                        <AuthCard style={styles.cardOverride}>
+                            <View style={styles.cardHeader}>
+                                <Text style={styles.heading}>स्वागत आहे 👋</Text>
+                                <Text style={styles.subheading}>
+                                    लॉगिन करण्यासाठी तुमचा मोबाईल नंबर टाका
+                                </Text>
+                            </View>
 
-                <Text style={styles.heading}>
-                    स्वागत आहे 👋
-                </Text>
+                            <View style={styles.inputContainer}>
+                                <InputField
+                                    label="मोबाईल नंबर"
+                                    placeholder="98765 43210"
+                                    keyboardType="phone-pad"
+                                    maxLength={10}
+                                    value={phone}
+                                    onChangeText={setPhone}
+                                    leftIcon={
+                                        <Text style={styles.countryCode}>
+                                            +91
+                                        </Text>
+                                    }
+                                />
+                            </View>
 
-                <InputField
-                    label="मोबाईल नंबर"
-                    placeholder="9876543210"
-                    keyboardType="phone-pad"
-                    value={phone}
-                    onChangeText={setPhone}
-                />
+                            <PrimaryButton
+                                title="OTP पाठवा"
+                                disabled={!isPhoneValid}
+                                onPress={() => navigation.navigate("Otp")}
+                            />
+                        </AuthCard>
 
-                <PrimaryButton
-                    title="OTP पाठवा"
-                    onPress={() => navigation.navigate("Otp")}
-                />
-
-            </AuthCard>
-
-            <Text style={styles.bottom}>
-                सुरक्षित • जलद • विश्वासार्ह
-            </Text>
-
+                        {/* Footer Badges */}
+                        <View style={styles.footerContainer}>
+                            <View style={styles.trustItem}>
+                                <Ionicons
+                                    name="shield-checkmark-outline"
+                                    size={14}
+                                    color="#6B7280"
+                                />
+                                <Text style={styles.trustText}>सुरक्षित</Text>
+                            </View>
+                            <Text style={styles.dotSeparator}>•</Text>
+                            <View style={styles.trustItem}>
+                                <Ionicons
+                                    name="flash-outline"
+                                    size={14}
+                                    color="#6B7280"
+                                />
+                                <Text style={styles.trustText}>जलद</Text>
+                            </View>
+                            <Text style={styles.dotSeparator}>•</Text>
+                            <View style={styles.trustItem}>
+                                <Ionicons
+                                    name="ribbon-outline"
+                                    size={14}
+                                    color="#6B7280"
+                                />
+                                <Text style={styles.trustText}>विश्वासार्ह</Text>
+                            </View>
+                        </View>
+                    </ScrollView>
+                </TouchableWithoutFeedback>
+            </KeyboardAvoidingView>
         </AppScreen>
     );
 }
 
 const styles = StyleSheet.create({
-
-    container: {
+    screen: {
         flex: 1,
         backgroundColor: COLORS.black,
+    },
+
+    keyboardView: {
+        flex: 1,
+    },
+
+    scrollContent: {
+        flexGrow: 1,
         justifyContent: "center",
         padding: SPACING.lg,
+        paddingVertical: SPACING.xl,
+    },
+
+    header: {
+        alignItems: "center",
+        marginBottom: 28,
+    },
+
+    logoWrapper: {
+        width: 100,
+        height: 100,
+        borderRadius: 50,
+        backgroundColor: "#18181B",
+        alignItems: "center",
+        justifyContent: "center",
+        borderWidth: 1.5,
+        borderColor: COLORS.primary,
+        marginBottom: 16,
+        ...Platform.select({
+            ios: {
+                shadowColor: COLORS.primary,
+                shadowOffset: { width: 0, height: 6 },
+                shadowOpacity: 0.25,
+                shadowRadius: 12,
+            },
+            android: {
+                elevation: 6,
+            },
+        }),
     },
 
     logo: {
-        width: 130,
-        height: 130,
-        alignSelf: "center",
+        width: 68,
+        height: 68,
     },
 
-    shop: {
+    shopName: {
         color: COLORS.white,
         textAlign: "center",
-        fontSize: 28,
-        fontWeight: "700",
-        marginTop: 10,
+        fontSize: 26,
+        fontWeight: "800",
+        letterSpacing: -0.3,
     },
 
-    tag: {
+    tagBadge: {
+        flexDirection: "row",
+        alignItems: "center",
+        backgroundColor: "#1F1A0E",
+        paddingHorizontal: 12,
+        paddingVertical: 4,
+        borderRadius: RADIUS.lg,
+        marginTop: 10,
+        borderWidth: 1,
+        borderColor: "#3D3012",
+    },
+
+    tagText: {
         color: COLORS.primary,
-        textAlign: "center",
-        marginBottom: 35,
-        marginTop: 5,
+        fontSize: 10,
+        fontWeight: "700",
+        marginLeft: 6,
+        letterSpacing: 0.8,
+    },
+
+    cardOverride: {
+        padding: SPACING.lg,
+    },
+
+    cardHeader: {
+        marginBottom: 20,
     },
 
     heading: {
-        fontSize: 24,
-        fontWeight: "700",
-        marginBottom: 30,
+        fontSize: 22,
+        fontWeight: "800",
         color: COLORS.text,
+        letterSpacing: -0.3,
     },
 
-    bottom: {
-        textAlign: "center",
-        color: "#999",
-        marginTop: 25,
+    subheading: {
         fontSize: 13,
+        color: "#6B7280",
+        marginTop: 4,
+        fontWeight: "500",
     },
 
+    inputContainer: {
+        marginBottom: 20,
+    },
+
+    countryCode: {
+        fontSize: 15,
+        fontWeight: "700",
+        color: COLORS.black,
+        marginRight: 8,
+    },
+
+    footerContainer: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+        marginTop: 28,
+    },
+
+    trustItem: {
+        flexDirection: "row",
+        alignItems: "center",
+    },
+
+    trustText: {
+        color: "#6B7280",
+        fontSize: 12,
+        fontWeight: "600",
+        marginLeft: 4,
+    },
+
+    dotSeparator: {
+        color: "#4B5563",
+        marginHorizontal: 10,
+        fontSize: 12,
+    },
 });

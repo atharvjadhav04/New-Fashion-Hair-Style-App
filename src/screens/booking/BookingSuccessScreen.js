@@ -4,6 +4,8 @@ import {
     Text,
     StyleSheet,
     ScrollView,
+    TouchableOpacity,
+    Platform,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -50,14 +52,16 @@ export default function BookingSuccessScreen({ navigation }) {
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={styles.content}
             >
-                {/* Success Icon */}
-
-                <View style={styles.successCircle}>
-                    <Ionicons
-                        name="checkmark"
-                        size={48}
-                        color={COLORS.black}
-                    />
+                {/* Success Animated Badge */}
+                <View style={styles.successWrapper}>
+                    <View style={styles.successGlow} />
+                    <View style={styles.successCircle}>
+                        <Ionicons
+                            name="checkmark-sharp"
+                            size={44}
+                            color={COLORS.black}
+                        />
+                    </View>
                 </View>
 
                 <Text style={styles.heading}>
@@ -68,67 +72,74 @@ export default function BookingSuccessScreen({ navigation }) {
                     तुमची अपॉइंटमेंट यशस्वीरित्या बुक झाली आहे.
                 </Text>
 
-                {/* Token */}
+                {/* Main Digital Ticket / Token */}
+                <View style={styles.ticketCard}>
+                    <View style={styles.ticketTop}>
+                        <Text style={styles.tokenLabel}>
+                            तुमचा टोकन नंबर
+                        </Text>
+                        <Text style={styles.tokenNumber}>
+                            #{tokenNumber}
+                        </Text>
+                        <View style={styles.tokenTag}>
+                            <Text style={styles.tokenHint}>
+                                हा नंबर लक्षात ठेवा
+                            </Text>
+                        </View>
+                    </View>
 
-                <View style={styles.tokenCard}>
-                    <Text style={styles.tokenLabel}>
-                        तुमचा टोकन नंबर
-                    </Text>
+                    {/* Ticket Notches */}
+                    <View style={styles.notchContainer}>
+                        <View style={styles.leftNotch} />
+                        <View style={styles.dashedLine} />
+                        <View style={styles.rightNotch} />
+                    </View>
 
-                    <Text style={styles.tokenNumber}>
-                        {tokenNumber}
-                    </Text>
+                    {/* Ticket Bottom Details */}
+                    <View style={styles.ticketBottom}>
+                        <Text style={styles.sectionTitle}>
+                            अपॉइंटमेंट तपशील
+                        </Text>
 
-                    <Text style={styles.tokenHint}>
-                        हा नंबर लक्षात ठेवा
-                    </Text>
+                        <DetailRow
+                            icon="cut-outline"
+                            label="सेवा"
+                            value={serviceName}
+                        />
+
+                        <DetailRow
+                            icon="person-outline"
+                            label="बार्बर"
+                            value={barberName}
+                        />
+
+                        <DetailRow
+                            icon="business-outline"
+                            label="चेअर"
+                            value={chair}
+                        />
+
+                        <DetailRow
+                            icon="calendar-outline"
+                            label="तारीख"
+                            value={booking.date || "--"}
+                        />
+
+                        <DetailRow
+                            icon="time-outline"
+                            label="वेळ"
+                            value={booking.time || "--"}
+                            isLast
+                        />
+                    </View>
                 </View>
 
-                {/* Appointment Details */}
-
-                <View style={styles.detailsCard}>
-                    <Text style={styles.sectionTitle}>
-                        अपॉइंटमेंट तपशील
-                    </Text>
-
-                    <DetailRow
-                        icon="cut-outline"
-                        label="सेवा"
-                        value={serviceName}
-                    />
-
-                    <DetailRow
-                        icon="person-outline"
-                        label="बार्बर"
-                        value={barberName}
-                    />
-
-                    <DetailRow
-                        icon="business-outline"
-                        label="चेअर"
-                        value={chair}
-                    />
-
-                    <DetailRow
-                        icon="calendar-outline"
-                        label="तारीख"
-                        value={booking.date || "--"}
-                    />
-
-                    <DetailRow
-                        icon="time-outline"
-                        label="वेळ"
-                        value={booking.time || "--"}
-                    />
-                </View>
-
-                {/* Queue */}
-
+                {/* Live Wait Info Card */}
                 <View style={styles.queueCard}>
                     <View style={styles.queueIcon}>
                         <Ionicons
                             name="hourglass-outline"
-                            size={24}
+                            size={22}
                             color={COLORS.primary}
                         />
                     </View>
@@ -145,21 +156,25 @@ export default function BookingSuccessScreen({ navigation }) {
                 </View>
             </ScrollView>
 
+            {/* Bottom Actions */}
             <View style={styles.bottomContainer}>
                 <PrimaryButton
                     title="💈 Live Queue पहा"
                     onPress={() => navigation.navigate("Queue")}
                 />
 
-                <View style={styles.secondaryButton}>
-                    <PrimaryButton
-                        title="मुख्य पृष्ठावर जा"
-                        onPress={() => {
-                            navigation.popToTop();
-                            navigation.getParent()?.navigate("Home");
-                        }}
-                    />
-                </View>
+                <TouchableOpacity
+                    activeOpacity={0.7}
+                    style={styles.homeButton}
+                    onPress={() => {
+                        navigation.popToTop();
+                        navigation.getParent()?.navigate("Home");
+                    }}
+                >
+                    <Text style={styles.homeButtonText}>
+                        मुख्य पृष्ठावर जा
+                    </Text>
+                </TouchableOpacity>
             </View>
         </AppScreen>
     );
@@ -169,13 +184,14 @@ function DetailRow({
     icon,
     label,
     value,
+    isLast = false,
 }) {
     return (
-        <View style={styles.detailRow}>
+        <View style={[styles.detailRow, isLast && styles.noBorder]}>
             <View style={styles.detailIcon}>
                 <Ionicons
                     name={icon}
-                    size={19}
+                    size={18}
                     color={COLORS.primary}
                 />
             </View>
@@ -202,85 +218,183 @@ const styles = StyleSheet.create({
     content: {
         padding: SPACING.lg,
         alignItems: "center",
-        paddingBottom: 160,
+        paddingBottom: 170,
+    },
+
+    successWrapper: {
+        alignItems: "center",
+        justifyContent: "center",
+        marginTop: 12,
+    },
+
+    successGlow: {
+        position: "absolute",
+        width: 100,
+        height: 100,
+        borderRadius: 50,
+        backgroundColor: COLORS.primary,
+        opacity: 0.18,
     },
 
     successCircle: {
-        width: 90,
-        height: 90,
-        borderRadius: 45,
+        width: 80,
+        height: 80,
+        borderRadius: 40,
         backgroundColor: COLORS.primary,
         alignItems: "center",
         justifyContent: "center",
-        marginTop: 20,
+        ...Platform.select({
+            ios: {
+                shadowColor: COLORS.primary,
+                shadowOffset: { width: 0, height: 6 },
+                shadowOpacity: 0.35,
+                shadowRadius: 10,
+            },
+            android: {
+                elevation: 6,
+            },
+        }),
     },
 
     heading: {
-        marginTop: 24,
+        marginTop: 20,
         fontSize: 26,
-        fontWeight: "700",
+        fontWeight: "800",
         color: COLORS.black,
         textAlign: "center",
+        letterSpacing: -0.4,
     },
 
     subtitle: {
-        marginTop: 8,
-        color: "#777",
+        marginTop: 6,
+        color: "#6B7280",
         textAlign: "center",
-        lineHeight: 21,
+        fontSize: 14,
+        lineHeight: 20,
     },
 
-    tokenCard: {
+    ticketCard: {
         width: "100%",
-        backgroundColor: COLORS.black,
+        backgroundColor: COLORS.white,
         borderRadius: RADIUS.xl,
+        marginTop: 24,
+        borderWidth: 1,
+        borderColor: "#E5E7EB",
+        ...Platform.select({
+            ios: {
+                shadowColor: "#000",
+                shadowOffset: { width: 0, height: 6 },
+                shadowOpacity: 0.05,
+                shadowRadius: 12,
+            },
+            android: {
+                elevation: 3,
+            },
+        }),
+    },
+
+    ticketTop: {
+        backgroundColor: COLORS.black,
+        borderTopLeftRadius: RADIUS.xl,
+        borderTopRightRadius: RADIUS.xl,
         padding: 24,
         alignItems: "center",
-        marginTop: 28,
     },
 
     tokenLabel: {
-        color: "#AAAAAA",
-        fontSize: 14,
+        color: "#9CA3AF",
+        fontSize: 13,
+        fontWeight: "600",
+        letterSpacing: 0.3,
     },
 
     tokenNumber: {
         color: COLORS.primary,
-        fontSize: 58,
+        fontSize: 54,
         fontWeight: "800",
-        marginVertical: 4,
+        marginVertical: 2,
+        letterSpacing: -1,
+    },
+
+    tokenTag: {
+        backgroundColor: "#262626",
+        paddingHorizontal: 12,
+        paddingVertical: 4,
+        borderRadius: 12,
     },
 
     tokenHint: {
-        color: "#CCCCCC",
-        fontSize: 12,
+        color: "#E5E7EB",
+        fontSize: 11,
+        fontWeight: "600",
     },
 
-    detailsCard: {
-        width: "100%",
-        backgroundColor: COLORS.white,
-        borderRadius: RADIUS.xl,
+    notchContainer: {
+        height: 20,
+        backgroundColor: COLORS.black,
+        flexDirection: "row",
+        alignItems: "center",
+        overflow: "hidden",
+    },
+
+    leftNotch: {
+        width: 16,
+        height: 16,
+        borderRadius: 8,
+        backgroundColor: COLORS.background,
+        marginLeft: -8,
+    },
+
+    dashedLine: {
+        flex: 1,
+        borderStyle: "dashed",
+        borderWidth: 1,
+        borderColor: "#374151",
+        marginHorizontal: 8,
+    },
+
+    rightNotch: {
+        width: 16,
+        height: 16,
+        borderRadius: 8,
+        backgroundColor: COLORS.background,
+        marginRight: -8,
+    },
+
+    ticketBottom: {
         padding: SPACING.lg,
-        marginTop: 16,
     },
 
     sectionTitle: {
-        fontSize: 18,
+        fontSize: 16,
         fontWeight: "700",
-        marginBottom: 20,
+        color: COLORS.black,
+        marginBottom: 16,
+        letterSpacing: -0.2,
     },
 
     detailRow: {
         flexDirection: "row",
         alignItems: "center",
-        marginBottom: 18,
+        paddingBottom: 12,
+        marginBottom: 12,
+        borderBottomWidth: 1,
+        borderBottomColor: "#F3F4F6",
+    },
+
+    noBorder: {
+        borderBottomWidth: 0,
+        paddingBottom: 0,
+        marginBottom: 0,
     },
 
     detailIcon: {
-        width: 40,
-        height: 40,
-        borderRadius: 12,
-        backgroundColor: "#F7F3E7",
+        width: 36,
+        height: 36,
+        borderRadius: 10,
+        backgroundColor: "#FFFDF9",
+        borderWidth: 1,
+        borderColor: "#FEF3C7",
         alignItems: "center",
         justifyContent: "center",
     },
@@ -291,50 +405,52 @@ const styles = StyleSheet.create({
     },
 
     detailLabel: {
-        color: "#888",
-        fontSize: 12,
+        color: "#9CA3AF",
+        fontSize: 11,
+        fontWeight: "500",
     },
 
     detailValue: {
-        marginTop: 3,
+        marginTop: 2,
         color: COLORS.black,
-        fontSize: 15,
+        fontSize: 14,
         fontWeight: "700",
     },
 
     queueCard: {
         width: "100%",
         backgroundColor: COLORS.black,
-        borderRadius: RADIUS.xl,
-        padding: SPACING.lg,
+        borderRadius: RADIUS.lg,
+        padding: 16,
         marginTop: 16,
         flexDirection: "row",
         alignItems: "center",
     },
 
     queueIcon: {
-        width: 46,
-        height: 46,
-        borderRadius: 14,
-        backgroundColor: "#292929",
+        width: 42,
+        height: 42,
+        borderRadius: 12,
+        backgroundColor: "#1F2937",
         alignItems: "center",
         justifyContent: "center",
     },
 
     queueContent: {
-        marginLeft: 14,
+        marginLeft: 12,
     },
 
     queueTitle: {
-        color: "#AAAAAA",
-        fontSize: 13,
+        color: "#9CA3AF",
+        fontSize: 12,
+        fontWeight: "500",
     },
 
     queueTime: {
         color: COLORS.primary,
-        fontSize: 20,
-        fontWeight: "700",
-        marginTop: 3,
+        fontSize: 18,
+        fontWeight: "800",
+        marginTop: 2,
     },
 
     bottomContainer: {
@@ -344,11 +460,22 @@ const styles = StyleSheet.create({
         bottom: 0,
         backgroundColor: COLORS.background,
         paddingHorizontal: SPACING.lg,
-        paddingBottom: SPACING.lg,
-        paddingTop: 8,
+        paddingBottom: Platform.OS === "ios" ? 28 : SPACING.lg,
+        paddingTop: 12,
+        borderTopWidth: 1,
+        borderTopColor: "#F3F4F6",
     },
 
-    secondaryButton: {
-        marginTop: 8,
+    homeButton: {
+        marginTop: 12,
+        paddingVertical: 12,
+        alignItems: "center",
+        justifyContent: "center",
+    },
+
+    homeButtonText: {
+        color: "#4B5563",
+        fontSize: 15,
+        fontWeight: "700",
     },
 });

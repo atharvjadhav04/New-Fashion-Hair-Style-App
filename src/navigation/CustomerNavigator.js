@@ -1,6 +1,6 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-
+import AddReviewScreen from "../screens/reviews/AddReviewScreen";
 import BottomTabs from "./BottomTabs";
 import BookingNavigator from "./BookingNavigator";
 
@@ -21,6 +21,10 @@ export default function CustomerNavigator() {
             <Stack.Screen
                 name="BookingFlow"
                 component={BookingNavigator}
+            />
+            <Stack.Screen
+                name="AddReview"
+                component={AddReviewScreen}
             />
         </Stack.Navigator>
     );

@@ -5,7 +5,9 @@ import {
     Text,
     TouchableOpacity,
     StyleSheet,
+    Platform,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 
 import AppScreen from "../../components/common/AppScreen";
 import PrimaryButton from "../../components/common/PrimaryButton";
@@ -21,6 +23,7 @@ import {
 const TIME_GROUPS = [
     {
         title: "सकाळ",
+        icon: "sunny-outline",
         slots: [
             { time: "09:00 AM", available: true },
             { time: "09:30 AM", available: true },
@@ -32,6 +35,7 @@ const TIME_GROUPS = [
     },
     {
         title: "दुपार",
+        icon: "partly-sunny-outline",
         slots: [
             { time: "12:00 PM", available: true },
             { time: "12:30 PM", available: true },
@@ -43,6 +47,7 @@ const TIME_GROUPS = [
     },
     {
         title: "संध्याकाळ",
+        icon: "moon-outline",
         slots: [
             { time: "04:00 PM", available: true },
             { time: "04:30 PM", available: false },
@@ -57,13 +62,10 @@ const TIME_GROUPS = [
 
 export default function SelectTimeScreen({ navigation }) {
     const { booking, updateBooking } = useBooking();
-
     const [selectedTime, setSelectedTime] = useState(null);
 
     const handleContinue = () => {
-        if (!selectedTime) {
-            return;
-        }
+        if (!selectedTime) return;
 
         updateBooking({
             time: selectedTime,
@@ -78,70 +80,88 @@ export default function SelectTimeScreen({ navigation }) {
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={styles.content}
             >
-                <Text style={styles.heading}>
-                    वेळ निवडा
-                </Text>
-
+                <Text style={styles.heading}>वेळ निवडा</Text>
                 <Text style={styles.subtitle}>
-                    तुमच्यासाठी योग्य वेळ निवडा
+                    तुमच्या सोयीनुसार मोकळा स्लॉट निवडा
                 </Text>
 
+                {/* Selected Date Summary Card */}
                 <View style={styles.dateCard}>
-                    <Text style={styles.dateLabel}>
-                        निवडलेली तारीख
-                    </Text>
-
-                    <Text style={styles.dateValue}>
-                        {booking.date || "तारीख निवडा"}
-                    </Text>
+                    <View style={styles.dateIconWrapper}>
+                        <Ionicons
+                            name="calendar"
+                            size={20}
+                            color={COLORS.primary}
+                        />
+                    </View>
+                    <View style={styles.dateInfo}>
+                        <Text style={styles.dateLabel}>निवडलेली तारीख</Text>
+                        <Text style={styles.dateValue}>
+                            {booking.date || "तारीख निवडा"}
+                        </Text>
+                    </View>
                 </View>
 
-                {TIME_GROUPS.map((group) => (
-                    <View
-                        key={group.title}
-                        style={styles.group}
-                    >
-                        <Text style={styles.groupTitle}>
-                            {group.title}
-                        </Text>
+                {/* Slot Status Legend */}
+                <View style={styles.legendContainer}>
+                    <View style={styles.legendItem}>
+                        <View style={[styles.legendDot, styles.legendAvailable]} />
+                        <Text style={styles.legendText}>उपलब्ध</Text>
+                    </View>
+                    <View style={styles.legendItem}>
+                        <View style={[styles.legendDot, styles.legendSelected]} />
+                        <Text style={styles.legendText}>निवडलेले</Text>
+                    </View>
+                    <View style={styles.legendItem}>
+                        <View style={[styles.legendDot, styles.legendFull]} />
+                        <Text style={styles.legendText}>फुल (Full)</Text>
+                    </View>
+                </View>
 
-                        <View style={styles.slots}>
+                {/* Time Groups & Slot Grid */}
+                {TIME_GROUPS.map((group) => (
+                    <View key={group.title} style={styles.group}>
+                        <View style={styles.groupHeader}>
+                            <Ionicons
+                                name={group.icon}
+                                size={18}
+                                color={COLORS.black}
+                            />
+                            <Text style={styles.groupTitle}>{group.title}</Text>
+                        </View>
+
+                        <View style={styles.slotsGrid}>
                             {group.slots.map((slot) => {
-                                const selected =
-                                    selectedTime === slot.time;
+                                const selected = selectedTime === slot.time;
 
                                 return (
                                     <TouchableOpacity
                                         key={slot.time}
                                         disabled={!slot.available}
-                                        activeOpacity={0.8}
-                                        onPress={() =>
-                                            setSelectedTime(slot.time)
-                                        }
+                                        activeOpacity={0.7}
+                                        onPress={() => setSelectedTime(slot.time)}
                                         style={[
                                             styles.slot,
-                                            !slot.available &&
-                                            styles.disabledSlot,
-                                            selected &&
-                                            styles.selectedSlot,
+                                            !slot.available && styles.disabledSlot,
+                                            selected && styles.selectedSlot,
                                         ]}
                                     >
                                         <Text
                                             style={[
                                                 styles.slotText,
-                                                !slot.available &&
-                                                styles.disabledText,
-                                                selected &&
-                                                styles.selectedText,
+                                                !slot.available && styles.disabledText,
+                                                selected && styles.selectedText,
                                             ]}
                                         >
                                             {slot.time}
                                         </Text>
 
                                         {!slot.available && (
-                                            <Text style={styles.fullText}>
-                                                Full
-                                            </Text>
+                                            <View style={styles.fullBadge}>
+                                                <Text style={styles.fullText}>
+                                                    फुल
+                                                </Text>
+                                            </View>
                                         )}
                                     </TouchableOpacity>
                                 );
@@ -151,9 +171,11 @@ export default function SelectTimeScreen({ navigation }) {
                 ))}
             </ScrollView>
 
-            <View style={styles.bottomButton}>
+            {/* Sticky Bottom Action Footer */}
+            <View style={styles.bottomButtonContainer}>
                 <PrimaryButton
-                    title="बुकिंग तपासा"
+                    title={selectedTime ? `${selectedTime} - बुकिंग तपासा` : "वेळ निवडा"}
+                    disabled={!selectedTime}
                     onPress={handleContinue}
                 />
             </View>
@@ -169,52 +191,134 @@ const styles = StyleSheet.create({
 
     content: {
         padding: SPACING.lg,
-        paddingBottom: 120,
+        paddingBottom: 140,
     },
 
     heading: {
-        fontSize: 30,
-        fontWeight: "700",
+        fontSize: 28,
+        fontWeight: "800",
         color: COLORS.black,
+        letterSpacing: -0.4,
     },
 
     subtitle: {
-        marginTop: 8,
-        color: "#777",
-        fontSize: 15,
+        marginTop: 4,
+        color: "#6B7280",
+        fontSize: 14,
+        marginBottom: 20,
     },
 
     dateCard: {
         backgroundColor: COLORS.black,
         borderRadius: RADIUS.xl,
         padding: SPACING.lg,
-        marginTop: 25,
+        flexDirection: "row",
+        alignItems: "center",
+        marginBottom: 20,
+        ...Platform.select({
+            ios: {
+                shadowColor: "#000",
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.12,
+                shadowRadius: 8,
+            },
+            android: {
+                elevation: 4,
+            },
+        }),
+    },
+
+    dateIconWrapper: {
+        width: 40,
+        height: 40,
+        borderRadius: 12,
+        backgroundColor: "#262626",
+        alignItems: "center",
+        justifyContent: "center",
+        marginRight: 14,
+    },
+
+    dateInfo: {
+        flex: 1,
     },
 
     dateLabel: {
-        color: "#AAA",
-        fontSize: 13,
+        color: "#9CA3AF",
+        fontSize: 11,
+        fontWeight: "600",
+        textTransform: "uppercase",
+        letterSpacing: 0.4,
     },
 
     dateValue: {
         color: COLORS.primary,
         fontSize: 18,
-        fontWeight: "700",
-        marginTop: 5,
+        fontWeight: "800",
+        marginTop: 2,
+    },
+
+    legendContainer: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        backgroundColor: COLORS.white,
+        paddingVertical: 10,
+        paddingHorizontal: 16,
+        borderRadius: RADIUS.lg,
+        marginBottom: 24,
+        borderWidth: 1,
+        borderColor: "#F3F4F6",
+    },
+
+    legendItem: {
+        flexDirection: "row",
+        alignItems: "center",
+    },
+
+    legendDot: {
+        width: 8,
+        height: 8,
+        borderRadius: 4,
+        marginRight: 6,
+    },
+
+    legendAvailable: {
+        backgroundColor: "#10B981",
+    },
+
+    legendSelected: {
+        backgroundColor: COLORS.primary,
+    },
+
+    legendFull: {
+        backgroundColor: "#D1D5DB",
+    },
+
+    legendText: {
+        fontSize: 12,
+        color: "#4B5563",
+        fontWeight: "600",
     },
 
     group: {
-        marginTop: 28,
+        marginBottom: 24,
+    },
+
+    groupHeader: {
+        flexDirection: "row",
+        alignItems: "center",
+        marginBottom: 12,
     },
 
     groupTitle: {
-        fontSize: 18,
+        fontSize: 16,
         fontWeight: "700",
         color: COLORS.black,
-        marginBottom: 14,
+        marginLeft: 8,
+        letterSpacing: -0.2,
     },
 
-    slots: {
+    slotsGrid: {
         flexDirection: "row",
         flexWrap: "wrap",
         gap: 10,
@@ -225,25 +329,48 @@ const styles = StyleSheet.create({
         minHeight: 52,
         backgroundColor: COLORS.white,
         borderRadius: RADIUS.xl,
-        borderWidth: 1,
-        borderColor: "#E5E5E5",
+        borderWidth: 1.5,
+        borderColor: "#F3F4F6",
         alignItems: "center",
         justifyContent: "center",
+        paddingVertical: 8,
+        ...Platform.select({
+            ios: {
+                shadowColor: "#000",
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.03,
+                shadowRadius: 4,
+            },
+            android: {
+                elevation: 1,
+            },
+        }),
     },
 
     selectedSlot: {
         backgroundColor: COLORS.black,
         borderColor: COLORS.primary,
+        ...Platform.select({
+            ios: {
+                shadowColor: COLORS.black,
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.2,
+                shadowRadius: 6,
+            },
+            android: {
+                elevation: 4,
+            },
+        }),
     },
 
     disabledSlot: {
-        backgroundColor: "#EEEEEE",
-        borderColor: "#EEEEEE",
+        backgroundColor: "#F9FAFB",
+        borderColor: "#F3F4F6",
     },
 
     slotText: {
         fontSize: 13,
-        fontWeight: "600",
+        fontWeight: "700",
         color: COLORS.black,
     },
 
@@ -252,20 +379,44 @@ const styles = StyleSheet.create({
     },
 
     disabledText: {
-        color: "#AAAAAA",
-        textDecorationLine: "line-through",
+        color: "#D1D5DB",
+    },
+
+    fullBadge: {
+        marginTop: 3,
+        backgroundColor: "#FEF2F2",
+        paddingHorizontal: 6,
+        paddingVertical: 1,
+        borderRadius: 4,
     },
 
     fullText: {
         fontSize: 9,
-        color: "#999",
-        marginTop: 2,
+        fontWeight: "700",
+        color: "#EF4444",
     },
 
-    bottomButton: {
+    bottomButtonContainer: {
+        position: "absolute",
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: COLORS.white,
         paddingHorizontal: SPACING.lg,
-        paddingBottom: SPACING.lg,
-        paddingTop: 8,
-        backgroundColor: COLORS.background,
+        paddingTop: 12,
+        paddingBottom: Platform.OS === "ios" ? 28 : SPACING.lg,
+        borderTopWidth: 1,
+        borderTopColor: "#F3F4F6",
+        ...Platform.select({
+            ios: {
+                shadowColor: "#000",
+                shadowOffset: { width: 0, height: -4 },
+                shadowOpacity: 0.04,
+                shadowRadius: 8,
+            },
+            android: {
+                elevation: 8,
+            },
+        }),
     },
 });

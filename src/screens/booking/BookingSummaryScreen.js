@@ -4,6 +4,7 @@ import {
     View,
     Text,
     StyleSheet,
+    Platform,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -59,19 +60,19 @@ export default function BookingSummaryScreen({ navigation }) {
                     पेमेंट करण्यापूर्वी तुमची बुकिंग तपासा
                 </Text>
 
-                {/* Service */}
+                {/* Service Card */}
                 <View style={styles.card}>
                     <View style={styles.iconContainer}>
                         <Ionicons
                             name="cut-outline"
-                            size={25}
+                            size={24}
                             color={COLORS.primary}
                         />
                     </View>
 
                     <View style={styles.mainInfo}>
                         <Text style={styles.label}>
-                            सेवा
+                            निवडलेली सेवा
                         </Text>
 
                         <Text style={styles.value}>
@@ -79,7 +80,7 @@ export default function BookingSummaryScreen({ navigation }) {
                         </Text>
 
                         <Text style={styles.secondary}>
-                            {service?.duration || "--"}
+                            ⏱️ {service?.duration || "--"}
                         </Text>
                     </View>
 
@@ -116,10 +117,11 @@ export default function BookingSummaryScreen({ navigation }) {
                         icon="business-outline"
                         label="चेअर"
                         value={chair}
+                        isLast
                     />
                 </View>
 
-                {/* Booking Type */}
+                {/* Booking Type Banner */}
                 <View style={styles.typeCard}>
                     <View style={styles.typeIcon}>
                         <Ionicons
@@ -180,9 +182,9 @@ export default function BookingSummaryScreen({ navigation }) {
                 {/* Payment Notice */}
                 <View style={styles.notice}>
                     <Ionicons
-                        name="shield-checkmark-outline"
+                        name="shield-checkmark-sharp"
                         size={20}
-                        color="#16A34A"
+                        color="#15803D"
                     />
 
                     <Text style={styles.noticeText}>
@@ -191,21 +193,25 @@ export default function BookingSummaryScreen({ navigation }) {
                 </View>
             </ScrollView>
 
+            {/* Bottom Bar */}
             <View style={styles.bottomContainer}>
                 <View style={styles.bottomPrice}>
-                    <Text style={styles.bottomLabel}>
-                        एकूण
-                    </Text>
+                    <View>
+                        <Text style={styles.bottomLabel}>
+                            एकूण देय रक्कम
+                        </Text>
+                        <Text style={styles.bottomAmount}>
+                            ₹{total}
+                        </Text>
+                    </View>
 
-                    <Text style={styles.bottomAmount}>
-                        ₹{total}
-                    </Text>
+                    <View style={styles.buttonWrapper}>
+                        <PrimaryButton
+                            title="पेमेंट करा"
+                            onPress={handlePayment}
+                        />
+                    </View>
                 </View>
-
-                <PrimaryButton
-                    title="पेमेंट करा"
-                    onPress={handlePayment}
-                />
             </View>
         </AppScreen>
     );
@@ -215,23 +221,24 @@ function DetailRow({
     icon,
     label,
     value,
+    isLast = false,
 }) {
     return (
-        <View style={styles.detailRow}>
+        <View style={[styles.detailRow, isLast && styles.noBorder]}>
             <View style={styles.detailIcon}>
                 <Ionicons
                     name={icon}
-                    size={19}
+                    size={18}
                     color={COLORS.primary}
                 />
             </View>
 
             <View style={styles.detailContent}>
-                <Text style={styles.label}>
+                <Text style={styles.detailLabel}>
                     {label}
                 </Text>
 
-                <Text style={styles.value}>
+                <Text style={styles.detailValue}>
                     {value}
                 </Text>
             </View>
@@ -265,20 +272,21 @@ const styles = StyleSheet.create({
 
     content: {
         padding: SPACING.lg,
-        paddingBottom: 150,
+        paddingBottom: 160,
     },
 
     heading: {
-        fontSize: 30,
-        fontWeight: "700",
+        fontSize: 28,
+        fontWeight: "800",
         color: COLORS.black,
+        letterSpacing: -0.4,
     },
 
     subtitle: {
-        marginTop: 8,
-        color: "#777",
+        marginTop: 4,
+        color: "#6B7280",
         fontSize: 14,
-        marginBottom: 24,
+        marginBottom: 20,
     },
 
     card: {
@@ -288,12 +296,25 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         marginBottom: 16,
+        borderWidth: 1,
+        borderColor: "#F3F4F6",
+        ...Platform.select({
+            ios: {
+                shadowColor: "#000",
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.04,
+                shadowRadius: 8,
+            },
+            android: {
+                elevation: 2,
+            },
+        }),
     },
 
     iconContainer: {
-        width: 55,
-        height: 55,
-        borderRadius: 18,
+        width: 48,
+        height: 48,
+        borderRadius: 14,
         backgroundColor: COLORS.black,
         alignItems: "center",
         justifyContent: "center",
@@ -305,26 +326,30 @@ const styles = StyleSheet.create({
     },
 
     label: {
-        fontSize: 12,
-        color: "#888",
+        fontSize: 11,
+        fontWeight: "600",
+        color: "#9CA3AF",
+        textTransform: "uppercase",
+        letterSpacing: 0.4,
     },
 
     value: {
-        marginTop: 3,
+        marginTop: 2,
         fontSize: 16,
         fontWeight: "700",
         color: COLORS.black,
     },
 
     secondary: {
-        marginTop: 4,
-        color: "#777",
-        fontSize: 13,
+        marginTop: 3,
+        color: "#6B7280",
+        fontSize: 12,
+        fontWeight: "500",
     },
 
     price: {
-        fontSize: 18,
-        fontWeight: "700",
+        fontSize: 20,
+        fontWeight: "800",
         color: COLORS.primary,
     },
 
@@ -333,26 +358,51 @@ const styles = StyleSheet.create({
         borderRadius: RADIUS.xl,
         padding: SPACING.lg,
         marginBottom: 16,
+        borderWidth: 1,
+        borderColor: "#F3F4F6",
+        ...Platform.select({
+            ios: {
+                shadowColor: "#000",
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.04,
+                shadowRadius: 8,
+            },
+            android: {
+                elevation: 2,
+            },
+        }),
     },
 
     sectionTitle: {
-        fontSize: 18,
+        fontSize: 16,
         fontWeight: "700",
         color: COLORS.black,
-        marginBottom: 18,
+        marginBottom: 16,
+        letterSpacing: -0.2,
     },
 
     detailRow: {
         flexDirection: "row",
         alignItems: "center",
-        marginBottom: 18,
+        paddingBottom: 12,
+        marginBottom: 12,
+        borderBottomWidth: 1,
+        borderBottomColor: "#F3F4F6",
+    },
+
+    noBorder: {
+        borderBottomWidth: 0,
+        paddingBottom: 0,
+        marginBottom: 0,
     },
 
     detailIcon: {
-        width: 38,
-        height: 38,
-        borderRadius: 12,
-        backgroundColor: "#F7F3E7",
+        width: 36,
+        height: 36,
+        borderRadius: 10,
+        backgroundColor: "#FFFDF9",
+        borderWidth: 1,
+        borderColor: "#FEF3C7",
         alignItems: "center",
         justifyContent: "center",
     },
@@ -360,6 +410,19 @@ const styles = StyleSheet.create({
     detailContent: {
         marginLeft: 12,
         flex: 1,
+    },
+
+    detailLabel: {
+        fontSize: 11,
+        fontWeight: "500",
+        color: "#9CA3AF",
+    },
+
+    detailValue: {
+        marginTop: 2,
+        fontSize: 14,
+        fontWeight: "700",
+        color: COLORS.black,
     },
 
     typeCard: {
@@ -374,8 +437,8 @@ const styles = StyleSheet.create({
     typeIcon: {
         width: 42,
         height: 42,
-        borderRadius: 14,
-        backgroundColor: "#292929",
+        borderRadius: 12,
+        backgroundColor: "#262626",
         alignItems: "center",
         justifyContent: "center",
     },
@@ -387,15 +450,15 @@ const styles = StyleSheet.create({
 
     typeTitle: {
         color: COLORS.primary,
-        fontSize: 16,
+        fontSize: 15,
         fontWeight: "700",
     },
 
     typeDescription: {
-        color: "#CCC",
+        color: "#D1D5DB",
         fontSize: 12,
         lineHeight: 18,
-        marginTop: 4,
+        marginTop: 2,
     },
 
     priceCard: {
@@ -403,26 +466,43 @@ const styles = StyleSheet.create({
         borderRadius: RADIUS.xl,
         padding: SPACING.lg,
         marginBottom: 16,
+        borderWidth: 1,
+        borderColor: "#F3F4F6",
+        ...Platform.select({
+            ios: {
+                shadowColor: "#000",
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.04,
+                shadowRadius: 8,
+            },
+            android: {
+                elevation: 2,
+            },
+        }),
     },
 
     priceRow: {
         flexDirection: "row",
         justifyContent: "space-between",
+        alignItems: "center",
     },
 
     priceLabel: {
-        color: "#666",
+        color: "#4B5563",
+        fontSize: 14,
+        fontWeight: "500",
     },
 
     priceValue: {
         color: COLORS.black,
-        fontWeight: "600",
+        fontSize: 15,
+        fontWeight: "700",
     },
 
     divider: {
         height: 1,
-        backgroundColor: "#EEEEEE",
-        marginVertical: 16,
+        backgroundColor: "#F3F4F6",
+        marginVertical: 14,
     },
 
     totalRow: {
@@ -432,22 +512,25 @@ const styles = StyleSheet.create({
     },
 
     totalLabel: {
-        fontSize: 17,
+        fontSize: 16,
         fontWeight: "700",
+        color: COLORS.black,
     },
 
     totalValue: {
-        fontSize: 22,
-        fontWeight: "700",
+        fontSize: 20,
+        fontWeight: "800",
         color: COLORS.primary,
     },
 
     notice: {
         flexDirection: "row",
         alignItems: "center",
-        backgroundColor: "#EAF8EF",
+        backgroundColor: "#F0FDF4",
+        borderWidth: 1,
+        borderColor: "#DCFCE7",
         padding: 14,
-        borderRadius: RADIUS.xl,
+        borderRadius: RADIUS.lg,
     },
 
     noticeText: {
@@ -455,6 +538,7 @@ const styles = StyleSheet.create({
         marginLeft: 10,
         color: "#166534",
         fontSize: 13,
+        fontWeight: "600",
     },
 
     bottomContainer: {
@@ -462,27 +546,45 @@ const styles = StyleSheet.create({
         bottom: 0,
         left: 0,
         right: 0,
-        backgroundColor: COLORS.background,
+        backgroundColor: COLORS.white,
         paddingHorizontal: SPACING.lg,
-        paddingTop: 10,
-        paddingBottom: SPACING.lg,
+        paddingTop: 12,
+        paddingBottom: Platform.OS === "ios" ? 28 : SPACING.lg,
+        borderTopWidth: 1,
+        borderTopColor: "#F3F4F6",
+        ...Platform.select({
+            ios: {
+                shadowColor: "#000",
+                shadowOffset: { width: 0, height: -4 },
+                shadowOpacity: 0.04,
+                shadowRadius: 8,
+            },
+            android: {
+                elevation: 8,
+            },
+        }),
     },
 
     bottomPrice: {
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        marginBottom: 10,
     },
 
     bottomLabel: {
-        color: "#777",
-        fontSize: 13,
+        color: "#9CA3AF",
+        fontSize: 12,
+        fontWeight: "600",
     },
 
     bottomAmount: {
-        fontSize: 20,
-        fontWeight: "700",
+        fontSize: 22,
+        fontWeight: "800",
         color: COLORS.black,
+        marginTop: 2,
+    },
+
+    buttonWrapper: {
+        flex: 0.55,
     },
 });

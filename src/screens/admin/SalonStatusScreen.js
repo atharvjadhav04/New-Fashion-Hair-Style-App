@@ -6,29 +6,19 @@ import {
     TouchableOpacity,
     StyleSheet,
     Switch,
+    Platform,
 } from "react-native";
-
 import { Ionicons } from "@expo/vector-icons";
+import DateTimePicker from "@react-native-community/datetimepicker";
 
 import AppScreen from "../../components/common/AppScreen";
-import DateTimePicker from "@react-native-community/datetimepicker";
-import {
-    COLORS,
-    SPACING,
-    RADIUS,
-} from "../../theme";
+import { COLORS, SPACING, RADIUS } from "../../theme";
 
 export default function SalonStatusScreen() {
     const [isOpen, setIsOpen] = useState(true);
-
-    const [openingTime, setOpeningTime] =
-        useState(new Date(2026, 0, 1, 9, 0));
-
-    const [closingTime, setClosingTime] =
-        useState(new Date(2026, 0, 1, 21, 0));
-
-    const [pickerType, setPickerType] =
-        useState(null);
+    const [openingTime, setOpeningTime] = useState(new Date(2026, 0, 1, 9, 0));
+    const [closingTime, setClosingTime] = useState(new Date(2026, 0, 1, 21, 0));
+    const [pickerType, setPickerType] = useState(null);
 
     const formatTime = (date) => {
         return date.toLocaleTimeString("en-IN", {
@@ -39,33 +29,29 @@ export default function SalonStatusScreen() {
     };
 
     const handleTimeChange = (event, selectedTime) => {
-        setPickerType(null);
+        if (Platform.OS === "android") {
+            setPickerType(null);
+        }
 
-        if (!selectedTime) {
+        if (event.type === "dismissed" || !selectedTime) {
             return;
         }
 
         if (pickerType === "opening") {
             setOpeningTime(selectedTime);
-        }
-
-        if (pickerType === "closing") {
+        } else if (pickerType === "closing") {
             setClosingTime(selectedTime);
         }
     };
+
     const saveSalonStatus = () => {
         const openingMinutes =
-            openingTime.getHours() * 60 +
-            openingTime.getMinutes();
-
+            openingTime.getHours() * 60 + openingTime.getMinutes();
         const closingMinutes =
-            closingTime.getHours() * 60 +
-            closingTime.getMinutes();
+            closingTime.getHours() * 60 + closingTime.getMinutes();
 
         if (openingMinutes >= closingMinutes) {
-            alert(
-                "Closing time must be after opening time."
-            );
+            alert("Closing time must be after opening time.");
             return;
         }
 
@@ -80,21 +66,14 @@ export default function SalonStatusScreen() {
 
     return (
         <AppScreen style={styles.screen}>
-
             <ScrollView
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={styles.content}
             >
-
                 {/* Header */}
-
                 <View style={styles.header}>
-
-                    <View>
-                        <Text style={styles.heading}>
-                            Salon Status
-                        </Text>
-
+                    <View style={styles.headerTextContainer}>
+                        <Text style={styles.heading}>Salon Status</Text>
                         <Text style={styles.subtitle}>
                             Salon open, close आणि timing व्यवस्थापित करा
                         </Text>
@@ -103,391 +82,391 @@ export default function SalonStatusScreen() {
                     <View style={styles.headerIcon}>
                         <Ionicons
                             name="storefront-outline"
-                            size={24}
-                            color={COLORS.primary}
+                            size={22}
+                            color={COLORS.primary || "#000"}
                         />
                     </View>
-
                 </View>
 
-                {/* Current Status */}
-
+                {/* Current Status Card */}
                 <View style={styles.statusCard}>
-
-                    <View style={styles.statusIcon}>
+                    <View
+                        style={[
+                            styles.statusIconBg,
+                            { backgroundColor: isOpen ? "#DCFCE7" : "#FEE2E2" },
+                        ]}
+                    >
                         <Ionicons
-                            name={
-                                isOpen
-                                    ? "checkmark-circle"
-                                    : "close-circle"
-                            }
-                            size={28}
-                            color={
-                                isOpen
-                                    ? "#22C55E"
-                                    : "#EF4444"
-                            }
+                            name={isOpen ? "storefront" : "lock-closed"}
+                            size={24}
+                            color={isOpen ? "#16A34A" : "#DC2626"}
                         />
                     </View>
 
                     <View style={styles.statusInfo}>
-
-                        <Text style={styles.statusTitle}>
-                            Salon is{" "}
-                            {isOpen
-                                ? "Open"
-                                : "Closed"}
-                        </Text>
+                        <View style={styles.statusRow}>
+                            <Text style={styles.statusTitle}>Salon is</Text>
+                            <View
+                                style={[
+                                    styles.badge,
+                                    { backgroundColor: isOpen ? "#DCFCE7" : "#FEE2E2" },
+                                ]}
+                            >
+                                <Text
+                                    style={[
+                                        styles.badgeText,
+                                        { color: isOpen ? "#15803D" : "#B91C1C" },
+                                    ]}
+                                >
+                                    {isOpen ? "OPEN" : "CLOSED"}
+                                </Text>
+                            </View>
+                        </View>
 
                         <Text style={styles.statusSubtitle}>
                             {isOpen
                                 ? "Customers can book appointments"
                                 : "New bookings are currently disabled"}
                         </Text>
-
                     </View>
 
                     <Switch
                         value={isOpen}
                         onValueChange={setIsOpen}
                         trackColor={{
-                            false: "#DDD",
-                            true: COLORS.primary,
+                            false: "#E2E8F0",
+                            true: COLORS.primary || "#000",
                         }}
                         thumbColor="#FFF"
                     />
-
                 </View>
 
-                {/* Today's Timing */}
-
-                <Text style={styles.sectionTitle}>
-                    Today's Timing
-                </Text>
-
-                <Text style={styles.sectionSubtitle}>
-                    Salon आज किती वेळ open राहील
-                </Text>
+                {/* Today's Timing Section */}
+                <View style={styles.sectionHeader}>
+                    <Text style={styles.sectionTitle}>Today's Timing</Text>
+                    <Text style={styles.sectionSubtitle}>
+                        Salon आज किती वेळ open राहील set करा
+                    </Text>
+                </View>
 
                 <View style={styles.timeRow}>
-
-                    {/* Opening */}
-
+                    {/* Opening Time Card */}
                     <View style={styles.timeCard}>
-
-                        <View style={styles.timeIcon}>
-                            <Ionicons
-                                name="sunny-outline"
-                                size={22}
-                                color={COLORS.primary}
-                            />
+                        <View style={styles.timeHeader}>
+                            <View style={styles.timeIcon}>
+                                <Ionicons
+                                    name="sunny-outline"
+                                    size={20}
+                                    color={COLORS.primary || "#000"}
+                                />
+                            </View>
+                            <Text style={styles.timeLabel}>Opening</Text>
                         </View>
 
-                        <Text style={styles.timeLabel}>
-                            Opening Time
-                        </Text>
-
-                        <Text style={styles.timeValue}>
-                            {formatTime(openingTime)}
-                        </Text>
+                        <Text style={styles.timeValue}>{formatTime(openingTime)}</Text>
 
                         <TouchableOpacity
                             style={styles.changeButton}
-                            onPress={() =>
-                                setPickerType("opening")
-                            }
+                            activeOpacity={0.7}
+                            onPress={() => setPickerType("opening")}
                         >
-                            <Text style={styles.changeText}>
-                                Change
-                            </Text>
+                            <Ionicons name="time-outline" size={14} color="#475569" />
+                            <Text style={styles.changeText}>Change</Text>
                         </TouchableOpacity>
-
                     </View>
 
-                    {/* Closing */}
-
+                    {/* Closing Time Card */}
                     <View style={styles.timeCard}>
-
-                        <View style={styles.timeIcon}>
-                            <Ionicons
-                                name="moon-outline"
-                                size={22}
-                                color={COLORS.primary}
-                            />
+                        <View style={styles.timeHeader}>
+                            <View style={styles.timeIcon}>
+                                <Ionicons
+                                    name="moon-outline"
+                                    size={20}
+                                    color={COLORS.primary || "#000"}
+                                />
+                            </View>
+                            <Text style={styles.timeLabel}>Closing</Text>
                         </View>
 
-                        <Text style={styles.timeLabel}>
-                            Closing Time
-                        </Text>
-
-                        <Text style={styles.timeValue}>
-                            {formatTime(closingTime)}
-                        </Text>
+                        <Text style={styles.timeValue}>{formatTime(closingTime)}</Text>
 
                         <TouchableOpacity
                             style={styles.changeButton}
-                            onPress={() =>
-                                setPickerType("closing")
-                            }
+                            activeOpacity={0.7}
+                            onPress={() => setPickerType("closing")}
                         >
-                            <Text style={styles.changeText}>
-                                Change
-                            </Text>
+                            <Ionicons name="time-outline" size={14} color="#475569" />
+                            <Text style={styles.changeText}>Change</Text>
                         </TouchableOpacity>
-
                     </View>
-
                 </View>
+
+                {/* Info Card */}
+                <View style={styles.infoCard}>
+                    <View style={styles.infoIcon}>
+                        <Ionicons
+                            name="information-circle"
+                            size={20}
+                            color="#D97706"
+                        />
+                    </View>
+                    <View style={styles.infoContent}>
+                        <Text style={styles.infoTitle}>Important Note</Text>
+                        <Text style={styles.infoText}>
+                            Salon बंद असल्यास customers नवीन appointment book करू शकणार नाहीत.
+                            Existing appointments मात्र admin कडून manage करता येतील.
+                        </Text>
+                    </View>
+                </View>
+
+                {/* Save Button */}
                 <TouchableOpacity
                     style={styles.saveButton}
-                    activeOpacity={0.8}
+                    activeOpacity={0.85}
                     onPress={saveSalonStatus}
                 >
                     <Ionicons
-                        name="checkmark-circle-outline"
-                        size={21}
-                        color={COLORS.black}
+                        name="checkmark-circle"
+                        size={20}
+                        color="#FFF"
                     />
-
-                    <Text style={styles.saveText}>
-                        Save Salon Status
-                    </Text>
+                    <Text style={styles.saveText}>Save Salon Status</Text>
                 </TouchableOpacity>
 
-                {/* Information */}
-
-                <View style={styles.infoCard}>
-
-                    <View style={styles.infoIcon}>
-                        <Ionicons
-                            name="information-circle-outline"
-                            size={21}
-                            color={COLORS.primary}
-                        />
-                    </View>
-
-                    <View style={styles.infoContent}>
-
-                        <Text style={styles.infoTitle}>
-                            Important
-                        </Text>
-
-                        <Text style={styles.infoText}>
-                            Salon बंद असल्यास customers नवीन
-                            appointment book करू शकणार नाहीत.
-                            Existing appointments मात्र admin
-                            कडून manage करता येतील.
-                        </Text>
-
-                    </View>
-
-                </View>
+                {/* Date Time Picker Modal / Sheet */}
                 {pickerType && (
                     <DateTimePicker
-                        value={
-                            pickerType === "opening"
-                                ? openingTime
-                                : closingTime
-                        }
+                        value={pickerType === "opening" ? openingTime : closingTime}
                         mode="time"
-                        display="default"
+                        display={Platform.OS === "ios" ? "spinner" : "default"}
                         onChange={handleTimeChange}
                     />
                 )}
-
             </ScrollView>
-
         </AppScreen>
     );
 }
 
 const styles = StyleSheet.create({
-
     screen: {
         flex: 1,
-        backgroundColor: COLORS.background,
+        backgroundColor: COLORS.background || "#F8FAFC",
     },
-
     content: {
-        padding: SPACING.lg,
-        paddingBottom: 50,
+        padding: SPACING.lg || 20,
+        paddingBottom: 40,
     },
 
+    // Header
     header: {
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between",
+        marginBottom: 20,
     },
-
+    headerTextContainer: {
+        flex: 1,
+        marginRight: 12,
+    },
     heading: {
-        fontSize: 30,
+        fontSize: 26,
         fontWeight: "800",
-        color: COLORS.black,
+        color: COLORS.black || "#0F172A",
+        letterSpacing: -0.5,
     },
-
     subtitle: {
-        marginTop: 5,
-        color: "#888",
-        fontSize: 11,
+        marginTop: 4,
+        color: "#64748B",
+        fontSize: 13,
+        lineHeight: 18,
     },
-
     headerIcon: {
-        width: 46,
-        height: 46,
-        borderRadius: 16,
-        backgroundColor: COLORS.black,
+        width: 44,
+        height: 44,
+        borderRadius: 14,
+        backgroundColor: "#F1F5F9",
+        borderWidth: 1,
+        borderColor: "#E2E8F0",
         alignItems: "center",
         justifyContent: "center",
     },
 
+    // Status Card
     statusCard: {
-        marginTop: 24,
-        backgroundColor: COLORS.white,
-        borderRadius: RADIUS.xl,
+        backgroundColor: "#FFFFFF",
+        borderRadius: RADIUS.xl || 20,
         padding: 16,
         flexDirection: "row",
         alignItems: "center",
+        borderWidth: 1,
+        borderColor: "#F1F5F9",
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.04,
+        shadowRadius: 8,
+        elevation: 2,
     },
-
-    statusIcon: {
-        width: 52,
-        height: 52,
-        borderRadius: 16,
-        backgroundColor: COLORS.black,
+    statusIconBg: {
+        width: 48,
+        height: 48,
+        borderRadius: 14,
         alignItems: "center",
         justifyContent: "center",
     },
-
     statusInfo: {
         flex: 1,
-        marginLeft: 12,
+        marginLeft: 14,
+        marginRight: 8,
     },
-
+    statusRow: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 8,
+    },
     statusTitle: {
-        color: COLORS.black,
+        color: COLORS.black || "#0F172A",
         fontSize: 16,
+        fontWeight: "700",
+    },
+    badge: {
+        paddingHorizontal: 8,
+        paddingVertical: 2,
+        borderRadius: 6,
+    },
+    badgeText: {
+        fontSize: 11,
         fontWeight: "800",
+        letterSpacing: 0.5,
     },
-
     statusSubtitle: {
-        marginTop: 4,
-        color: "#888",
-        fontSize: 10,
+        marginTop: 3,
+        color: "#64748B",
+        fontSize: 12,
     },
 
-    sectionTitle: {
+    // Section Headers
+    sectionHeader: {
         marginTop: 28,
-        color: COLORS.black,
+        marginBottom: 12,
+    },
+    sectionTitle: {
+        color: COLORS.black || "#0F172A",
+        fontSize: 18,
+        fontWeight: "700",
+    },
+    sectionSubtitle: {
+        marginTop: 2,
+        color: "#64748B",
+        fontSize: 13,
+    },
+
+    // Time Cards
+    timeRow: {
+        flexDirection: "row",
+        gap: 12,
+    },
+    timeCard: {
+        flex: 1,
+        backgroundColor: "#FFFFFF",
+        borderRadius: RADIUS.xl || 20,
+        padding: 16,
+        borderWidth: 1,
+        borderColor: "#F1F5F9",
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.04,
+        shadowRadius: 8,
+        elevation: 2,
+    },
+    timeHeader: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 8,
+    },
+    timeIcon: {
+        width: 32,
+        height: 32,
+        borderRadius: 10,
+        backgroundColor: "#F8FAFC",
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    timeLabel: {
+        color: "#64748B",
+        fontSize: 12,
+        fontWeight: "600",
+    },
+    timeValue: {
+        marginTop: 12,
+        marginBottom: 14,
+        color: COLORS.black || "#0F172A",
         fontSize: 18,
         fontWeight: "800",
     },
-
-    sectionSubtitle: {
-        marginTop: 4,
-        marginBottom: 12,
-        color: "#999",
-        fontSize: 10,
-    },
-
-    timeRow: {
-        flexDirection: "row",
-        gap: 10,
-    },
-
-    timeCard: {
-        flex: 1,
-        backgroundColor: COLORS.white,
-        borderRadius: RADIUS.xl,
-        padding: 15,
-    },
-
-    timeIcon: {
-        width: 42,
-        height: 42,
-        borderRadius: 13,
-        backgroundColor: COLORS.black,
-        alignItems: "center",
-        justifyContent: "center",
-    },
-
-    timeLabel: {
-        marginTop: 12,
-        color: "#888",
-        fontSize: 10,
-    },
-
-    timeValue: {
-        marginTop: 5,
-        color: COLORS.black,
-        fontSize: 19,
-        fontWeight: "800",
-    },
-
     changeButton: {
-        marginTop: 12,
-        height: 34,
+        height: 38,
         borderRadius: 10,
-        backgroundColor: "#F5F5F5",
+        backgroundColor: "#F1F5F9",
+        flexDirection: "row",
         alignItems: "center",
         justifyContent: "center",
+        gap: 6,
     },
-
     changeText: {
-        color: COLORS.black,
-        fontSize: 10,
-        fontWeight: "700",
+        color: "#334155",
+        fontSize: 12,
+        fontWeight: "600",
     },
 
+    // Info Card
     infoCard: {
-        marginTop: 20,
+        marginTop: 24,
         padding: 14,
         borderRadius: 16,
-        backgroundColor: "#FFF7E0",
+        backgroundColor: "#FFFBEB",
+        borderWidth: 1,
+        borderColor: "#FDE68A",
         flexDirection: "row",
         alignItems: "flex-start",
     },
-
     infoIcon: {
-        width: 34,
-        height: 34,
-        borderRadius: 10,
-        backgroundColor: COLORS.black,
-        alignItems: "center",
-        justifyContent: "center",
+        marginTop: 2,
     },
-
     infoContent: {
         flex: 1,
         marginLeft: 10,
     },
-
     infoTitle: {
-        color: COLORS.black,
+        color: "#92400E",
+        fontSize: 13,
+        fontWeight: "700",
+    },
+    infoText: {
+        marginTop: 2,
+        color: "#B45309",
         fontSize: 12,
-        fontWeight: "800",
+        lineHeight: 18,
     },
 
-    infoText: {
-        marginTop: 4,
-        color: "#8A6700",
-        fontSize: 10,
-        lineHeight: 16,
-    },
+    // Save Button
     saveButton: {
-        height: 54,
-        borderRadius: RADIUS.xl,
-        backgroundColor: COLORS.primary,
-        marginTop: 20,
+        height: 52,
+        borderRadius: RADIUS.xl || 16,
+        backgroundColor: COLORS.black || "#0F172A",
+        marginTop: 24,
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "center",
+        gap: 8,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.1,
+        shadowRadius: 10,
+        elevation: 3,
     },
-
     saveText: {
-        marginLeft: 7,
-        color: COLORS.black,
-        fontSize: 13,
-        fontWeight: "800",
+        color: "#FFFFFF",
+        fontSize: 15,
+        fontWeight: "700",
     },
-
 });

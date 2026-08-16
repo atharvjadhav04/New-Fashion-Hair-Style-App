@@ -7,7 +7,7 @@ import AdminNavigator from "./AdminNavigator";
 export default function AppNavigator() {
 
     // TEMPORARY TEST
-    const role = "ADMIN";
+    const role = "CUSTOMER";
 
     return (
         <NavigationContainer>

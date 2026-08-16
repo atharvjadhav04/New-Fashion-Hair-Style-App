@@ -7,48 +7,26 @@ import {
     TouchableOpacity,
     StyleSheet,
     Alert,
+    Platform,
 } from "react-native";
-
 import { Ionicons } from "@expo/vector-icons";
 
 import AppScreen from "../../components/common/AppScreen";
+import { COLORS, SPACING, RADIUS } from "../../theme";
 
-import {
-    COLORS,
-    SPACING,
-    RADIUS,
-} from "../../theme";
+export default function AddServiceScreen({ navigation, route }) {
+    const editingService = route?.params?.service;
 
-export default function AddServiceScreen({
-    navigation,
-    route,
-}) {
-
-    const editingService =
-        route?.params?.service;
-
-    const [name, setName] = useState(
-        editingService?.name || ""
-    );
-
-    const [marathi, setMarathi] = useState(
-        editingService?.marathi || ""
-    );
-
+    const [name, setName] = useState(editingService?.name || "");
+    const [marathi, setMarathi] = useState(editingService?.marathi || "");
     const [price, setPrice] = useState(
-        editingService?.price
-            ? String(editingService.price)
-            : ""
+        editingService?.price ? String(editingService.price) : ""
     );
-
-    const [duration, setDuration] = useState(
-        editingService?.duration || ""
-    );
+    const [duration, setDuration] = useState(editingService?.duration || "");
 
     const isEditing = !!editingService;
 
     const handleSave = () => {
-
         if (!name.trim()) {
             Alert.alert(
                 "Service Name Required",
@@ -58,66 +36,36 @@ export default function AddServiceScreen({
         }
 
         if (!price.trim()) {
-            Alert.alert(
-                "Price Required",
-                "कृपया service price टाका."
-            );
+            Alert.alert("Price Required", "कृपया service price टाका.");
             return;
         }
 
         if (!duration.trim()) {
-            Alert.alert(
-                "Duration Required",
-                "कृपया service duration टाका."
-            );
+            Alert.alert("Duration Required", "कृपया service duration टाका.");
             return;
         }
 
         const service = {
-            id:
-                editingService?.id ||
-                Date.now().toString(),
-
+            id: editingService?.id || Date.now().toString(),
             name: name.trim(),
-
-            marathi:
-                marathi.trim() ||
-                name.trim(),
-
+            marathi: marathi.trim() || name.trim(),
             price: Number(price),
-
             duration: duration.trim(),
-
-            active:
-                editingService?.active ?? true,
+            active: editingService?.active ?? true,
         };
 
-        console.log(
-            isEditing
-                ? "UPDATE SERVICE:"
-                : "ADD SERVICE:",
-            service
-        );
-
         Alert.alert(
-            isEditing
-                ? "Service Updated"
-                : "Service Added",
-
+            isEditing ? "Service Updated" : "Service Added",
             isEditing
                 ? "Service successfully updated."
                 : "नवीन service successfully add झाली.",
-
             [
                 {
                     text: "OK",
                     onPress: () => {
-                        navigation.popTo(
-                            "ServicesHome",
-                            {
-                                updatedService: service,
-                            }
-                        );
+                        navigation.popTo("ServicesHome", {
+                            updatedService: service,
+                        });
                     },
                 },
             ]
@@ -126,43 +74,31 @@ export default function AddServiceScreen({
 
     return (
         <AppScreen style={styles.screen}>
-
             <ScrollView
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={styles.content}
                 keyboardShouldPersistTaps="handled"
             >
-
-                {/* Back */}
-
+                {/* Back Button */}
                 <TouchableOpacity
                     style={styles.backButton}
-                    onPress={() =>
-                        navigation.goBack()
-                    }
+                    onPress={() => navigation.goBack()}
+                    activeOpacity={0.7}
                 >
                     <Ionicons
-                        name="arrow-back"
-                        size={20}
-                        color={COLORS.black}
+                        name="chevron-back"
+                        size={22}
+                        color={COLORS.black || "#0F172A"}
                     />
-
-                    <Text style={styles.backText}>
-                        Services
-                    </Text>
+                    <Text style={styles.backText}>Services</Text>
                 </TouchableOpacity>
 
-                {/* Header */}
-
+                {/* Header Section */}
                 <View style={styles.header}>
-
-                    <View>
+                    <View style={styles.headerTextGroup}>
                         <Text style={styles.heading}>
-                            {isEditing
-                                ? "Edit Service"
-                                : "Add Service"}
+                            {isEditing ? "Edit Service" : "Add Service"}
                         </Text>
-
                         <Text style={styles.subtitle}>
                             Service आणि pricing manage करा
                         </Text>
@@ -171,32 +107,24 @@ export default function AddServiceScreen({
                     <View style={styles.headerIcon}>
                         <Ionicons
                             name="cut-outline"
-                            size={23}
-                            color={COLORS.primary}
+                            size={22}
+                            color={COLORS.primary || "#F59E0B"}
                         />
                     </View>
-
                 </View>
 
-                {/* Name */}
-
-                <Text style={styles.label}>
-                    Service Name
-                </Text>
-
+                {/* Service Name Input */}
+                <Text style={styles.label}>Service Name</Text>
                 <Input
                     icon="cut-outline"
                     placeholder="उदा. Hair Cut"
                     value={name}
                     onChangeText={setName}
+                    autoCapitalize="words"
                 />
 
-                {/* Marathi */}
-
-                <Text style={styles.label}>
-                    Marathi Name
-                </Text>
-
+                {/* Marathi Name Input */}
+                <Text style={styles.label}>Marathi Name</Text>
                 <Input
                     icon="language-outline"
                     placeholder="उदा. हेअर कट"
@@ -204,12 +132,8 @@ export default function AddServiceScreen({
                     onChangeText={setMarathi}
                 />
 
-                {/* Price */}
-
-                <Text style={styles.label}>
-                    Price
-                </Text>
-
+                {/* Price Input */}
+                <Text style={styles.label}>Price (₹)</Text>
                 <Input
                     icon="cash-outline"
                     placeholder="उदा. 200"
@@ -218,12 +142,8 @@ export default function AddServiceScreen({
                     keyboardType="number-pad"
                 />
 
-                {/* Duration */}
-
-                <Text style={styles.label}>
-                    Duration
-                </Text>
-
+                {/* Duration Input */}
+                <Text style={styles.label}>Duration</Text>
                 <Input
                     icon="time-outline"
                     placeholder="उदा. 30 min"
@@ -231,84 +151,63 @@ export default function AddServiceScreen({
                     onChangeText={setDuration}
                 />
 
-                {/* Preview */}
-
-                <Text style={styles.sectionTitle}>
-                    Preview
-                </Text>
-
+                {/* Live Card Preview */}
+                <Text style={styles.sectionTitle}>Preview</Text>
                 <View style={styles.previewCard}>
-
                     <View style={styles.previewIcon}>
                         <Ionicons
                             name="cut-outline"
-                            size={23}
-                            color={COLORS.primary}
+                            size={22}
+                            color={COLORS.primary || "#F59E0B"}
                         />
                     </View>
 
                     <View style={styles.previewInfo}>
-
-                        <Text style={styles.previewName}>
+                        <Text style={styles.previewName} numberOfLines={1}>
                             {name || "Hair Cut"}
                         </Text>
 
-                        <Text style={styles.previewMarathi}>
+                        <Text style={styles.previewMarathi} numberOfLines={1}>
                             {marathi || "हेअर कट"}
                         </Text>
 
                         <View style={styles.previewMeta}>
-
                             <Text style={styles.previewPrice}>
                                 ₹{price || "0"}
                             </Text>
-
+                            <Text style={styles.previewMetaDot}>•</Text>
                             <Text style={styles.previewDuration}>
                                 {duration || "30 min"}
                             </Text>
-
                         </View>
-
                     </View>
 
                     <View style={styles.activeBadge}>
                         <View style={styles.activeDot} />
-
-                        <Text style={styles.activeText}>
-                            Active
-                        </Text>
+                        <Text style={styles.activeText}>Active</Text>
                     </View>
-
                 </View>
 
-                {/* Save */}
-
+                {/* Action Button */}
                 <TouchableOpacity
                     style={styles.saveButton}
-                    activeOpacity={0.8}
+                    activeOpacity={0.85}
                     onPress={handleSave}
                 >
-
                     <Ionicons
                         name={
                             isEditing
                                 ? "checkmark-circle-outline"
                                 : "add-circle-outline"
                         }
-                        size={21}
-                        color={COLORS.black}
+                        size={22}
+                        color={COLORS.black || "#0F172A"}
                     />
-
                     <Text style={styles.saveText}>
-                        {isEditing
-                            ? "Update Service"
-                            : "Add Service"}
+                        {isEditing ? "Update Service" : "Add Service"}
                     </Text>
-
                 </TouchableOpacity>
-
             </ScrollView>
-
         </AppScreen>
     );
 }
@@ -319,205 +218,225 @@ function Input({
     value,
     onChangeText,
     keyboardType,
+    autoCapitalize = "none",
 }) {
     return (
         <View style={styles.inputContainer}>
-
-            <Ionicons
-                name={icon}
-                size={20}
-                color="#888"
-            />
-
+            <Ionicons name={icon} size={20} color="#64748B" />
             <TextInput
                 style={styles.input}
                 placeholder={placeholder}
-                placeholderTextColor="#999"
+                placeholderTextColor="#94A3B8"
                 value={value}
                 onChangeText={onChangeText}
                 keyboardType={keyboardType}
+                autoCapitalize={autoCapitalize}
             />
-
         </View>
     );
 }
 
 const styles = StyleSheet.create({
-
     screen: {
         flex: 1,
-        backgroundColor: COLORS.background,
+        backgroundColor: COLORS.background || "#F8FAFC",
     },
-
     content: {
-        padding: SPACING.lg,
-        paddingBottom: 50,
+        padding: SPACING.lg || 16,
+        paddingBottom: 40,
     },
 
+    // Back Header
     backButton: {
         flexDirection: "row",
         alignItems: "center",
-        marginBottom: 18,
+        marginBottom: 20,
+        alignSelf: "flex-start",
     },
-
     backText: {
-        marginLeft: 7,
-        color: "#666",
-        fontSize: 12,
+        marginLeft: 4,
+        color: "#64748B",
+        fontSize: 14,
         fontWeight: "600",
     },
 
+    // Screen Header
     header: {
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between",
-        marginBottom: 25,
+        marginBottom: 24,
     },
-
+    headerTextGroup: {
+        flex: 1,
+        marginRight: 12,
+    },
     heading: {
         fontSize: 28,
         fontWeight: "800",
-        color: COLORS.black,
+        color: COLORS.black || "#0F172A",
+        letterSpacing: -0.5,
     },
-
     subtitle: {
-        marginTop: 5,
-        color: "#888",
-        fontSize: 11,
+        marginTop: 4,
+        color: "#64748B",
+        fontSize: 13,
+        fontWeight: "500",
     },
-
     headerIcon: {
         width: 46,
         height: 46,
-        borderRadius: 16,
-        backgroundColor: COLORS.black,
+        borderRadius: 14,
+        backgroundColor: COLORS.black || "#0F172A",
         alignItems: "center",
         justifyContent: "center",
     },
 
+    // Form Inputs
     label: {
-        color: COLORS.black,
-        fontSize: 13,
+        color: COLORS.black || "#0F172A",
+        fontSize: 14,
         fontWeight: "700",
         marginBottom: 8,
+        marginTop: 4,
     },
-
     inputContainer: {
-        height: 54,
-        backgroundColor: COLORS.white,
-        borderRadius: 15,
+        height: 52,
+        backgroundColor: COLORS.white || "#FFFFFF",
+        borderRadius: RADIUS.lg || 14,
         flexDirection: "row",
         alignItems: "center",
-        paddingHorizontal: 15,
-        marginBottom: 18,
+        paddingHorizontal: 14,
+        marginBottom: 16,
         borderWidth: 1,
-        borderColor: "#EEEEEE",
+        borderColor: "#E2E8F0",
     },
-
     input: {
         flex: 1,
         marginLeft: 10,
-        color: COLORS.black,
-        fontSize: 14,
+        color: COLORS.black || "#0F172A",
+        fontSize: 15,
+        fontWeight: "500",
     },
 
+    // Preview Section
     sectionTitle: {
         marginTop: 8,
-        marginBottom: 11,
-        color: COLORS.black,
-        fontSize: 18,
+        marginBottom: 12,
+        color: COLORS.black || "#0F172A",
+        fontSize: 17,
         fontWeight: "800",
     },
-
     previewCard: {
-        backgroundColor: COLORS.white,
-        borderRadius: RADIUS.xl,
-        padding: 15,
+        backgroundColor: COLORS.white || "#FFFFFF",
+        borderRadius: RADIUS.xl || 16,
+        padding: 16,
         flexDirection: "row",
         alignItems: "center",
+        borderWidth: 1,
+        borderColor: "#E2E8F0",
+        marginBottom: 28,
+        ...Platform.select({
+            ios: {
+                shadowColor: "#000",
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.04,
+                shadowRadius: 8,
+            },
+            android: {
+                elevation: 1.5,
+            },
+        }),
     },
-
     previewIcon: {
-        width: 50,
-        height: 50,
-        borderRadius: 15,
-        backgroundColor: COLORS.black,
+        width: 46,
+        height: 46,
+        borderRadius: 14,
+        backgroundColor: COLORS.black || "#0F172A",
         alignItems: "center",
         justifyContent: "center",
     },
-
     previewInfo: {
         flex: 1,
-        marginLeft: 12,
+        marginLeft: 14,
+        marginRight: 8,
     },
-
     previewName: {
-        color: COLORS.black,
+        color: COLORS.black || "#0F172A",
+        fontSize: 15,
+        fontWeight: "700",
+    },
+    previewMarathi: {
+        marginTop: 2,
+        color: "#64748B",
+        fontSize: 12,
+        fontWeight: "500",
+    },
+    previewMeta: {
+        flexDirection: "row",
+        alignItems: "center",
+        marginTop: 6,
+    },
+    previewPrice: {
+        color: "#D97706",
         fontSize: 14,
         fontWeight: "800",
     },
-
-    previewMarathi: {
-        marginTop: 3,
-        color: "#888",
-        fontSize: 10,
+    previewMetaDot: {
+        marginHorizontal: 6,
+        color: "#94A3B8",
+        fontSize: 12,
     },
-
-    previewMeta: {
-        flexDirection: "row",
-        marginTop: 6,
-    },
-
-    previewPrice: {
-        color: COLORS.primary,
-        fontSize: 11,
-        fontWeight: "800",
-    },
-
     previewDuration: {
-        marginLeft: 12,
-        color: "#888",
-        fontSize: 10,
+        color: "#64748B",
+        fontSize: 12,
+        fontWeight: "600",
     },
-
     activeBadge: {
         flexDirection: "row",
         alignItems: "center",
-        backgroundColor: "#EAF8EF",
-        paddingHorizontal: 8,
+        backgroundColor: "#DCFCE7",
+        paddingHorizontal: 10,
         paddingVertical: 6,
-        borderRadius: 15,
+        borderRadius: 20,
     },
-
     activeDot: {
         width: 6,
         height: 6,
         borderRadius: 3,
-        backgroundColor: "#22C55E",
-        marginRight: 5,
+        backgroundColor: "#16A34A",
+        marginRight: 6,
     },
-
     activeText: {
-        color: "#16A34A",
-        fontSize: 8,
+        color: "#15803D",
+        fontSize: 12,
         fontWeight: "700",
     },
 
+    // Save Button
     saveButton: {
         height: 54,
-        borderRadius: RADIUS.xl,
-        backgroundColor: COLORS.primary,
-        marginTop: 22,
+        borderRadius: RADIUS.xl || 16,
+        backgroundColor: COLORS.primary || "#F59E0B",
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "center",
+        ...Platform.select({
+            ios: {
+                shadowColor: "#000",
+                shadowOffset: { width: 0, height: 3 },
+                shadowOpacity: 0.12,
+                shadowRadius: 6,
+            },
+            android: {
+                elevation: 3,
+            },
+        }),
     },
-
     saveText: {
-        marginLeft: 7,
-        color: COLORS.black,
-        fontSize: 13,
+        marginLeft: 8,
+        color: COLORS.black || "#0F172A",
+        fontSize: 15,
         fontWeight: "800",
     },
-
 });

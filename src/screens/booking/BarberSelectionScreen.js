@@ -5,6 +5,7 @@ import {
     Text,
     TouchableOpacity,
     StyleSheet,
+    Platform,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -81,7 +82,7 @@ export default function BarberSelectionScreen({ navigation }) {
                     return (
                         <TouchableOpacity
                             key={barber.id}
-                            activeOpacity={0.85}
+                            activeOpacity={0.88}
                             style={[
                                 styles.card,
                                 selected && styles.selectedCard,
@@ -103,7 +104,7 @@ export default function BarberSelectionScreen({ navigation }) {
                                     <View style={styles.ratingRow}>
                                         <Ionicons
                                             name="star"
-                                            size={15}
+                                            size={14}
                                             color={COLORS.primary}
                                         />
 
@@ -113,21 +114,23 @@ export default function BarberSelectionScreen({ navigation }) {
                                     </View>
                                 </View>
 
-                                {selected && (
+                                {selected ? (
                                     <View style={styles.check}>
                                         <Ionicons
                                             name="checkmark"
-                                            size={18}
+                                            size={16}
                                             color={COLORS.white}
                                         />
                                     </View>
+                                ) : (
+                                    <View style={styles.unselectedCheck} />
                                 )}
                             </View>
 
                             <View style={styles.divider} />
 
                             <View style={styles.queueRow}>
-                                <View>
+                                <View style={styles.statBox}>
                                     <Text style={styles.smallLabel}>
                                         प्रतीक्षेत
                                     </Text>
@@ -137,7 +140,9 @@ export default function BarberSelectionScreen({ navigation }) {
                                     </Text>
                                 </View>
 
-                                <View>
+                                <View style={styles.verticalDivider} />
+
+                                <View style={styles.statBox}>
                                     <Text style={styles.smallLabel}>
                                         अंदाजे वेळ
                                     </Text>
@@ -164,6 +169,7 @@ export default function BarberSelectionScreen({ navigation }) {
                 <PrimaryButton
                     title="पुढे जा"
                     onPress={handleContinue}
+                    disabled={!selectedBarber}
                 />
             </View>
         </AppScreen>
@@ -178,20 +184,22 @@ const styles = StyleSheet.create({
 
     content: {
         padding: SPACING.lg,
-        paddingBottom: 120,
+        paddingBottom: 110,
     },
 
     heading: {
         fontSize: 28,
-        fontWeight: "700",
+        fontWeight: "800",
         color: COLORS.black,
+        letterSpacing: -0.5,
     },
 
     subtitle: {
-        marginTop: 8,
-        marginBottom: 24,
-        color: "#777",
-        fontSize: 15,
+        marginTop: 4,
+        marginBottom: 22,
+        color: "#6B7280",
+        fontSize: 14,
+        fontWeight: "400",
     },
 
     card: {
@@ -199,12 +207,35 @@ const styles = StyleSheet.create({
         borderRadius: RADIUS.xl,
         padding: SPACING.lg,
         marginBottom: 16,
-        borderWidth: 2,
-        borderColor: "#EEEEEE",
+        borderWidth: 1.5,
+        borderColor: "#F0F0F0",
+        ...Platform.select({
+            ios: {
+                shadowColor: "#000",
+                shadowOffset: { width: 0, height: 3 },
+                shadowOpacity: 0.04,
+                shadowRadius: 8,
+            },
+            android: {
+                elevation: 2,
+            },
+        }),
     },
 
     selectedCard: {
         borderColor: COLORS.primary,
+        backgroundColor: "#FFFDF9",
+        ...Platform.select({
+            ios: {
+                shadowColor: COLORS.primary,
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.15,
+                shadowRadius: 10,
+            },
+            android: {
+                elevation: 4,
+            },
+        }),
     },
 
     topRow: {
@@ -213,9 +244,9 @@ const styles = StyleSheet.create({
     },
 
     avatar: {
-        width: 58,
-        height: 58,
-        borderRadius: 29,
+        width: 52,
+        height: 52,
+        borderRadius: 16,
         backgroundColor: COLORS.black,
         alignItems: "center",
         justifyContent: "center",
@@ -223,8 +254,8 @@ const styles = StyleSheet.create({
 
     avatarText: {
         color: COLORS.primary,
-        fontSize: 23,
-        fontWeight: "700",
+        fontSize: 22,
+        fontWeight: "800",
     },
 
     info: {
@@ -233,36 +264,46 @@ const styles = StyleSheet.create({
     },
 
     name: {
-        fontSize: 19,
+        fontSize: 18,
         fontWeight: "700",
         color: COLORS.black,
+        letterSpacing: -0.2,
     },
 
     ratingRow: {
         flexDirection: "row",
         alignItems: "center",
-        marginTop: 5,
+        marginTop: 4,
     },
 
     rating: {
-        marginLeft: 5,
-        color: "#666",
-        fontWeight: "600",
+        marginLeft: 4,
+        color: "#4B5563",
+        fontSize: 13,
+        fontWeight: "700",
     },
 
     check: {
-        width: 30,
-        height: 30,
-        borderRadius: 15,
+        width: 26,
+        height: 26,
+        borderRadius: 13,
         backgroundColor: COLORS.primary,
         alignItems: "center",
         justifyContent: "center",
     },
 
+    unselectedCheck: {
+        width: 26,
+        height: 26,
+        borderRadius: 13,
+        borderWidth: 1.5,
+        borderColor: "#E5E7EB",
+    },
+
     divider: {
         height: 1,
-        backgroundColor: "#EEEEEE",
-        marginVertical: 16,
+        backgroundColor: "#F3F4F6",
+        marginVertical: 14,
     },
 
     queueRow: {
@@ -271,14 +312,26 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
 
+    statBox: {
+        flex: 1,
+    },
+
+    verticalDivider: {
+        width: 1,
+        height: 24,
+        backgroundColor: "#E5E7EB",
+        marginHorizontal: 12,
+    },
+
     smallLabel: {
-        color: "#888",
-        fontSize: 12,
+        color: "#9CA3AF",
+        fontSize: 11,
+        fontWeight: "500",
     },
 
     queueValue: {
-        marginTop: 4,
-        fontSize: 14,
+        marginTop: 2,
+        fontSize: 13,
         fontWeight: "700",
         color: COLORS.black,
     },
@@ -286,30 +339,38 @@ const styles = StyleSheet.create({
     availableBadge: {
         flexDirection: "row",
         alignItems: "center",
-        backgroundColor: "#EAF8EF",
+        backgroundColor: "#F0FDF4",
         paddingHorizontal: 10,
-        paddingVertical: 6,
+        paddingVertical: 5,
         borderRadius: 20,
+        borderWidth: 1,
+        borderColor: "#DCFCE7",
     },
 
     greenDot: {
-        width: 7,
-        height: 7,
-        borderRadius: 4,
+        width: 6,
+        height: 6,
+        borderRadius: 3,
         backgroundColor: "#22C55E",
-        marginRight: 5,
+        marginRight: 6,
     },
 
     availableText: {
-        color: "#16A34A",
-        fontSize: 12,
+        color: "#15803D",
+        fontSize: 11,
         fontWeight: "700",
     },
 
     bottomButton: {
+        position: "absolute",
+        bottom: 0,
+        left: 0,
+        right: 0,
         paddingHorizontal: SPACING.lg,
-        paddingBottom: SPACING.lg,
-        paddingTop: 8,
+        paddingBottom: Platform.OS === "ios" ? 28 : SPACING.lg,
+        paddingTop: 12,
         backgroundColor: COLORS.background,
+        borderTopWidth: 1,
+        borderTopColor: "#F3F4F6",
     },
 });

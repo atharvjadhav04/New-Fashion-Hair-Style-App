@@ -5,6 +5,7 @@ import {
     Text,
     TouchableOpacity,
     StyleSheet,
+    Platform,
 } from "react-native";
 
 import { Ionicons } from "@expo/vector-icons";
@@ -65,8 +66,8 @@ export default function ProfileScreen({ navigation }) {
 
                             <Ionicons
                                 name="call-outline"
-                                size={14}
-                                color="#999"
+                                size={13}
+                                color="rgba(255, 255, 255, 0.6)"
                             />
 
                             <Text style={styles.phone}>
@@ -78,6 +79,7 @@ export default function ProfileScreen({ navigation }) {
                     </View>
 
                     <TouchableOpacity
+                        activeOpacity={0.8}
                         style={styles.editButton}
                         onPress={() => { }}
                     >
@@ -182,6 +184,7 @@ export default function ProfileScreen({ navigation }) {
                 {/* Logout */}
 
                 <TouchableOpacity
+                    activeOpacity={0.8}
                     style={styles.logoutButton}
                     onPress={() => { }}
                 >
@@ -225,7 +228,7 @@ function InfoRow({
             <View style={styles.rowIcon}>
                 <Ionicons
                     name={icon}
-                    size={19}
+                    size={18}
                     color={COLORS.primary}
                 />
             </View>
@@ -255,7 +258,7 @@ function MenuItem({
 }) {
     return (
         <TouchableOpacity
-            activeOpacity={0.7}
+            activeOpacity={0.65}
             style={[
                 styles.menuItem,
                 !last && styles.rowBorder,
@@ -266,7 +269,7 @@ function MenuItem({
             <View style={styles.menuIcon}>
                 <Ionicons
                     name={icon}
-                    size={20}
+                    size={19}
                     color={COLORS.primary}
                 />
             </View>
@@ -285,8 +288,8 @@ function MenuItem({
 
             <Ionicons
                 name="chevron-forward"
-                size={19}
-                color="#999"
+                size={18}
+                color="#C0C0C0"
             />
 
         </TouchableOpacity>
@@ -306,119 +309,154 @@ const styles = StyleSheet.create({
     },
 
     heading: {
-        fontSize: 30,
-        fontWeight: "700",
+        fontSize: 28,
+        fontWeight: "800",
         color: COLORS.black,
+        letterSpacing: -0.5,
     },
 
     subtitle: {
-        marginTop: 6,
-        color: "#777",
+        marginTop: 4,
+        color: "#6B7280",
         fontSize: 14,
+        fontWeight: "400",
     },
 
     profileCard: {
         backgroundColor: COLORS.black,
         borderRadius: RADIUS.xl,
         padding: SPACING.lg,
-        marginTop: 24,
+        marginTop: 20,
         flexDirection: "row",
         alignItems: "center",
+        // Soft elevation shadow
+        ...Platform.select({
+            ios: {
+                shadowColor: "#000",
+                shadowOffset: { width: 0, height: 6 },
+                shadowOpacity: 0.15,
+                shadowRadius: 10,
+            },
+            android: {
+                elevation: 6,
+            },
+        }),
     },
 
     avatar: {
-        width: 64,
-        height: 64,
-        borderRadius: 32,
+        width: 60,
+        height: 60,
+        borderRadius: 30,
         backgroundColor: COLORS.primary,
         alignItems: "center",
         justifyContent: "center",
+        borderWidth: 2,
+        borderColor: "rgba(255, 255, 255, 0.2)",
     },
 
     avatarText: {
         color: COLORS.black,
-        fontSize: 26,
+        fontSize: 24,
         fontWeight: "800",
     },
 
     profileInfo: {
         flex: 1,
-        marginLeft: 14,
+        marginLeft: 16,
     },
 
     name: {
         color: COLORS.white,
-        fontSize: 19,
+        fontSize: 18,
         fontWeight: "700",
+        letterSpacing: 0.2,
     },
 
     phoneRow: {
         flexDirection: "row",
         alignItems: "center",
-        marginTop: 7,
+        marginTop: 5,
     },
 
     phone: {
-        marginLeft: 5,
-        color: "#AAAAAA",
-        fontSize: 12,
+        marginLeft: 6,
+        color: "rgba(255, 255, 255, 0.7)",
+        fontSize: 13,
+        fontWeight: "500",
     },
 
     editButton: {
-        width: 38,
-        height: 38,
-        borderRadius: 19,
-        backgroundColor: "#292929",
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        backgroundColor: "#1F1F1F",
+        borderWidth: 1,
+        borderColor: "#2D2D2D",
         alignItems: "center",
         justifyContent: "center",
     },
 
     sectionTitle: {
-        marginTop: 26,
+        marginTop: 24,
         marginBottom: 10,
-        fontSize: 17,
+        fontSize: 16,
         fontWeight: "700",
         color: COLORS.black,
+        letterSpacing: -0.2,
     },
 
     infoCard: {
         backgroundColor: COLORS.white,
         borderRadius: RADIUS.xl,
         paddingHorizontal: SPACING.lg,
+        borderWidth: 1,
+        borderColor: "#F0F0F0",
+        ...Platform.select({
+            ios: {
+                shadowColor: "#000",
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.04,
+                shadowRadius: 8,
+            },
+            android: {
+                elevation: 2,
+            },
+        }),
     },
 
     infoRow: {
         flexDirection: "row",
         alignItems: "center",
-        paddingVertical: 16,
+        paddingVertical: 14,
     },
 
     rowBorder: {
         borderBottomWidth: 1,
-        borderBottomColor: "#EEEEEE",
+        borderBottomColor: "#F3F4F6",
     },
 
     rowIcon: {
-        width: 40,
-        height: 40,
+        width: 38,
+        height: 38,
         borderRadius: 12,
-        backgroundColor: "#F7F3E7",
+        backgroundColor: "#F8F6EF",
         alignItems: "center",
         justifyContent: "center",
     },
 
     rowContent: {
         flex: 1,
-        marginLeft: 12,
+        marginLeft: 14,
     },
 
     rowLabel: {
-        color: "#999",
+        color: "#8E8E93",
         fontSize: 11,
+        fontWeight: "500",
     },
 
     rowValue: {
-        marginTop: 3,
+        marginTop: 2,
         color: COLORS.black,
         fontSize: 14,
         fontWeight: "600",
@@ -428,46 +466,62 @@ const styles = StyleSheet.create({
         backgroundColor: COLORS.white,
         borderRadius: RADIUS.xl,
         paddingHorizontal: SPACING.lg,
+        borderWidth: 1,
+        borderColor: "#F0F0F0",
+        ...Platform.select({
+            ios: {
+                shadowColor: "#000",
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.04,
+                shadowRadius: 8,
+            },
+            android: {
+                elevation: 2,
+            },
+        }),
     },
 
     menuItem: {
-        minHeight: 72,
+        paddingVertical: 14,
         flexDirection: "row",
         alignItems: "center",
     },
 
     menuIcon: {
-        width: 42,
-        height: 42,
-        borderRadius: 13,
-        backgroundColor: "#F7F3E7",
+        width: 38,
+        height: 38,
+        borderRadius: 12,
+        backgroundColor: "#F8F6EF",
         alignItems: "center",
         justifyContent: "center",
     },
 
     menuContent: {
         flex: 1,
-        marginLeft: 12,
-        marginRight: 10,
+        marginLeft: 14,
+        marginRight: 8,
     },
 
     menuTitle: {
         color: COLORS.black,
         fontSize: 14,
-        fontWeight: "700",
+        fontWeight: "600",
     },
 
     menuSubtitle: {
-        marginTop: 3,
-        color: "#888",
+        marginTop: 2,
+        color: "#8E8E93",
         fontSize: 11,
+        fontWeight: "400",
     },
 
     logoutButton: {
-        marginTop: 24,
-        height: 54,
+        marginTop: 28,
+        height: 52,
         borderRadius: RADIUS.xl,
-        backgroundColor: "#FEECEC",
+        backgroundColor: "#FEF2F2",
+        borderWidth: 1,
+        borderColor: "#FEE2E2",
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "center",
@@ -482,9 +536,10 @@ const styles = StyleSheet.create({
 
     version: {
         textAlign: "center",
-        marginTop: 18,
-        color: "#AAAAAA",
-        fontSize: 11,
+        marginTop: 20,
+        color: "#9CA3AF",
+        fontSize: 12,
+        fontWeight: "500",
     },
 
 });

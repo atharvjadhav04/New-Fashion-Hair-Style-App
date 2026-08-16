@@ -1,25 +1,16 @@
-import React, {
-    useEffect,
-    useMemo,
-    useState,
-} from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
     ScrollView,
     View,
     Text,
     TouchableOpacity,
     StyleSheet,
+    Platform,
 } from "react-native";
-
 import { Ionicons } from "@expo/vector-icons";
 
 import AppScreen from "../../components/common/AppScreen";
-
-import {
-    COLORS,
-    SPACING,
-    RADIUS,
-} from "../../theme";
+import { COLORS, SPACING, RADIUS } from "../../theme";
 
 const INITIAL_TRANSACTIONS = [
     {
@@ -29,10 +20,8 @@ const INITIAL_TRANSACTIONS = [
         source: "Offline",
         payment_method: "Cash",
         amount: 200,
-        transaction_date:
-            new Date().toISOString(),
+        transaction_date: new Date().toISOString(),
     },
-
     {
         id: "2",
         type: "Income",
@@ -40,10 +29,8 @@ const INITIAL_TRANSACTIONS = [
         source: "Online",
         payment_method: "UPI",
         amount: 300,
-        transaction_date:
-            new Date().toISOString(),
+        transaction_date: new Date().toISOString(),
     },
-
     {
         id: "3",
         type: "Expense",
@@ -51,10 +38,8 @@ const INITIAL_TRANSACTIONS = [
         source: "Offline",
         payment_method: "UPI",
         amount: 450,
-        transaction_date:
-            new Date().toISOString(),
+        transaction_date: new Date().toISOString(),
     },
-
     {
         id: "4",
         type: "Income",
@@ -62,736 +47,623 @@ const INITIAL_TRANSACTIONS = [
         source: "Online",
         payment_method: "Online Gateway",
         amount: 500,
-        transaction_date:
-            new Date().toISOString(),
+        transaction_date: new Date().toISOString(),
     },
 ];
 
-export default function FinanceScreen({
-    navigation,
-    route,
-}) {
+// Helper to check if ISO string is today
+const isToday = (dateString) => {
+    if (!dateString) return false;
+    const date = new Date(dateString);
+    const today = new Date();
+    return (
+        date.getDate() === today.getDate() &&
+        date.getMonth() === today.getMonth() &&
+        date.getFullYear() === today.getFullYear()
+    );
+};
 
-    const [transactions, setTransactions] =
-        useState(INITIAL_TRANSACTIONS);
-
-    useEffect(() => {
-        const newTransaction =
-            route?.params?.newTransaction;
-
-        if (!newTransaction) {
-            return;
-        }
-
-        console.log(
-            "RECEIVED TRANSACTION:",
-            newTransaction
-        );
-
-        setTransactions((current) => [
-            newTransaction,
-            ...current,
-        ]);
-
-        navigation.setParams({
-            newTransaction: undefined,
-        });
-    }, [route?.params?.newTransaction]);
-
+export default function FinanceScreen({ navigation, route }) {
+    const [transactions, setTransactions] = useState(INITIAL_TRANSACTIONS);
     const [filter, setFilter] = useState("All");
 
+    useEffect(() => {
+        const newTransaction = route?.params?.newTransaction;
+        if (!newTransaction) return;
+
+        setTransactions((current) => [newTransaction, ...current]);
+        navigation.setParams({ newTransaction: undefined });
+    }, [route?.params?.newTransaction]);
+
+    // Today's Income
     const todayIncome = useMemo(() => {
         return transactions
-            .filter(
-                (item) =>
-                    item.type === "Income" &&
-                    item.date === "Today"
-            )
-            .reduce(
-                (total, item) =>
-                    total + item.amount,
-                0
-            );
+            .filter((item) => item.type === "Income" && isToday(item.transaction_date))
+            .reduce((total, item) => total + Number(item.amount || 0), 0);
     }, [transactions]);
 
+    // Today's Expense
     const todayExpense = useMemo(() => {
         return transactions
-            .filter(
-                (item) =>
-                    item.type === "Expense" &&
-                    item.date === "Today"
-            )
-            .reduce(
-                (total, item) =>
-                    total + item.amount,
-                0
-            );
+            .filter((item) => item.type === "Expense" && isToday(item.transaction_date))
+            .reduce((total, item) => total + Number(item.amount || 0), 0);
     }, [transactions]);
 
+    // Monthly / Overall Income
     const monthlyIncome = useMemo(() => {
         return transactions
-            .filter(
-                (item) =>
-                    item.type === "Income"
-            )
-            .reduce(
-                (total, item) =>
-                    total + item.amount,
-                0
-            );
+            .filter((item) => item.type === "Income")
+            .reduce((total, item) => total + Number(item.amount || 0), 0);
     }, [transactions]);
 
+    // Monthly / Overall Expense
     const monthlyExpense = useMemo(() => {
         return transactions
-            .filter(
-                (item) =>
-                    item.type === "Expense"
-            )
-            .reduce(
-                (total, item) =>
-                    total + item.amount,
-                0
-            );
+            .filter((item) => item.type === "Expense")
+            .reduce((total, item) => total + Number(item.amount || 0), 0);
     }, [transactions]);
 
-    const profit =
-        monthlyIncome - monthlyExpense;
+    const profit = monthlyIncome - monthlyExpense;
 
-    const filteredTransactions =
-        transactions.filter((item) => {
-
-            if (filter === "All") {
-                return true;
-            }
-
-            return item.type === filter;
-        });
+    const filteredTransactions = useMemo(() => {
+        if (filter === "All") return transactions;
+        return transactions.filter((item) => item.type === filter);
+    }, [transactions, filter]);
 
     return (
         <AppScreen style={styles.screen}>
-
             <ScrollView
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={styles.content}
             >
-
                 {/* Header */}
-
                 <View style={styles.header}>
-
-                    <View>
-                        <Text style={styles.heading}>
-                            Finance
-                        </Text>
-
+                    <View style={styles.headerTextGroup}>
+                        <Text style={styles.heading}>Finance</Text>
                         <Text style={styles.subtitle}>
-                            Salon income आणि expenses व्यवस्थापित करा
+                            सलूनच्या उत्पन्न आणि खर्चाची संपूर्ण माहिती
                         </Text>
                     </View>
+
                     <TouchableOpacity
+                        activeOpacity={0.8}
                         style={styles.addTransactionButton}
-                        onPress={() =>
-                            navigation.navigate(
-                                "AddTransaction"
-                            )
-                        }
+                        onPress={() => navigation.navigate("AddTransaction")}
                     >
                         <Ionicons
                             name="add"
-                            size={22}
-                            color={COLORS.black}
+                            size={20}
+                            color={COLORS.black || "#0F172A"}
                         />
-
-                        <Text style={styles.addTransactionText}>
-                            Add
-                        </Text>
+                        <Text style={styles.addTransactionText}>Add</Text>
                     </TouchableOpacity>
-
-
                 </View>
 
-                {/* Main Balance */}
-
+                {/* Main Net Balance Card */}
                 <View style={styles.balanceCard}>
-
-                    <View>
-                        <Text style={styles.balanceLabel}>
-                            Monthly Profit
-                        </Text>
-
+                    <View style={{ flex: 1 }}>
+                        <Text style={styles.balanceLabel}>MONTHLY NET PROFIT</Text>
                         <Text style={styles.balanceValue}>
                             ₹{profit.toLocaleString("en-IN")}
                         </Text>
-
-                        <Text style={styles.balanceSubtitle}>
-                            Income − Expenses
-                        </Text>
+                        <View style={styles.balanceBadge}>
+                            <Text style={styles.balanceSubtitle}>
+                                Total Income − Total Expenses
+                            </Text>
+                        </View>
                     </View>
 
                     <View style={styles.profitIcon}>
                         <Ionicons
-                            name={
-                                profit >= 0
-                                    ? "trending-up"
-                                    : "trending-down"
-                            }
-                            size={28}
-                            color={COLORS.primary}
+                            name={profit >= 0 ? "trending-up" : "trending-down"}
+                            size={26}
+                            color={profit >= 0 ? "#16A34A" : "#DC2626"}
                         />
                     </View>
-
                 </View>
 
-                {/* Today's Stats */}
-
-                <Text style={styles.sectionTitle}>
-                    Today
-                </Text>
-
+                {/* Today's Section */}
+                <Text style={styles.sectionTitle}>Today's Overview</Text>
                 <View style={styles.statsRow}>
-
                     <FinanceStat
-                        icon="arrow-down-circle-outline"
-                        title="Income"
+                        icon="arrow-down-circle"
+                        iconColor="#16A34A"
+                        title="Today's Income"
                         value={todayIncome}
                     />
-
                     <FinanceStat
-                        icon="arrow-up-circle-outline"
-                        title="Expenses"
+                        icon="arrow-up-circle"
+                        iconColor="#DC2626"
+                        title="Today's Expense"
                         value={todayExpense}
                     />
-
                 </View>
 
-                {/* Monthly Stats */}
-
-                <Text style={styles.sectionTitle}>
-                    This Month
-                </Text>
-
+                {/* Monthly Breakdown */}
+                <Text style={styles.sectionTitle}>Monthly Summary</Text>
                 <View style={styles.monthCard}>
-
                     <MonthRow
                         icon="trending-up-outline"
                         title="Total Income"
                         value={monthlyIncome}
+                        color="#16A34A"
                     />
-
                     <View style={styles.divider} />
-
                     <MonthRow
                         icon="trending-down-outline"
                         title="Total Expenses"
                         value={monthlyExpense}
+                        color="#DC2626"
                     />
-
                     <View style={styles.divider} />
-
                     <MonthRow
                         icon="wallet-outline"
                         title="Net Profit"
                         value={profit}
                         highlight
+                        color={COLORS.primary || "#F59E0B"}
                     />
-
                 </View>
 
-                {/* Transactions Header */}
-
+                {/* Recent Transactions Section */}
                 <View style={styles.transactionHeader}>
-
                     <View>
-                        <Text style={styles.sectionTitle}>
-                            Transactions
-                        </Text>
-
+                        <Text style={styles.sectionTitle}>Transactions</Text>
                         <Text style={styles.sectionSubtitle}>
-                            Recent financial activity
+                            हालचेलींचा इतिहास (History)
                         </Text>
                     </View>
 
                     <TouchableOpacity
-                        onPress={() =>
-                            navigation.navigate(
-                                "TransactionHistory"
-                            )
-                        }
+                        activeOpacity={0.7}
+                        onPress={() => navigation.navigate("TransactionHistory")}
                     >
-                        <Text style={styles.viewAll}>
-                            View All
-                        </Text>
+                        <Text style={styles.viewAll}>View All</Text>
                     </TouchableOpacity>
-
                 </View>
 
-                {/* Filters */}
-
+                {/* Filter Chips */}
                 <View style={styles.filters}>
-
-                    {["All", "Income", "Expense"].map(
-                        (item) => (
+                    {["All", "Income", "Expense"].map((item) => {
+                        const active = filter === item;
+                        return (
                             <TouchableOpacity
                                 key={item}
+                                activeOpacity={0.7}
                                 style={[
                                     styles.filterButton,
-                                    filter === item &&
-                                    styles.filterActive,
+                                    active && styles.filterActive,
                                 ]}
-                                onPress={() =>
-                                    setFilter(item)
-                                }
+                                onPress={() => setFilter(item)}
                             >
                                 <Text
                                     style={[
                                         styles.filterText,
-                                        filter === item &&
-                                        styles.filterTextActive,
+                                        active && styles.filterTextActive,
                                     ]}
                                 >
                                     {item}
                                 </Text>
                             </TouchableOpacity>
-                        )
-                    )}
-
+                        );
+                    })}
                 </View>
 
-                {/* Transaction List */}
-
-                {filteredTransactions.map(
-                    (transaction) => (
+                {/* Transaction Item List */}
+                {filteredTransactions.length === 0 ? (
+                    <View style={styles.emptyContainer}>
+                        <Text style={styles.emptyText}>कोणतेही व्यव्हार सापडले नाहीत</Text>
+                    </View>
+                ) : (
+                    filteredTransactions.map((transaction) => (
                         <TransactionCard
                             key={transaction.id}
-                            transaction={
-                                transaction
-                            }
+                            transaction={transaction}
                         />
-                    )
+                    ))
                 )}
-
             </ScrollView>
-
         </AppScreen>
     );
 }
 
-function FinanceStat({
-    icon,
-    title,
-    value,
-}) {
+function FinanceStat({ icon, iconColor, title, value }) {
     return (
         <View style={styles.statCard}>
-
-            <View style={styles.statIcon}>
-                <Ionicons
-                    name={icon}
-                    size={22}
-                    color={COLORS.primary}
-                />
+            <View style={styles.statHeader}>
+                <View style={[styles.statIcon, { backgroundColor: `${iconColor}15` }]}>
+                    <Ionicons name={icon} size={22} color={iconColor} />
+                </View>
+                <Text style={styles.statTitle}>{title}</Text>
             </View>
-
-            <Text style={styles.statTitle}>
-                {title}
-            </Text>
-
-            <Text style={styles.statValue}>
-                ₹{value.toLocaleString("en-IN")}
-            </Text>
-
+            <Text style={styles.statValue}>₹{value.toLocaleString("en-IN")}</Text>
         </View>
     );
 }
 
-function MonthRow({
-    icon,
-    title,
-    value,
-    highlight,
-}) {
+function MonthRow({ icon, title, value, highlight, color }) {
     return (
         <View style={styles.monthRow}>
-
-            <View style={styles.monthIcon}>
-                <Ionicons
-                    name={icon}
-                    size={20}
-                    color={COLORS.primary}
-                />
+            <View style={styles.monthLeft}>
+                <View style={[styles.monthIcon, { backgroundColor: `${color}15` }]}>
+                    <Ionicons name={icon} size={20} color={color} />
+                </View>
+                <Text style={styles.monthTitle}>{title}</Text>
             </View>
-
-            <Text style={styles.monthTitle}>
-                {title}
-            </Text>
-
             <Text
                 style={[
                     styles.monthValue,
-                    highlight &&
-                    styles.monthValueHighlight,
+                    highlight && styles.monthValueHighlight,
                 ]}
             >
                 ₹{value.toLocaleString("en-IN")}
             </Text>
-
         </View>
     );
 }
 
 const formatTransactionDate = (date) => {
-    return new Date(date).toLocaleDateString(
-        "en-IN",
-        {
-            day: "2-digit",
-            month: "short",
-        }
-    );
+    if (!date) return "";
+    return new Date(date).toLocaleDateString("en-IN", {
+        day: "2-digit",
+        month: "short",
+    });
 };
 
-function TransactionCard({
-    transaction,
-}) {
-    const isIncome =
-        transaction.type === "Income";
+function TransactionCard({ transaction }) {
+    const isIncome = transaction.type === "Income";
 
     return (
         <View style={styles.transactionCard}>
-
             <View
                 style={[
                     styles.transactionIcon,
-                    isIncome
-                        ? styles.incomeIcon
-                        : styles.expenseIcon,
+                    isIncome ? styles.incomeIcon : styles.expenseIcon,
                 ]}
             >
                 <Ionicons
-                    name={
-                        isIncome
-                            ? "arrow-down-outline"
-                            : "arrow-up-outline"
-                    }
-                    size={20}
-                    color={
-                        isIncome
-                            ? "#16A34A"
-                            : "#DC2626"
-                    }
+                    name={isIncome ? "arrow-down" : "arrow-up"}
+                    size={18}
+                    color={isIncome ? "#16A34A" : "#DC2626"}
                 />
             </View>
 
             <View style={styles.transactionInfo}>
-
-                <Text style={styles.transactionTitle}>
-                    {transaction.title}
+                <Text style={styles.transactionTitle}>{transaction.title}</Text>
+                <Text style={styles.transactionSubtitle}>
+                    {transaction.source} • {transaction.payment_method} •{" "}
+                    {formatTransactionDate(transaction.transaction_date)}
                 </Text>
-
-                <Text style={styles.transactionCustomer}>
-                    {transaction.source} •{" "}
-                    {transaction.payment_method} •{" "}
-                    {formatTransactionDate(
-                        transaction.transaction_date
-                    )}
-                </Text>
-
             </View>
 
             <Text
                 style={[
                     styles.transactionAmount,
-                    isIncome
-                        ? styles.incomeText
-                        : styles.expenseText,
+                    isIncome ? styles.incomeText : styles.expenseText,
                 ]}
             >
-                {isIncome ? "+" : "-"}₹
-                {transaction.amount}
+                {isIncome ? "+" : "-"}₹{transaction.amount}
             </Text>
-
         </View>
     );
 }
 
 const styles = StyleSheet.create({
-
     screen: {
         flex: 1,
-        backgroundColor: COLORS.background,
+        backgroundColor: COLORS.background || "#F8FAFC",
     },
-
     content: {
-        padding: SPACING.lg,
-        paddingBottom: 50,
+        padding: SPACING.lg || 16,
+        paddingBottom: 40,
     },
 
+    // Header
     header: {
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between",
+        marginBottom: 20,
     },
-
+    headerTextGroup: {
+        flex: 1,
+        marginRight: 12,
+    },
     heading: {
-        fontSize: 30,
+        fontSize: 28,
         fontWeight: "800",
-        color: COLORS.black,
+        color: COLORS.black || "#0F172A",
+        letterSpacing: -0.5,
     },
-
     subtitle: {
-        marginTop: 5,
-        color: "#888",
-        fontSize: 11,
+        marginTop: 4,
+        color: "#64748B",
+        fontSize: 13,
+        fontWeight: "500",
     },
-
-    headerIcon: {
-        width: 46,
-        height: 46,
-        borderRadius: 16,
-        backgroundColor: COLORS.black,
+    addTransactionButton: {
+        height: 40,
+        paddingHorizontal: 16,
+        borderRadius: 12,
+        backgroundColor: COLORS.primary || "#F59E0B",
+        flexDirection: "row",
         alignItems: "center",
         justifyContent: "center",
+        ...Platform.select({
+            ios: {
+                shadowColor: "#000",
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.1,
+                shadowRadius: 4,
+            },
+            android: {
+                elevation: 2,
+            },
+        }),
+    },
+    addTransactionText: {
+        marginLeft: 4,
+        color: COLORS.black || "#0F172A",
+        fontSize: 13,
+        fontWeight: "700",
     },
 
+    // Net Balance Card
     balanceCard: {
-        marginTop: 22,
-        backgroundColor: COLORS.black,
-        borderRadius: RADIUS.xl,
+        backgroundColor: COLORS.black || "#0F172A",
+        borderRadius: RADIUS.xl || 18,
         padding: 20,
         flexDirection: "row",
         alignItems: "center",
-        justifyContent: "space-between",
+        marginBottom: 24,
     },
-
     balanceLabel: {
-        color: "#999",
-        fontSize: 10,
+        color: "#94A3B8",
+        fontSize: 11,
+        fontWeight: "700",
+        letterSpacing: 0.8,
     },
-
     balanceValue: {
-        marginTop: 5,
-        color: COLORS.primary,
-        fontSize: 30,
+        marginTop: 6,
+        color: COLORS.primary || "#F59E0B",
+        fontSize: 32,
         fontWeight: "800",
     },
-
-    balanceSubtitle: {
-        marginTop: 3,
-        color: "#777",
-        fontSize: 9,
+    balanceBadge: {
+        marginTop: 6,
     },
-
+    balanceSubtitle: {
+        color: "#CBD5E1",
+        fontSize: 12,
+        fontWeight: "500",
+    },
     profitIcon: {
-        width: 55,
-        height: 55,
-        borderRadius: 18,
-        backgroundColor: "#222",
+        width: 48,
+        height: 48,
+        borderRadius: 14,
+        backgroundColor: "rgba(255,255,255,0.08)",
         alignItems: "center",
         justifyContent: "center",
     },
 
+    // Section Typography
     sectionTitle: {
-        marginTop: 25,
-        color: COLORS.black,
-        fontSize: 18,
+        fontSize: 17,
         fontWeight: "800",
+        color: COLORS.black || "#0F172A",
+        marginBottom: 12,
     },
 
-    sectionSubtitle: {
-        marginTop: 3,
-        color: "#999",
-        fontSize: 10,
-    },
-
+    // Today's Stats Grid
     statsRow: {
         flexDirection: "row",
-        gap: 10,
+        gap: 12,
+        marginBottom: 24,
     },
-
     statCard: {
         flex: 1,
-        marginTop: 12,
-        backgroundColor: COLORS.white,
-        borderRadius: RADIUS.xl,
-        padding: 15,
+        backgroundColor: COLORS.white || "#FFFFFF",
+        borderRadius: RADIUS.xl || 16,
+        padding: 14,
+        borderWidth: 1,
+        borderColor: "#F1F5F9",
+        ...Platform.select({
+            ios: {
+                shadowColor: "#000",
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.03,
+                shadowRadius: 6,
+            },
+            android: {
+                elevation: 1.5,
+            },
+        }),
     },
-
+    statHeader: {
+        flexDirection: "row",
+        alignItems: "center",
+        marginBottom: 10,
+    },
     statIcon: {
-        width: 42,
-        height: 42,
-        borderRadius: 13,
-        backgroundColor: COLORS.black,
+        width: 32,
+        height: 32,
+        borderRadius: 8,
         alignItems: "center",
         justifyContent: "center",
+        marginRight: 8,
     },
-
     statTitle: {
-        marginTop: 10,
-        color: "#888",
-        fontSize: 10,
+        color: "#64748B",
+        fontSize: 12,
+        fontWeight: "600",
+        flex: 1,
     },
-
     statValue: {
-        marginTop: 4,
-        color: COLORS.black,
-        fontSize: 19,
+        color: COLORS.black || "#0F172A",
+        fontSize: 20,
         fontWeight: "800",
     },
 
+    // Monthly Card
     monthCard: {
-        marginTop: 12,
-        backgroundColor: COLORS.white,
-        borderRadius: RADIUS.xl,
-        paddingHorizontal: 15,
+        backgroundColor: COLORS.white || "#FFFFFF",
+        borderRadius: RADIUS.xl || 16,
+        paddingHorizontal: 16,
+        borderWidth: 1,
+        borderColor: "#F1F5F9",
+        marginBottom: 24,
+        ...Platform.select({
+            ios: {
+                shadowColor: "#000",
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.03,
+                shadowRadius: 6,
+            },
+            android: {
+                elevation: 1.5,
+            },
+        }),
     },
-
     monthRow: {
-        minHeight: 62,
+        height: 58,
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+    },
+    monthLeft: {
         flexDirection: "row",
         alignItems: "center",
     },
-
     monthIcon: {
-        width: 38,
-        height: 38,
-        borderRadius: 12,
-        backgroundColor: COLORS.black,
+        width: 34,
+        height: 34,
+        borderRadius: 10,
         alignItems: "center",
         justifyContent: "center",
+        marginRight: 12,
+    },
+    monthTitle: {
+        color: COLORS.black || "#0F172A",
+        fontSize: 13,
+        fontWeight: "600",
+    },
+    monthValue: {
+        color: COLORS.black || "#0F172A",
+        fontSize: 15,
+        fontWeight: "800",
+    },
+    monthValueHighlight: {
+        color: COLORS.primary || "#F59E0B",
+    },
+    divider: {
+        height: 1,
+        backgroundColor: "#F1F5F9",
     },
 
-    monthTitle: {
-        flex: 1,
-        marginLeft: 11,
-        color: COLORS.black,
-        fontSize: 11,
+    // Transaction Section Header
+    transactionHeader: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        marginBottom: 8,
+    },
+    sectionSubtitle: {
+        marginTop: 2,
+        color: "#64748B",
+        fontSize: 12,
+        fontWeight: "500",
+    },
+    viewAll: {
+        color: COLORS.primary || "#F59E0B",
+        fontSize: 13,
         fontWeight: "700",
     },
 
-    monthValue: {
-        color: COLORS.black,
+    // Filters
+    filters: {
+        flexDirection: "row",
+        marginTop: 8,
+        marginBottom: 14,
+        gap: 8,
+    },
+    filterButton: {
+        paddingHorizontal: 16,
+        paddingVertical: 8,
+        borderRadius: 20,
+        backgroundColor: "#F1F5F9",
+        borderWidth: 1,
+        borderColor: "#E2E8F0",
+    },
+    filterActive: {
+        backgroundColor: COLORS.black || "#0F172A",
+        borderColor: COLORS.black || "#0F172A",
+    },
+    filterText: {
+        color: "#64748B",
+        fontSize: 12,
+        fontWeight: "600",
+    },
+    filterTextActive: {
+        color: "#FFFFFF",
+    },
+
+    // Transaction Card
+    transactionCard: {
+        backgroundColor: COLORS.white || "#FFFFFF",
+        borderRadius: RADIUS.lg || 14,
+        padding: 14,
+        marginBottom: 10,
+        flexDirection: "row",
+        alignItems: "center",
+        borderWidth: 1,
+        borderColor: "#F1F5F9",
+    },
+    transactionIcon: {
+        width: 40,
+        height: 40,
+        borderRadius: 12,
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    incomeIcon: {
+        backgroundColor: "#DCFCE7",
+    },
+    expenseIcon: {
+        backgroundColor: "#FEE2E2",
+    },
+    transactionInfo: {
+        flex: 1,
+        marginLeft: 12,
+        marginRight: 8,
+    },
+    transactionTitle: {
+        color: COLORS.black || "#0F172A",
+        fontSize: 14,
+        fontWeight: "700",
+    },
+    transactionSubtitle: {
+        marginTop: 3,
+        color: "#64748B",
+        fontSize: 11,
+    },
+    transactionAmount: {
         fontSize: 14,
         fontWeight: "800",
     },
-
-    monthValueHighlight: {
-        color: COLORS.primary,
-    },
-
-    divider: {
-        height: 1,
-        backgroundColor: "#EEEEEE",
-    },
-
-    transactionHeader: {
-        marginTop: 4,
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-    },
-
-    viewAll: {
-        color: COLORS.primary,
-        fontSize: 10,
-        fontWeight: "800",
-    },
-
-    filters: {
-        flexDirection: "row",
-        marginTop: 12,
-        marginBottom: 10,
-    },
-
-    filterButton: {
-        paddingHorizontal: 15,
-        paddingVertical: 8,
-        borderRadius: 20,
-        backgroundColor: "#EEEEEE",
-        marginRight: 7,
-    },
-
-    filterActive: {
-        backgroundColor: COLORS.black,
-    },
-
-    filterText: {
-        color: "#777",
-        fontSize: 9,
-        fontWeight: "700",
-    },
-
-    filterTextActive: {
-        color: COLORS.primary,
-    },
-
-    transactionCard: {
-        backgroundColor: COLORS.white,
-        borderRadius: 15,
-        padding: 13,
-        marginBottom: 8,
-        flexDirection: "row",
-        alignItems: "center",
-    },
-
-    transactionIcon: {
-        width: 42,
-        height: 42,
-        borderRadius: 13,
-        alignItems: "center",
-        justifyContent: "center",
-    },
-
-    incomeIcon: {
-        backgroundColor: "#EAF8EF",
-    },
-
-    expenseIcon: {
-        backgroundColor: "#FEECEC",
-    },
-
-    transactionInfo: {
-        flex: 1,
-        marginLeft: 11,
-    },
-
-    transactionTitle: {
-        color: COLORS.black,
-        fontSize: 12,
-        fontWeight: "800",
-    },
-
-    transactionCustomer: {
-        marginTop: 3,
-        color: "#999",
-        fontSize: 9,
-    },
-
-    transactionAmount: {
-        fontSize: 13,
-        fontWeight: "800",
-    },
-
     incomeText: {
         color: "#16A34A",
     },
-
     expenseText: {
         color: "#DC2626",
     },
-    addTransactionButton: {
-        height: 42,
-        paddingHorizontal: 14,
-        borderRadius: 14,
-        backgroundColor: COLORS.primary,
-        flexDirection: "row",
+
+    // Empty state
+    emptyContainer: {
+        paddingVertical: 24,
         alignItems: "center",
-        justifyContent: "center",
     },
-
-    addTransactionText: {
-        marginLeft: 4,
-        color: COLORS.black,
-        fontSize: 11,
-        fontWeight: "800",
+    emptyText: {
+        color: "#94A3B8",
+        fontSize: 13,
     },
-
 });
