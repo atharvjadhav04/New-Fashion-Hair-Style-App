@@ -80,18 +80,21 @@ export default function SelectTimeScreen({ navigation }) {
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={styles.content}
             >
-                <Text style={styles.heading}>वेळ निवडा</Text>
-                <Text style={styles.subtitle}>
-                    तुमच्या सोयीनुसार मोकळा स्लॉट निवडा
-                </Text>
+                {/* Header Section */}
+                <View style={styles.headerContainer}>
+                    <Text style={styles.heading}>वेळ निवडा</Text>
+                    <Text style={styles.subtitle}>
+                        तुमच्या सोयीनुसार मोकळा स्लॉट निवडा
+                    </Text>
+                </View>
 
                 {/* Selected Date Summary Card */}
                 <View style={styles.dateCard}>
                     <View style={styles.dateIconWrapper}>
                         <Ionicons
                             name="calendar"
-                            size={20}
-                            color={COLORS.primary}
+                            size={18}
+                            color={COLORS.primary || "#F59E0B"}
                         />
                     </View>
                     <View style={styles.dateInfo}>
@@ -100,6 +103,13 @@ export default function SelectTimeScreen({ navigation }) {
                             {booking.date || "तारीख निवडा"}
                         </Text>
                     </View>
+                    <TouchableOpacity
+                        activeOpacity={0.7}
+                        onPress={() => navigation.goBack()}
+                        style={styles.changeDateBtn}
+                    >
+                        <Text style={styles.changeDateText}>बदला</Text>
+                    </TouchableOpacity>
                 </View>
 
                 {/* Slot Status Legend */}
@@ -122,11 +132,13 @@ export default function SelectTimeScreen({ navigation }) {
                 {TIME_GROUPS.map((group) => (
                     <View key={group.title} style={styles.group}>
                         <View style={styles.groupHeader}>
-                            <Ionicons
-                                name={group.icon}
-                                size={18}
-                                color={COLORS.black}
-                            />
+                            <View style={styles.groupIconChip}>
+                                <Ionicons
+                                    name={group.icon}
+                                    size={16}
+                                    color={COLORS.black || "#111827"}
+                                />
+                            </View>
                             <Text style={styles.groupTitle}>{group.title}</Text>
                         </View>
 
@@ -138,7 +150,7 @@ export default function SelectTimeScreen({ navigation }) {
                                     <TouchableOpacity
                                         key={slot.time}
                                         disabled={!slot.available}
-                                        activeOpacity={0.7}
+                                        activeOpacity={0.75}
                                         onPress={() => setSelectedTime(slot.time)}
                                         style={[
                                             styles.slot,
@@ -186,35 +198,41 @@ export default function SelectTimeScreen({ navigation }) {
 const styles = StyleSheet.create({
     screen: {
         flex: 1,
-        backgroundColor: COLORS.background,
+        backgroundColor: COLORS.background || "#F9FAFB",
     },
 
     content: {
-        padding: SPACING.lg,
-        paddingBottom: 140,
+        paddingHorizontal: SPACING.lg || 16,
+        paddingTop: SPACING.md || 12,
+        paddingBottom: 150,
+    },
+
+    headerContainer: {
+        marginBottom: 16,
     },
 
     heading: {
-        fontSize: 28,
+        fontSize: 26,
         fontWeight: "800",
-        color: COLORS.black,
-        letterSpacing: -0.4,
+        color: COLORS.black || "#111827",
+        letterSpacing: -0.3,
     },
 
     subtitle: {
         marginTop: 4,
         color: "#6B7280",
-        fontSize: 14,
-        marginBottom: 20,
+        fontSize: 13.5,
+        lineHeight: 18,
     },
 
     dateCard: {
-        backgroundColor: COLORS.black,
-        borderRadius: RADIUS.xl,
-        padding: SPACING.lg,
+        backgroundColor: COLORS.black || "#111827",
+        borderRadius: RADIUS.xl || 18,
+        paddingHorizontal: 16,
+        paddingVertical: 14,
         flexDirection: "row",
         alignItems: "center",
-        marginBottom: 20,
+        marginBottom: 18,
         ...Platform.select({
             ios: {
                 shadowColor: "#000",
@@ -229,13 +247,13 @@ const styles = StyleSheet.create({
     },
 
     dateIconWrapper: {
-        width: 40,
-        height: 40,
+        width: 38,
+        height: 38,
         borderRadius: 12,
-        backgroundColor: "#262626",
+        backgroundColor: "rgba(255, 255, 255, 0.12)",
         alignItems: "center",
         justifyContent: "center",
-        marginRight: 14,
+        marginRight: 12,
     },
 
     dateInfo: {
@@ -244,30 +262,54 @@ const styles = StyleSheet.create({
 
     dateLabel: {
         color: "#9CA3AF",
-        fontSize: 11,
+        fontSize: 10.5,
         fontWeight: "600",
         textTransform: "uppercase",
         letterSpacing: 0.4,
     },
 
     dateValue: {
-        color: COLORS.primary,
-        fontSize: 18,
+        color: COLORS.primary || "#F59E0B",
+        fontSize: 16,
         fontWeight: "800",
-        marginTop: 2,
+        marginTop: 1,
+    },
+
+    changeDateBtn: {
+        backgroundColor: "rgba(255, 255, 255, 0.1)",
+        paddingHorizontal: 10,
+        paddingVertical: 5,
+        borderRadius: 8,
+    },
+
+    changeDateText: {
+        color: "#FFFFFF",
+        fontSize: 11.5,
+        fontWeight: "700",
     },
 
     legendContainer: {
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between",
-        backgroundColor: COLORS.white,
+        backgroundColor: COLORS.white || "#FFFFFF",
         paddingVertical: 10,
         paddingHorizontal: 16,
-        borderRadius: RADIUS.lg,
-        marginBottom: 24,
+        borderRadius: RADIUS.lg || 14,
+        marginBottom: 22,
         borderWidth: 1,
-        borderColor: "#F3F4F6",
+        borderColor: "#E5E7EB",
+        ...Platform.select({
+            ios: {
+                shadowColor: "#000",
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.03,
+                shadowRadius: 4,
+            },
+            android: {
+                elevation: 1,
+            },
+        }),
     },
 
     legendItem: {
@@ -287,7 +329,7 @@ const styles = StyleSheet.create({
     },
 
     legendSelected: {
-        backgroundColor: COLORS.primary,
+        backgroundColor: COLORS.primary || "#F59E0B",
     },
 
     legendFull: {
@@ -295,13 +337,13 @@ const styles = StyleSheet.create({
     },
 
     legendText: {
-        fontSize: 12,
+        fontSize: 11.5,
         color: "#4B5563",
         fontWeight: "600",
     },
 
     group: {
-        marginBottom: 24,
+        marginBottom: 22,
     },
 
     groupHeader: {
@@ -310,10 +352,19 @@ const styles = StyleSheet.create({
         marginBottom: 12,
     },
 
+    groupIconChip: {
+        width: 28,
+        height: 28,
+        borderRadius: 8,
+        backgroundColor: "#F3F4F6",
+        alignItems: "center",
+        justifyContent: "center",
+    },
+
     groupTitle: {
-        fontSize: 16,
+        fontSize: 15,
         fontWeight: "700",
-        color: COLORS.black,
+        color: COLORS.black || "#111827",
         marginLeft: 8,
         letterSpacing: -0.2,
     },
@@ -327,13 +378,14 @@ const styles = StyleSheet.create({
     slot: {
         width: "31%",
         minHeight: 52,
-        backgroundColor: COLORS.white,
-        borderRadius: RADIUS.xl,
+        backgroundColor: COLORS.white || "#FFFFFF",
+        borderRadius: RADIUS.xl || 16,
         borderWidth: 1.5,
-        borderColor: "#F3F4F6",
+        borderColor: "#E5E7EB",
         alignItems: "center",
         justifyContent: "center",
         paddingVertical: 8,
+        paddingHorizontal: 2,
         ...Platform.select({
             ios: {
                 shadowColor: "#000",
@@ -348,17 +400,17 @@ const styles = StyleSheet.create({
     },
 
     selectedSlot: {
-        backgroundColor: COLORS.black,
-        borderColor: COLORS.primary,
+        backgroundColor: COLORS.black || "#111827",
+        borderColor: COLORS.primary || "#F59E0B",
         ...Platform.select({
             ios: {
-                shadowColor: COLORS.black,
+                shadowColor: "#000",
                 shadowOffset: { width: 0, height: 4 },
-                shadowOpacity: 0.2,
-                shadowRadius: 6,
+                shadowOpacity: 0.18,
+                shadowRadius: 8,
             },
             android: {
-                elevation: 4,
+                elevation: 5,
             },
         }),
     },
@@ -366,20 +418,21 @@ const styles = StyleSheet.create({
     disabledSlot: {
         backgroundColor: "#F9FAFB",
         borderColor: "#F3F4F6",
+        opacity: 0.7,
     },
 
     slotText: {
-        fontSize: 13,
+        fontSize: 12.5,
         fontWeight: "700",
-        color: COLORS.black,
+        color: COLORS.black || "#111827",
     },
 
     selectedText: {
-        color: COLORS.primary,
+        color: COLORS.primary || "#F59E0B",
     },
 
     disabledText: {
-        color: "#D1D5DB",
+        color: "#9CA3AF",
     },
 
     fullBadge: {
@@ -388,10 +441,12 @@ const styles = StyleSheet.create({
         paddingHorizontal: 6,
         paddingVertical: 1,
         borderRadius: 4,
+        borderWidth: 0.5,
+        borderColor: "#FECACA",
     },
 
     fullText: {
-        fontSize: 9,
+        fontSize: 8.5,
         fontWeight: "700",
         color: "#EF4444",
     },
@@ -401,21 +456,21 @@ const styles = StyleSheet.create({
         left: 0,
         right: 0,
         bottom: 0,
-        backgroundColor: COLORS.white,
-        paddingHorizontal: SPACING.lg,
-        paddingTop: 12,
-        paddingBottom: Platform.OS === "ios" ? 28 : SPACING.lg,
+        backgroundColor: COLORS.white || "#FFFFFF",
+        paddingHorizontal: SPACING.lg || 16,
+        paddingTop: 14,
+        paddingBottom: Platform.OS === "ios" ? 30 : 16,
         borderTopWidth: 1,
         borderTopColor: "#F3F4F6",
         ...Platform.select({
             ios: {
                 shadowColor: "#000",
-                shadowOffset: { width: 0, height: -4 },
-                shadowOpacity: 0.04,
-                shadowRadius: 8,
+                shadowOffset: { width: 0, height: -6 },
+                shadowOpacity: 0.06,
+                shadowRadius: 10,
             },
             android: {
-                elevation: 8,
+                elevation: 10,
             },
         }),
     },

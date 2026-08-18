@@ -29,58 +29,56 @@ export default function HomeScreen({ navigation }) {
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={styles.content}
             >
-                {/* Luxury Salon Top Branding & Action Bar */}
-                <View style={styles.topHeader}>
-                    <View style={styles.brandContainer}>
-                        <View style={styles.logoBadge}>
-                            <Ionicons name="sparkles" size={16} color="#F59E0B" />
+                {/* Dark Header Panel */}
+                <View style={styles.headerPanel}>
+                    <View style={styles.topHeader}>
+                        <View style={styles.brandContainer}>
+                            <View style={styles.logoBadge}>
+                                <Ionicons name="sparkles" size={16} color="#0D1B1A" />
+                            </View>
+                            <View>
+                                <Text style={styles.brandTitle}>Luxe Studio</Text>
+                                <Text style={styles.brandSubtitle}>Premium Hair & Grooming</Text>
+                            </View>
                         </View>
-                        <View>
-                            <Text style={styles.brandTitle}>LUXE STUDIO</Text>
-                            <Text style={styles.brandSubtitle}>Premium Hair & Grooming</Text>
-                        </View>
+
+                        <TouchableOpacity
+                            style={styles.notificationBtn}
+                            activeOpacity={0.75}
+                            onPress={() => navigation.navigate("Notifications")}
+                        >
+                            <Ionicons name="notifications-outline" size={19} color="#F4F7F6" />
+                            <View style={styles.notificationPulse} />
+                        </TouchableOpacity>
                     </View>
 
-                    <TouchableOpacity
-                        style={styles.notificationBtn}
-                        activeOpacity={0.8}
-                        onPress={() => navigation.navigate("Notifications")}
-                    >
-                        <Ionicons
-                            name="notifications-outline"
-                            size={20}
-                            color={COLORS.black || "#0F172A"}
-                        />
-                        <View style={styles.notificationPulse} />
-                    </TouchableOpacity>
-                </View>
-
-                {/* Hero Showcase Banner */}
-                <View style={styles.sectionWrapper}>
+                    {/* Hero Showcase Banner */}
                     <HeroBanner />
                 </View>
 
-                {/* Real-time Salon Metric Dashboard */}
-                <View style={styles.metricsContainer}>
-                    <View style={styles.metricCard}>
-                        <View style={styles.metricIconBg}>
-                            <Ionicons name="time-outline" size={18} color="#D97706" />
+                {/* Floating Metric Card — overlaps header/hero seam */}
+                <View style={styles.metricsFloatWrapper}>
+                    <View style={styles.metricsContainer}>
+                        <View style={styles.metricCard}>
+                            <View style={styles.metricIconBg}>
+                                <Ionicons name="time-outline" size={17} color="#0F766E" />
+                            </View>
+                            <View>
+                                <Text style={styles.metricVal}>20 Min</Text>
+                                <Text style={styles.metricLbl}>Wait Time</Text>
+                            </View>
                         </View>
-                        <View>
-                            <Text style={styles.metricVal}>20 Min</Text>
-                            <Text style={styles.metricLbl}>Wait Time</Text>
-                        </View>
-                    </View>
 
-                    <View style={styles.metricDivider} />
+                        <View style={styles.metricDivider} />
 
-                    <View style={styles.metricCard}>
-                        <View style={styles.metricIconBg}>
-                            <Ionicons name="people-outline" size={18} color="#2563EB" />
-                        </View>
-                        <View>
-                            <Text style={styles.metricVal}>4 Ahead</Text>
-                            <Text style={styles.metricLbl}>Live Queue</Text>
+                        <View style={styles.metricCard}>
+                            <View style={styles.metricIconBg}>
+                                <Ionicons name="people-outline" size={17} color="#0F766E" />
+                            </View>
+                            <View>
+                                <Text style={styles.metricVal}>4 Ahead</Text>
+                                <Text style={styles.metricLbl}>Live Queue</Text>
+                            </View>
                         </View>
                     </View>
                 </View>
@@ -95,9 +93,8 @@ export default function HomeScreen({ navigation }) {
                 {/* Live Chair Status Section */}
                 <View style={styles.sectionWrapper}>
                     <View style={styles.sectionHeader}>
-                        <View style={styles.sectionTitleRow}>
-                            <View style={styles.sectionIndicator} />
-                            <Text style={styles.sectionHeading}>Live Queue</Text>
+                        <View style={styles.pillTag}>
+                            <Text style={styles.pillTagText}>Live Queue</Text>
                         </View>
                         <View style={styles.liveChip}>
                             <View style={styles.livePulseDot} />
@@ -117,9 +114,8 @@ export default function HomeScreen({ navigation }) {
                 {/* Active Appointments Section */}
                 <View style={styles.sectionWrapper}>
                     <View style={styles.sectionHeader}>
-                        <View style={styles.sectionTitleRow}>
-                            <View style={[styles.sectionIndicator, { backgroundColor: "#8B5CF6" }]} />
-                            <Text style={styles.sectionHeading}>Active Booking</Text>
+                        <View style={[styles.pillTag, styles.pillTagAlt]}>
+                            <Text style={[styles.pillTagText, styles.pillTagTextAlt]}>Active Booking</Text>
                         </View>
                     </View>
 
@@ -127,17 +123,16 @@ export default function HomeScreen({ navigation }) {
                 </View>
 
                 {/* Popular Services Horizontal Carousel */}
-                <View style={styles.sectionWrapper}>
+                <View style={[styles.sectionWrapper, { marginBottom: 8 }]}>
                     <View style={styles.sectionHeader}>
-                        <View style={styles.sectionTitleRow}>
-                            <View style={[styles.sectionIndicator, { backgroundColor: "#F59E0B" }]} />
-                            <Text style={styles.sectionHeading}>Popular Services</Text>
-                        </View>
+                        <Text style={styles.sectionHeadingLarge}>Popular Services</Text>
                         <TouchableOpacity
                             activeOpacity={0.7}
                             onPress={() => navigation.navigate("Services")}
+                            style={styles.exploreLinkBtn}
                         >
-                            <Text style={styles.exploreLink}>Explore All →</Text>
+                            <Text style={styles.exploreLink}>See all</Text>
+                            <Ionicons name="chevron-forward" size={14} color="#0F766E" />
                         </TouchableOpacity>
                     </View>
 
@@ -164,93 +159,97 @@ export default function HomeScreen({ navigation }) {
     );
 }
 
+const ACCENT = "#0F766E"; // deep teal — spa/salon aesthetic
+const INK = "#0D1B1A";
+
 const styles = StyleSheet.create({
     screen: {
         flex: 1,
-        backgroundColor: COLORS.background || "#FAF9F6",
+        backgroundColor: COLORS.background || "#F5F5F2",
     },
     content: {
-        padding: SPACING.lg || 20,
-        paddingBottom: 50,
+        paddingBottom: 56,
     },
 
-    // Luxury Brand Header
+    // Dark Header Panel — replaces flat top bar
+    headerPanel: {
+        backgroundColor: INK,
+        borderBottomLeftRadius: 28,
+        borderBottomRightRadius: 28,
+        paddingHorizontal: SPACING.lg || 20,
+        paddingTop: 14,
+        paddingBottom: 28,
+    },
     topHeader: {
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between",
-        marginBottom: 20,
-        marginTop: 4,
+        marginBottom: 18,
     },
     brandContainer: {
         flexDirection: "row",
         alignItems: "center",
-        gap: 12,
+        gap: 11,
     },
     logoBadge: {
-        width: 40,
-        height: 40,
+        width: 38,
+        height: 38,
         borderRadius: 12,
-        backgroundColor: "#FEF3C7",
+        backgroundColor: "#4ADE9D",
         alignItems: "center",
         justifyContent: "center",
-        borderWidth: 1,
-        borderColor: "#FDE68A",
     },
     brandTitle: {
-        fontSize: 18,
-        fontWeight: "900",
-        color: COLORS.black || "#0F172A",
-        letterSpacing: 1.5,
-    },
-    brandSubtitle: {
-        fontSize: 11,
-        color: "#64748B",
-        fontWeight: "600",
+        fontSize: 16,
+        fontWeight: "800",
+        color: "#F4F7F6",
         letterSpacing: 0.2,
     },
+    brandSubtitle: {
+        fontSize: 11.5,
+        color: "#9FB3AF",
+        fontWeight: "500",
+        marginTop: 2,
+    },
     notificationBtn: {
-        width: 42,
-        height: 42,
-        borderRadius: 14,
-        backgroundColor: "#FFFFFF",
+        width: 40,
+        height: 40,
+        borderRadius: 13,
+        backgroundColor: "rgba(255,255,255,0.08)",
         alignItems: "center",
         justifyContent: "center",
-        borderWidth: 1,
-        borderColor: "#E2E8F0",
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.04,
-        shadowRadius: 6,
-        elevation: 2,
     },
     notificationPulse: {
         position: "absolute",
-        top: 10,
-        right: 11,
+        top: 9,
+        right: 10,
         width: 7,
         height: 7,
         borderRadius: 3.5,
-        backgroundColor: "#EF4444",
+        backgroundColor: "#F87171",
+        borderWidth: 1.5,
+        borderColor: INK,
     },
 
-    // Real-time Salon Metric Dashboard
+    // Floating metric card, overlapping the header/content seam
+    metricsFloatWrapper: {
+        paddingHorizontal: SPACING.lg || 20,
+        marginTop: -22,
+        marginBottom: 22,
+    },
     metricsContainer: {
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-around",
         backgroundColor: "#FFFFFF",
-        borderRadius: RADIUS.xl || 18,
-        paddingVertical: 14,
-        paddingHorizontal: 16,
-        marginBottom: 22,
-        borderWidth: 1,
-        borderColor: "#F1F5F9",
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 3 },
-        shadowOpacity: 0.03,
-        shadowRadius: 8,
-        elevation: 2,
+        borderRadius: RADIUS.xl || 20,
+        paddingVertical: 16,
+        paddingHorizontal: 18,
+        shadowColor: "#000000",
+        shadowOffset: { width: 0, height: 8 },
+        shadowOpacity: 0.10,
+        shadowRadius: 16,
+        elevation: 6,
     },
     metricCard: {
         flexDirection: "row",
@@ -260,89 +259,106 @@ const styles = StyleSheet.create({
     metricIconBg: {
         width: 36,
         height: 36,
-        borderRadius: 10,
-        backgroundColor: "#F8FAFC",
+        borderRadius: 11,
+        backgroundColor: "#E6F5F2",
         alignItems: "center",
         justifyContent: "center",
     },
     metricVal: {
         fontSize: 14,
         fontWeight: "800",
-        color: COLORS.black || "#0F172A",
+        color: INK,
     },
     metricLbl: {
-        fontSize: 11,
-        color: "#64748B",
+        fontSize: 10.5,
+        color: "#8A938F",
         fontWeight: "500",
+        marginTop: 1,
     },
     metricDivider: {
         width: 1,
-        height: 26,
-        backgroundColor: "#E2E8F0",
+        height: 28,
+        backgroundColor: "#EAEDEC",
     },
 
-    // Section Layout Scaffold
+    // Section Layout
     sectionWrapper: {
-        marginBottom: 24,
+        paddingHorizontal: SPACING.lg || 20,
+        marginBottom: 26,
     },
     sectionHeader: {
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between",
-        marginBottom: 12,
+        marginBottom: 14,
     },
-    sectionTitleRow: {
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 8,
-    },
-    sectionIndicator: {
-        width: 4,
-        height: 16,
-        borderRadius: 2,
-        backgroundColor: COLORS.primary || "#2563EB",
-    },
-    sectionHeading: {
+    sectionHeadingLarge: {
         fontSize: 17,
         fontWeight: "800",
-        color: COLORS.black || "#0F172A",
-        letterSpacing: -0.3,
+        color: INK,
+        letterSpacing: -0.2,
+    },
+
+    // Pill-style section tags — replaces the old bar-indicator pattern
+    pillTag: {
+        backgroundColor: "#E6F5F2",
+        paddingHorizontal: 12,
+        paddingVertical: 6,
+        borderRadius: 20,
+    },
+    pillTagText: {
+        fontSize: 12.5,
+        fontWeight: "800",
+        color: ACCENT,
+        letterSpacing: 0.2,
+    },
+    pillTagAlt: {
+        backgroundColor: "#F1EAFB",
+    },
+    pillTagTextAlt: {
+        color: "#7C3AED",
     },
 
     // Live Pill Chip
     liveChip: {
         flexDirection: "row",
         alignItems: "center",
-        backgroundColor: "#DCFCE7",
-        paddingHorizontal: 9,
-        paddingVertical: 4,
+        backgroundColor: "#E4F7E9",
+        paddingHorizontal: 10,
+        paddingVertical: 5,
         borderRadius: 20,
-        gap: 5,
+        gap: 6,
     },
     livePulseDot: {
         width: 6,
         height: 6,
         borderRadius: 3,
-        backgroundColor: "#16A34A",
+        backgroundColor: "#1DA34A",
     },
     liveChipText: {
         fontSize: 10,
         fontWeight: "800",
-        color: "#15803D",
+        color: "#127A38",
         letterSpacing: 0.5,
     },
 
     // Explore Link
+    exploreLinkBtn: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 2,
+    },
     exploreLink: {
         fontSize: 13,
         fontWeight: "700",
-        color: "#D97706",
+        color: ACCENT,
     },
 
     // Carousel Layout
     carouselContainer: {
+        paddingLeft: SPACING.lg || 20,
         paddingRight: 10,
-        gap: 12,
+        gap: 14,
     },
     carouselItemWrapper: {
         width: 215,

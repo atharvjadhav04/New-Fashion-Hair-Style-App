@@ -50,37 +50,37 @@ export default function QueueScreen() {
                 contentContainerStyle={styles.content}
             >
                 {/* Header */}
+                <View style={styles.headerContainer}>
+                    <Text style={styles.heading}>Live Queue</Text>
+                    <Text style={styles.subtitle}>तुमचा नंबर जवळ येत आहे</Text>
+                </View>
 
-                <Text style={styles.heading}>
-                    Live Queue
-                </Text>
-
-                <Text style={styles.subtitle}>
-                    तुमचा नंबर जवळ येत आहे
-                </Text>
-
-                {/* Barber */}
-
+                {/* Barber Card */}
                 <View style={styles.barberCard}>
-                    <View style={styles.barberIcon}>
-                        <Ionicons
-                            name="person"
-                            size={22}
-                            color={COLORS.primary}
-                        />
+                    <View style={styles.barberAvatarWrapper}>
+                        <View style={styles.barberIcon}>
+                            <Ionicons
+                                name="person"
+                                size={20}
+                                color={COLORS.primary || "#EAB308"}
+                            />
+                        </View>
                     </View>
 
                     <View style={styles.barberInfo}>
-                        <Text style={styles.smallLabel}>
-                            तुमचा बार्बर
-                        </Text>
-
+                        <Text style={styles.smallLabel}>तुमचा बार्बर</Text>
                         <Text style={styles.barberName}>
                             {queue.barberName}
                         </Text>
                     </View>
 
                     <View style={styles.chairBadge}>
+                        <Ionicons
+                            name="cut-outline"
+                            size={13}
+                            color={COLORS.black || "#111827"}
+                            style={{ marginRight: 4 }}
+                        />
                         <Text style={styles.chairText}>
                             Chair {queue.chairNumber}
                         </Text>
@@ -88,23 +88,20 @@ export default function QueueScreen() {
                 </View>
 
                 {/* Main Queue Card */}
-
                 <View style={styles.queueCard}>
                     <View style={styles.liveRow}>
-                        <View style={styles.liveDotOuter}>
-                            <View style={styles.liveDot} />
+                        <View style={styles.liveBadge}>
+                            <View style={styles.liveDotOuter}>
+                                <View style={styles.liveDot} />
+                            </View>
+                            <Text style={styles.liveText}>LIVE QUEUE</Text>
                         </View>
-
-                        <Text style={styles.liveText}>
-                            LIVE QUEUE
-                        </Text>
                     </View>
 
-                    <Text style={styles.currentLabel}>
-                        सध्या सुरू असलेला टोकन
-                    </Text>
+                    <Text style={styles.currentLabel}>सध्या सुरू असलेला टोकन</Text>
 
                     <View style={styles.tokenDisplayBox}>
+                        <Text style={styles.currentTokenSymbol}>#</Text>
                         <Text style={styles.currentToken}>
                             {queue.currentToken}
                         </Text>
@@ -113,10 +110,7 @@ export default function QueueScreen() {
                     <View style={styles.divider} />
 
                     <View style={styles.progressHeader}>
-                        <Text style={styles.progressLabel}>
-                            Queue Progress
-                        </Text>
-
+                        <Text style={styles.progressLabel}>Queue Progress</Text>
                         <Text style={styles.progressPercent}>
                             {Math.round(progress)}%
                         </Text>
@@ -134,21 +128,17 @@ export default function QueueScreen() {
                     </View>
 
                     <View style={styles.tokenRow}>
-                        <View>
-                            <Text style={styles.tokenLabel}>
-                                Current
-                            </Text>
-
+                        <View style={styles.tokenBox}>
+                            <Text style={styles.tokenLabel}>Current</Text>
                             <Text style={styles.tokenValue}>
                                 #{queue.currentToken}
                             </Text>
                         </View>
 
-                        <View style={styles.youContainer}>
-                            <Text style={styles.youLabel}>
-                                YOU
-                            </Text>
+                        <View style={styles.tokenDividerVertical} />
 
+                        <View style={[styles.tokenBox, styles.youContainer]}>
+                            <Text style={styles.youLabel}>YOU</Text>
                             <Text style={styles.yourToken}>
                                 #{queue.yourToken}
                             </Text>
@@ -157,24 +147,19 @@ export default function QueueScreen() {
                 </View>
 
                 {/* Waiting Information */}
-
                 <View style={styles.waitingCard}>
                     <View style={styles.waitingItem}>
                         <View style={styles.waitingIcon}>
                             <Ionicons
-                                name="people-outline"
-                                size={22}
-                                color={COLORS.primary}
+                                name="people"
+                                size={20}
+                                color={COLORS.primary || "#111827"}
                             />
                         </View>
-
                         <Text style={styles.waitingNumber}>
                             {customersAhead}
                         </Text>
-
-                        <Text style={styles.waitingLabel}>
-                            ग्राहक तुमच्या आधी
-                        </Text>
+                        <Text style={styles.waitingLabel}>ग्राहक तुमच्या आधी</Text>
                     </View>
 
                     <View style={styles.verticalLine} />
@@ -182,29 +167,24 @@ export default function QueueScreen() {
                     <View style={styles.waitingItem}>
                         <View style={styles.waitingIcon}>
                             <Ionicons
-                                name="time-outline"
-                                size={22}
-                                color={COLORS.primary}
+                                name="time"
+                                size={20}
+                                color={COLORS.primary || "#111827"}
                             />
                         </View>
-
                         <Text style={styles.waitingNumber}>
                             {queue.estimatedMinutes}
                         </Text>
-
-                        <Text style={styles.waitingLabel}>
-                            अंदाजे मिनिटे
-                        </Text>
+                        <Text style={styles.waitingLabel}>अंदाजे मिनिटे</Text>
                     </View>
                 </View>
 
                 {/* Status */}
-
                 <View style={styles.statusCard}>
                     <View style={styles.statusIcon}>
                         <Ionicons
-                            name="notifications-outline"
-                            size={20}
+                            name="notifications"
+                            size={18}
                             color="#16A34A"
                         />
                     </View>
@@ -213,23 +193,19 @@ export default function QueueScreen() {
                         <Text style={styles.statusTitle}>
                             तुमची पाळी जवळ आली आहे
                         </Text>
-
                         <Text style={styles.statusText}>
-                            कृपया सलूनमध्ये उपलब्ध रहा. तुमचा नंबर
-                            जवळ आल्यावर तुम्हाला अपडेट मिळेल.
+                            कृपया सलूनमध्ये उपलब्ध रहा. तुमचा नंबर जवळ आल्यावर तुम्हाला अपडेट मिळेल.
                         </Text>
                     </View>
                 </View>
 
                 {/* Refresh info */}
-
                 <View style={styles.refreshRow}>
                     <Ionicons
                         name="sync-outline"
-                        size={14}
+                        size={13}
                         color="#9CA3AF"
                     />
-
                     <Text style={styles.refreshText}>
                         Queue माहिती आपोआप अपडेट होईल
                     </Text>
@@ -242,43 +218,48 @@ export default function QueueScreen() {
 const styles = StyleSheet.create({
     screen: {
         flex: 1,
-        backgroundColor: COLORS.background,
+        backgroundColor: COLORS.background || "#F9FAFB",
     },
 
     content: {
-        padding: SPACING.lg,
+        paddingHorizontal: SPACING.lg || 20,
+        paddingTop: SPACING.md || 16,
         paddingBottom: 40,
     },
 
+    headerContainer: {
+        marginBottom: 8,
+    },
+
     heading: {
-        fontSize: 28,
+        fontSize: 30,
         fontWeight: "800",
-        color: COLORS.black,
-        letterSpacing: -0.5,
+        color: COLORS.black || "#111827",
+        letterSpacing: -0.8,
     },
 
     subtitle: {
-        marginTop: 4,
+        marginTop: 2,
         color: "#6B7280",
         fontSize: 14,
-        fontWeight: "400",
+        fontWeight: "500",
     },
 
     barberCard: {
-        backgroundColor: COLORS.white,
-        borderRadius: RADIUS.xl,
-        padding: SPACING.lg,
-        marginTop: 20,
+        backgroundColor: COLORS.white || "#FFFFFF",
+        borderRadius: RADIUS.xl || 20,
+        padding: SPACING.lg || 16,
+        marginTop: 16,
         flexDirection: "row",
         alignItems: "center",
         borderWidth: 1,
-        borderColor: "#F0F0F0",
+        borderColor: "#E5E7EB",
         ...Platform.select({
             ios: {
                 shadowColor: "#000",
-                shadowOffset: { width: 0, height: 3 },
-                shadowOpacity: 0.05,
-                shadowRadius: 8,
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.04,
+                shadowRadius: 10,
             },
             android: {
                 elevation: 2,
@@ -286,11 +267,15 @@ const styles = StyleSheet.create({
         }),
     },
 
+    barberAvatarWrapper: {
+        position: "relative",
+    },
+
     barberIcon: {
-        width: 46,
-        height: 46,
-        borderRadius: 14,
-        backgroundColor: COLORS.black,
+        width: 48,
+        height: 48,
+        borderRadius: 16,
+        backgroundColor: COLORS.black || "#111827",
         alignItems: "center",
         justifyContent: "center",
     },
@@ -301,50 +286,54 @@ const styles = StyleSheet.create({
     },
 
     smallLabel: {
-        color: "#8E8E93",
+        color: "#6B7280",
         fontSize: 11,
-        fontWeight: "500",
+        fontWeight: "600",
+        textTransform: "uppercase",
+        letterSpacing: 0.5,
     },
 
     barberName: {
         marginTop: 2,
-        fontSize: 17,
+        fontSize: 18,
         fontWeight: "700",
-        color: COLORS.black,
-        letterSpacing: -0.2,
+        color: COLORS.black || "#111827",
+        letterSpacing: -0.3,
     },
 
     chairBadge: {
-        backgroundColor: "#F8F6EF",
+        backgroundColor: "#F3F4F6",
         paddingHorizontal: 12,
-        paddingVertical: 6,
-        borderRadius: 16,
+        paddingVertical: 7,
+        borderRadius: 20,
+        flexDirection: "row",
+        alignItems: "center",
         borderWidth: 1,
-        borderColor: "rgba(0,0,0,0.04)",
+        borderColor: "#E5E7EB",
     },
 
     chairText: {
-        color: COLORS.black,
+        color: COLORS.black || "#111827",
         fontSize: 12,
         fontWeight: "700",
     },
 
     queueCard: {
-        backgroundColor: COLORS.black,
-        borderRadius: RADIUS.xl,
-        padding: 22,
-        marginTop: 16,
+        backgroundColor: COLORS.black || "#0F172A",
+        borderRadius: RADIUS.xl || 24,
+        padding: 24,
+        marginTop: 18,
         borderWidth: 1,
-        borderColor: "#222222",
+        borderColor: "#1E293B",
         ...Platform.select({
             ios: {
                 shadowColor: "#000",
-                shadowOffset: { width: 0, height: 8 },
-                shadowOpacity: 0.18,
-                shadowRadius: 12,
+                shadowOffset: { width: 0, height: 12 },
+                shadowOpacity: 0.25,
+                shadowRadius: 16,
             },
             android: {
-                elevation: 6,
+                elevation: 8,
             },
         }),
     },
@@ -352,107 +341,149 @@ const styles = StyleSheet.create({
     liveRow: {
         flexDirection: "row",
         alignItems: "center",
+        justifyContent: "center",
+    },
+
+    liveBadge: {
+        flexDirection: "row",
+        alignItems: "center",
+        backgroundColor: "rgba(34, 197, 94, 0.12)",
+        paddingHorizontal: 12,
+        paddingVertical: 5,
+        borderRadius: 12,
+        borderWidth: 1,
+        borderColor: "rgba(34, 197, 94, 0.25)",
     },
 
     liveDotOuter: {
-        width: 14,
-        height: 14,
-        borderRadius: 7,
-        backgroundColor: "rgba(34, 197, 94, 0.2)",
+        width: 10,
+        height: 10,
+        borderRadius: 5,
+        backgroundColor: "rgba(34, 197, 94, 0.3)",
         alignItems: "center",
         justifyContent: "center",
     },
 
     liveDot: {
-        width: 7,
-        height: 7,
-        borderRadius: 3.5,
+        width: 6,
+        height: 6,
+        borderRadius: 3,
         backgroundColor: "#22C55E",
     },
 
     liveText: {
-        marginLeft: 8,
+        marginLeft: 6,
         color: "#22C55E",
         fontSize: 11,
         fontWeight: "800",
-        letterSpacing: 1.2,
+        letterSpacing: 1,
     },
 
     currentLabel: {
-        marginTop: 20,
+        marginTop: 18,
         color: "#9CA3AF",
         textAlign: "center",
         fontSize: 13,
-        fontWeight: "500",
+        fontWeight: "600",
+        letterSpacing: 0.2,
     },
 
     tokenDisplayBox: {
-        alignItems: "center",
+        flexDirection: "row",
+        alignItems: "baseline",
         justifyContent: "center",
-        paddingVertical: 6,
+        paddingVertical: 2,
+    },
+
+    currentTokenSymbol: {
+        color: COLORS.primary || "#EAB308",
+        fontSize: 36,
+        fontWeight: "700",
+        marginRight: 2,
     },
 
     currentToken: {
-        color: COLORS.primary,
-        fontSize: 62,
-        fontWeight: "800",
+        color: COLORS.primary || "#EAB308",
+        fontSize: 68,
+        fontWeight: "900",
         textAlign: "center",
-        letterSpacing: -1,
+        letterSpacing: -2,
     },
 
     divider: {
         height: 1,
-        backgroundColor: "rgba(255, 255, 255, 0.1)",
+        backgroundColor: "rgba(255, 255, 255, 0.08)",
         marginVertical: 18,
     },
 
     progressHeader: {
         flexDirection: "row",
         justifyContent: "space-between",
+        alignItems: "center",
         marginBottom: 8,
     },
 
     progressLabel: {
         color: "#9CA3AF",
         fontSize: 12,
-        fontWeight: "500",
+        fontWeight: "600",
     },
 
     progressPercent: {
-        color: COLORS.primary,
-        fontSize: 12,
-        fontWeight: "700",
+        color: COLORS.primary || "#EAB308",
+        fontSize: 13,
+        fontWeight: "800",
     },
 
     progressBackground: {
         height: 8,
-        backgroundColor: "#262626",
+        backgroundColor: "#1E293B",
         borderRadius: 4,
         overflow: "hidden",
     },
 
     progressFill: {
         height: "100%",
-        backgroundColor: COLORS.primary,
+        backgroundColor: COLORS.primary || "#EAB308",
         borderRadius: 4,
     },
 
     tokenRow: {
         flexDirection: "row",
         justifyContent: "space-between",
+        alignItems: "center",
         marginTop: 20,
+        backgroundColor: "rgba(255, 255, 255, 0.04)",
+        paddingHorizontal: 16,
+        paddingVertical: 12,
+        borderRadius: 16,
+        borderWidth: 1,
+        borderColor: "rgba(255, 255, 255, 0.05)",
+    },
+
+    tokenBox: {
+        flex: 1,
+    },
+
+    tokenDividerVertical: {
+        width: 1,
+        height: 28,
+        backgroundColor: "rgba(255, 255, 255, 0.1)",
+        marginHorizontal: 12,
     },
 
     tokenLabel: {
         color: "#9CA3AF",
         fontSize: 11,
-        fontWeight: "500",
+        fontWeight: "600",
+        textTransform: "uppercase",
+        letterSpacing: 0.5,
     },
 
     tokenValue: {
-        color: COLORS.white,
-        fontSize: 22,
-        fontWeight: "700",
+        color: COLORS.white || "#FFFFFF",
+        fontSize: 20,
+        fontWeight: "800",
         marginTop: 2,
     },
 
@@ -461,35 +492,35 @@ const styles = StyleSheet.create({
     },
 
     youLabel: {
-        color: COLORS.primary,
+        color: COLORS.primary || "#EAB308",
         fontSize: 11,
         fontWeight: "800",
-        letterSpacing: 0.5,
+        letterSpacing: 0.8,
     },
 
     yourToken: {
-        color: COLORS.primary,
-        fontSize: 22,
+        color: COLORS.primary || "#EAB308",
+        fontSize: 20,
         fontWeight: "800",
         marginTop: 2,
     },
 
     waitingCard: {
-        backgroundColor: COLORS.white,
-        borderRadius: RADIUS.xl,
+        backgroundColor: COLORS.white || "#FFFFFF",
+        borderRadius: RADIUS.xl || 20,
         paddingVertical: 18,
-        paddingHorizontal: SPACING.lg,
-        marginTop: 16,
+        paddingHorizontal: SPACING.lg || 16,
+        marginTop: 18,
         flexDirection: "row",
         alignItems: "center",
         borderWidth: 1,
-        borderColor: "#F0F0F0",
+        borderColor: "#E5E7EB",
         ...Platform.select({
             ios: {
                 shadowColor: "#000",
-                shadowOffset: { width: 0, height: 3 },
+                shadowOffset: { width: 0, height: 4 },
                 shadowOpacity: 0.04,
-                shadowRadius: 8,
+                shadowRadius: 10,
             },
             android: {
                 elevation: 2,
@@ -503,49 +534,49 @@ const styles = StyleSheet.create({
     },
 
     waitingIcon: {
-        width: 40,
-        height: 40,
-        borderRadius: 12,
-        backgroundColor: "#F8F6EF",
+        width: 42,
+        height: 42,
+        borderRadius: 14,
+        backgroundColor: "#F3F4F6",
         alignItems: "center",
         justifyContent: "center",
     },
 
     waitingNumber: {
-        marginTop: 6,
-        fontSize: 22,
+        marginTop: 8,
+        fontSize: 24,
         fontWeight: "800",
-        color: COLORS.black,
+        color: COLORS.black || "#111827",
         letterSpacing: -0.5,
     },
 
     waitingLabel: {
         marginTop: 2,
-        color: "#8E8E93",
-        fontSize: 11,
+        color: "#6B7280",
+        fontSize: 12,
         fontWeight: "500",
         textAlign: "center",
     },
 
     verticalLine: {
         width: 1,
-        height: 55,
-        backgroundColor: "#F3F4F6",
+        height: 50,
+        backgroundColor: "#E5E7EB",
     },
 
     statusCard: {
         backgroundColor: "#F0FDF4",
-        borderRadius: RADIUS.xl,
-        padding: SPACING.lg,
-        marginTop: 16,
+        borderRadius: RADIUS.xl || 20,
+        padding: SPACING.lg || 16,
+        marginTop: 18,
         flexDirection: "row",
         borderWidth: 1,
-        borderColor: "#DCFCE7",
+        borderColor: "#BBF7D0",
     },
 
     statusIcon: {
-        width: 38,
-        height: 38,
+        width: 36,
+        height: 36,
         borderRadius: 12,
         backgroundColor: "#DCFCE7",
         alignItems: "center",
@@ -567,20 +598,20 @@ const styles = StyleSheet.create({
         color: "#166534",
         fontSize: 12,
         lineHeight: 18,
-        marginTop: 3,
+        marginTop: 4,
     },
 
     refreshRow: {
         flexDirection: "row",
         justifyContent: "center",
         alignItems: "center",
-        marginTop: 20,
+        marginTop: 22,
     },
 
     refreshText: {
         marginLeft: 6,
         color: "#9CA3AF",
-        fontSize: 11,
+        fontSize: 12,
         fontWeight: "500",
     },
 });

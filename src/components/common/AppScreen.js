@@ -4,11 +4,22 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { COLORS } from "../../theme";
 
-export default function AppScreen({ children, style }) {
+export default function AppScreen({
+    children,
+    style,
+}) {
     return (
         <SafeAreaView
-            edges={["top", "left", "right"]}
-            style={[styles.container, style]}
+            edges={[
+                "top",
+                "bottom",
+                "left",
+                "right",
+            ]}
+            style={[
+                styles.container,
+                style,
+            ]}
         >
             <View style={styles.content}>
                 {children}
@@ -20,7 +31,8 @@ export default function AppScreen({ children, style }) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: COLORS.background,
+        backgroundColor:
+            COLORS.background,
     },
 
     content: {

@@ -85,23 +85,23 @@ export default function SelectDateScreen({ navigation }) {
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={styles.content}
             >
-                <Text style={styles.heading}>
-                    तारीख निवडा
-                </Text>
-
-                <Text style={styles.subtitle}>
-                    तुमच्या अपॉइंटमेंटसाठी सोयीस्कर तारीख निवडा
-                </Text>
+                {/* Header Section */}
+                <View style={styles.headerContainer}>
+                    <Text style={styles.heading}>तारीख निवडा</Text>
+                    <Text style={styles.subtitle}>
+                        तुमच्या अपॉइंटमेंटसाठी सोयीस्कर तारीख निवडा
+                    </Text>
+                </View>
 
                 {/* Section Header */}
                 <View style={styles.monthHeader}>
                     <Ionicons
                         name="calendar-outline"
                         size={18}
-                        color={COLORS.primary}
+                        color={COLORS.primary || "#F59E0B"}
                     />
                     <Text style={styles.monthText}>
-                        {selectedDate.month} 2026
+                        {selectedDate.month} {selectedDate.date.getFullYear()}
                     </Text>
                 </View>
 
@@ -117,7 +117,7 @@ export default function SelectDateScreen({ navigation }) {
                         return (
                             <TouchableOpacity
                                 key={item.iso}
-                                activeOpacity={0.7}
+                                activeOpacity={0.8}
                                 onPress={() => setSelectedDate(item)}
                                 style={[
                                     styles.dateCard,
@@ -178,9 +178,9 @@ export default function SelectDateScreen({ navigation }) {
                     <View style={styles.selectedHeader}>
                         <View style={styles.selectedIconWrapper}>
                             <Ionicons
-                                name="checkmark-circle-outline"
-                                size={22}
-                                color={COLORS.primary}
+                                name="calendar"
+                                size={20}
+                                color={COLORS.primary || "#F59E0B"}
                             />
                         </View>
                         <View style={styles.selectedTextContainer}>
@@ -199,9 +199,9 @@ export default function SelectDateScreen({ navigation }) {
                 <View style={styles.infoCard}>
                     <View style={styles.infoIconWrapper}>
                         <Ionicons
-                            name="information-circle-outline"
+                            name="information-circle"
                             size={20}
-                            color="#B45309"
+                            color="#D97706"
                         />
                     </View>
                     <View style={styles.infoContent}>
@@ -228,26 +228,31 @@ export default function SelectDateScreen({ navigation }) {
 const styles = StyleSheet.create({
     screen: {
         flex: 1,
-        backgroundColor: COLORS.background,
+        backgroundColor: COLORS.background || "#F9FAFB",
     },
 
     content: {
-        padding: SPACING.lg,
-        paddingBottom: 150,
+        paddingHorizontal: SPACING.lg || 16,
+        paddingTop: SPACING.md || 12,
+        paddingBottom: 160,
+    },
+
+    headerContainer: {
+        marginBottom: 16,
     },
 
     heading: {
-        fontSize: 28,
+        fontSize: 26,
         fontWeight: "800",
-        color: COLORS.black,
-        letterSpacing: -0.4,
+        color: COLORS.black || "#111827",
+        letterSpacing: -0.3,
     },
 
     subtitle: {
         marginTop: 4,
         color: "#6B7280",
-        fontSize: 14,
-        marginBottom: 20,
+        fontSize: 13.5,
+        lineHeight: 18,
     },
 
     monthHeader: {
@@ -257,54 +262,56 @@ const styles = StyleSheet.create({
     },
 
     monthText: {
-        fontSize: 16,
+        fontSize: 15,
         fontWeight: "700",
-        color: COLORS.black,
-        marginLeft: 8,
+        color: COLORS.black || "#1F2937",
+        marginLeft: 6,
         letterSpacing: -0.2,
     },
 
     dateList: {
-        paddingVertical: 6,
-        paddingRight: SPACING.lg,
+        paddingVertical: 4,
+        paddingRight: SPACING.lg || 16,
     },
 
     dateCard: {
         width: 72,
-        height: 104,
-        backgroundColor: COLORS.white,
-        borderRadius: RADIUS.xl,
-        marginRight: 12,
+        height: 108,
+        backgroundColor: COLORS.white || "#FFFFFF",
+        borderRadius: RADIUS.xl || 18,
+        marginRight: 10,
         alignItems: "center",
         justifyContent: "center",
         borderWidth: 1.5,
-        borderColor: "#F3F4F6",
-        paddingTop: 8,
+        borderColor: "#E5E7EB",
+        paddingTop: 12,
+        paddingBottom: 8,
+        position: "relative",
         ...Platform.select({
             ios: {
                 shadowColor: "#000",
-                shadowOffset: { width: 0, height: 4 },
-                shadowOpacity: 0.03,
-                shadowRadius: 6,
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.04,
+                shadowRadius: 5,
             },
             android: {
-                elevation: 2,
+                elevation: 1.5,
             },
         }),
     },
 
     selectedDateCard: {
-        backgroundColor: COLORS.black,
-        borderColor: COLORS.primary,
+        backgroundColor: COLORS.black || "#111827",
+        borderColor: COLORS.primary || "#F59E0B",
         ...Platform.select({
             ios: {
-                shadowColor: COLORS.black,
+                shadowColor: "#000",
                 shadowOffset: { width: 0, height: 6 },
-                shadowOpacity: 0.2,
-                shadowRadius: 8,
+                shadowOpacity: 0.18,
+                shadowRadius: 10,
             },
             android: {
-                elevation: 5,
+                elevation: 6,
             },
         }),
     },
@@ -313,13 +320,13 @@ const styles = StyleSheet.create({
         position: "absolute",
         top: 6,
         backgroundColor: "#F3F4F6",
-        paddingHorizontal: 8,
+        paddingHorizontal: 7,
         paddingVertical: 2,
         borderRadius: 8,
     },
 
     selectedTodayBadge: {
-        backgroundColor: "#262626",
+        backgroundColor: "rgba(255, 255, 255, 0.15)",
     },
 
     todayText: {
@@ -329,55 +336,55 @@ const styles = StyleSheet.create({
     },
 
     selectedTodayText: {
-        color: COLORS.primary,
+        color: COLORS.primary || "#F59E0B",
     },
 
     day: {
-        fontSize: 12,
-        color: "#9CA3AF",
+        fontSize: 11.5,
+        color: "#6B7280",
         fontWeight: "600",
-        marginTop: 8,
+        marginTop: 6,
     },
 
     selectedDayText: {
-        color: "#D1D5DB",
+        color: "#9CA3AF",
     },
 
     dateNumber: {
         marginTop: 2,
         fontSize: 24,
         fontWeight: "800",
-        color: COLORS.black,
+        color: COLORS.black || "#111827",
     },
 
     selectedNumberText: {
-        color: COLORS.primary,
+        color: COLORS.primary || "#F59E0B",
     },
 
     monthSmall: {
         marginTop: 2,
-        fontSize: 11,
-        color: "#6B7280",
-        fontWeight: "500",
+        fontSize: 10.5,
+        color: "#9CA3AF",
+        fontWeight: "600",
     },
 
     selectedMonthText: {
-        color: "#9CA3AF",
+        color: "#D1D5DB",
     },
 
     selectedInfo: {
-        backgroundColor: COLORS.white,
-        borderRadius: RADIUS.xl,
-        padding: SPACING.lg,
-        marginTop: 24,
+        backgroundColor: COLORS.white || "#FFFFFF",
+        borderRadius: RADIUS.xl || 18,
+        padding: 16,
+        marginTop: 22,
         borderWidth: 1,
-        borderColor: "#F3F4F6",
+        borderColor: "#E5E7EB",
         ...Platform.select({
             ios: {
                 shadowColor: "#000",
-                shadowOffset: { width: 0, height: 4 },
-                shadowOpacity: 0.03,
-                shadowRadius: 8,
+                shadowOffset: { width: 0, height: 3 },
+                shadowOpacity: 0.04,
+                shadowRadius: 6,
             },
             android: {
                 elevation: 2,
@@ -394,15 +401,13 @@ const styles = StyleSheet.create({
         width: 42,
         height: 42,
         borderRadius: 12,
-        backgroundColor: "#FFFDF9",
-        borderWidth: 1,
-        borderColor: "#FEF3C7",
+        backgroundColor: "rgba(245, 158, 11, 0.1)",
         alignItems: "center",
         justifyContent: "center",
     },
 
     selectedTextContainer: {
-        marginLeft: 14,
+        marginLeft: 12,
         flex: 1,
     },
 
@@ -411,20 +416,20 @@ const styles = StyleSheet.create({
         fontSize: 11,
         fontWeight: "600",
         textTransform: "uppercase",
-        letterSpacing: 0.4,
+        letterSpacing: 0.5,
     },
 
     selectedDate: {
         marginTop: 2,
-        fontSize: 17,
+        fontSize: 16.5,
         fontWeight: "800",
-        color: COLORS.black,
+        color: COLORS.black || "#111827",
     },
 
     infoCard: {
         backgroundColor: "#FEF3C7",
-        borderRadius: RADIUS.xl,
-        padding: SPACING.lg,
+        borderRadius: RADIUS.xl || 16,
+        padding: 14,
         marginTop: 14,
         flexDirection: "row",
         borderWidth: 1,
@@ -432,7 +437,7 @@ const styles = StyleSheet.create({
     },
 
     infoIconWrapper: {
-        marginTop: 2,
+        marginTop: 1,
     },
 
     infoContent: {
@@ -447,10 +452,10 @@ const styles = StyleSheet.create({
     },
 
     infoText: {
-        marginTop: 3,
+        marginTop: 2,
         color: "#B45309",
         fontSize: 12,
-        lineHeight: 18,
+        lineHeight: 17,
         fontWeight: "500",
     },
 
@@ -459,21 +464,21 @@ const styles = StyleSheet.create({
         left: 0,
         right: 0,
         bottom: 0,
-        backgroundColor: COLORS.white,
-        paddingHorizontal: SPACING.lg,
-        paddingTop: 12,
-        paddingBottom: Platform.OS === "ios" ? 28 : SPACING.lg,
+        backgroundColor: COLORS.white || "#FFFFFF",
+        paddingHorizontal: SPACING.lg || 16,
+        paddingTop: 14,
+        paddingBottom: Platform.OS === "ios" ? 30 : 16,
         borderTopWidth: 1,
         borderTopColor: "#F3F4F6",
         ...Platform.select({
             ios: {
                 shadowColor: "#000",
-                shadowOffset: { width: 0, height: -4 },
-                shadowOpacity: 0.04,
-                shadowRadius: 8,
+                shadowOffset: { width: 0, height: -6 },
+                shadowOpacity: 0.06,
+                shadowRadius: 10,
             },
             android: {
-                elevation: 8,
+                elevation: 10,
             },
         }),
     },

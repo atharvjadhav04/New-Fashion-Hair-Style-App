@@ -7,7 +7,7 @@ import {
 } from "react-native";
 
 import { Ionicons } from "@expo/vector-icons";
-import { useBooking } from "../../context/BookingContext";
+
 import {
     COLORS,
     SPACING,
@@ -18,7 +18,6 @@ export default function ServiceCard({
     service,
     onBook,
 }) {
-    const { updateBooking } = useBooking();
     return (
         <View style={styles.card}>
 
@@ -69,7 +68,6 @@ export default function ServiceCard({
 }
 
 const styles = StyleSheet.create({
-
     card: {
         backgroundColor: "#FFF",
         borderRadius: RADIUS.xl,
@@ -129,5 +127,4 @@ const styles = StyleSheet.create({
         color: COLORS.white,
         fontWeight: "700",
     },
-
 });

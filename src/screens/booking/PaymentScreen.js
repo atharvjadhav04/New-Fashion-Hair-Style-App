@@ -19,7 +19,7 @@ export default function PaymentScreen({ navigation }) {
     const { booking } = useBooking();
     const [selectedMethod, setSelectedMethod] = useState("gpay");
 
-    const amount = booking.amount || booking.service?.price || 0;
+    const amount = booking?.amount || booking?.service?.price || 0;
 
     const handleSuccess = () => {
         navigation.navigate("BookingSuccess");
@@ -31,11 +31,13 @@ export default function PaymentScreen({ navigation }) {
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={styles.content}
             >
-                {/* Header */}
-                <Text style={styles.heading}>पेमेंटचा पर्याय निवडा</Text>
-                <Text style={styles.subtitle}>
-                    सुरक्षित व जलद बुकिंगसाठी पेमेंट पद्धत निवडा
-                </Text>
+                {/* Header Section */}
+                <View style={styles.headerContainer}>
+                    <Text style={styles.heading}>पेमेंटचा पर्याय निवडा</Text>
+                    <Text style={styles.subtitle}>
+                        सुरक्षित व जलद बुकिंगसाठी तुमची आवडती पेमेंट पद्धत निवडा
+                    </Text>
+                </View>
 
                 {/* Amount Summary Card */}
                 <View style={styles.amountCard}>
@@ -45,15 +47,15 @@ export default function PaymentScreen({ navigation }) {
                     </View>
                     <View style={styles.safetyBadge}>
                         <Ionicons
-                            name="shield-checkmark-sharp"
+                            name="shield-checkmark"
                             size={14}
-                            color={COLORS.primary}
+                            color={COLORS.primary || "#EAB308"}
                         />
                         <Text style={styles.safetyText}>100% सुरक्षित</Text>
                     </View>
                 </View>
 
-                {/* UPI Options */}
+                {/* UPI Options Section */}
                 <Text style={styles.sectionTitle}>UPI पेमेंट</Text>
 
                 <PaymentOption
@@ -64,6 +66,7 @@ export default function PaymentScreen({ navigation }) {
                     iconColor="#4285F4"
                     selected={selectedMethod === "gpay"}
                     onSelect={setSelectedMethod}
+                    tag="Fast"
                 />
 
                 <PaymentOption
@@ -87,7 +90,7 @@ export default function PaymentScreen({ navigation }) {
                 />
 
                 {/* Pay at Salon & Other Options */}
-                <Text style={[styles.sectionTitle, { marginTop: 22 }]}>
+                <Text style={[styles.sectionTitle, { marginTop: 24 }]}>
                     इतर पर्याय
                 </Text>
 
@@ -99,6 +102,7 @@ export default function PaymentScreen({ navigation }) {
                     iconColor="#16A34A"
                     selected={selectedMethod === "cash"}
                     onSelect={setSelectedMethod}
+                    tag="Popular"
                 />
 
                 <PaymentOption
@@ -114,20 +118,20 @@ export default function PaymentScreen({ navigation }) {
                 {/* Security Trust Banner */}
                 <View style={styles.trustBox}>
                     <Ionicons
-                        name="lock-closed-outline"
-                        size={16}
+                        name="lock-closed"
+                        size={15}
                         color="#6B7280"
                     />
                     <Text style={styles.trustText}>
-                        तुमची पेमेंट माहिती पूर्णपणे सुरक्षित व एन्क्रिप्टेड आहे.
+                        तुमची पेमेंट माहिती पूर्णपणे एन्क्रिप्टेड व सुरक्षित आहे.
                     </Text>
                 </View>
             </ScrollView>
 
-            {/* Bottom Action Footer */}
+            {/* Bottom Floating Action Footer */}
             <View style={styles.bottomContainer}>
                 <View style={styles.bottomPrice}>
-                    <View>
+                    <View style={styles.priceContainer}>
                         <Text style={styles.bottomLabel}>देय रक्कम</Text>
                         <Text style={styles.bottomAmount}>₹{amount}</Text>
                     </View>
@@ -156,22 +160,43 @@ function PaymentOption({
     iconColor,
     selected,
     onSelect,
+    tag,
 }) {
     return (
         <TouchableOpacity
-            activeOpacity={0.7}
+            activeOpacity={0.8}
             style={[styles.optionCard, selected && styles.optionCardSelected]}
             onPress={() => onSelect(id)}
         >
-            <View style={styles.optionIconContainer}>
+            <View
+                style={[
+                    styles.optionIconContainer,
+                    selected && { backgroundColor: iconColor + "15" },
+                ]}
+            >
                 <Ionicons name={icon} size={22} color={iconColor} />
             </View>
 
             <View style={styles.optionTextContainer}>
-                <Text style={styles.optionTitle}>{title}</Text>
+                <View style={styles.titleRow}>
+                    <Text
+                        style={[
+                            styles.optionTitle,
+                            selected && styles.optionTitleSelected,
+                        ]}
+                    >
+                        {title}
+                    </Text>
+                    {tag && (
+                        <View style={styles.tagBadge}>
+                            <Text style={styles.tagText}>{tag}</Text>
+                        </View>
+                    )}
+                </View>
                 <Text style={styles.optionSubtitle}>{subtitle}</Text>
             </View>
 
+            {/* Custom Styled Radio Button */}
             <View
                 style={[
                     styles.radioOuter,
@@ -187,32 +212,37 @@ function PaymentOption({
 const styles = StyleSheet.create({
     screen: {
         flex: 1,
-        backgroundColor: COLORS.background,
+        backgroundColor: COLORS.background || "#F9FAFB",
     },
 
     content: {
-        padding: SPACING.lg,
-        paddingBottom: 160,
+        paddingHorizontal: SPACING.lg || 16,
+        paddingTop: SPACING.md || 12,
+        paddingBottom: 170,
+    },
+
+    headerContainer: {
+        marginBottom: 18,
     },
 
     heading: {
-        fontSize: 28,
+        fontSize: 26,
         fontWeight: "800",
-        color: COLORS.black,
-        letterSpacing: -0.4,
+        color: COLORS.black || "#111827",
+        letterSpacing: -0.3,
     },
 
     subtitle: {
         marginTop: 4,
         color: "#6B7280",
-        fontSize: 14,
-        marginBottom: 20,
+        fontSize: 13.5,
+        lineHeight: 18,
     },
 
     amountCard: {
-        backgroundColor: COLORS.black,
-        borderRadius: RADIUS.xl,
-        padding: SPACING.lg,
+        backgroundColor: COLORS.black || "#111827",
+        borderRadius: RADIUS.xl || 20,
+        padding: 20,
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between",
@@ -220,12 +250,12 @@ const styles = StyleSheet.create({
         ...Platform.select({
             ios: {
                 shadowColor: "#000",
-                shadowOffset: { width: 0, height: 6 },
-                shadowOpacity: 0.12,
-                shadowRadius: 10,
+                shadowOffset: { width: 0, height: 8 },
+                shadowOpacity: 0.15,
+                shadowRadius: 12,
             },
             android: {
-                elevation: 4,
+                elevation: 6,
             },
         }),
     },
@@ -238,12 +268,13 @@ const styles = StyleSheet.create({
         color: "#9CA3AF",
         fontSize: 12,
         fontWeight: "600",
-        letterSpacing: 0.3,
+        textTransform: "uppercase",
+        letterSpacing: 0.5,
     },
 
     amountValue: {
-        color: COLORS.primary,
-        fontSize: 32,
+        color: COLORS.primary || "#F59E0B",
+        fontSize: 30,
         fontWeight: "800",
         marginTop: 2,
     },
@@ -251,75 +282,99 @@ const styles = StyleSheet.create({
     safetyBadge: {
         flexDirection: "row",
         alignItems: "center",
-        backgroundColor: "#262626",
-        paddingHorizontal: 12,
+        backgroundColor: "rgba(255, 255, 255, 0.12)",
+        paddingHorizontal: 10,
         paddingVertical: 6,
         borderRadius: 20,
+        borderWidth: 1,
+        borderColor: "rgba(255, 255, 255, 0.1)",
     },
 
     safetyText: {
-        color: "#E5E7EB",
+        color: "#F3F4F6",
         fontSize: 11,
         fontWeight: "600",
-        marginLeft: 6,
+        marginLeft: 5,
     },
 
     sectionTitle: {
-        fontSize: 15,
+        fontSize: 14,
         fontWeight: "700",
-        color: COLORS.black,
+        color: "#374151",
         marginBottom: 12,
-        letterSpacing: -0.2,
+        textTransform: "uppercase",
+        letterSpacing: 0.6,
     },
 
     optionCard: {
-        backgroundColor: COLORS.white,
-        borderRadius: RADIUS.xl,
-        padding: 16,
+        backgroundColor: COLORS.white || "#FFFFFF",
+        borderRadius: RADIUS.xl || 16,
+        padding: 14,
         flexDirection: "row",
         alignItems: "center",
-        marginBottom: 12,
+        marginBottom: 10,
         borderWidth: 1.5,
-        borderColor: "#F3F4F6",
+        borderColor: "#E5E7EB",
         ...Platform.select({
             ios: {
                 shadowColor: "#000",
-                shadowOffset: { width: 0, height: 3 },
-                shadowOpacity: 0.03,
-                shadowRadius: 6,
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.04,
+                shadowRadius: 5,
             },
             android: {
-                elevation: 1.5,
+                elevation: 1,
             },
         }),
     },
 
     optionCardSelected: {
-        borderColor: COLORS.primary,
-        backgroundColor: "#FFFDF9",
+        borderColor: COLORS.primary || "#F59E0B",
+        backgroundColor: "rgba(245, 158, 11, 0.04)",
     },
 
     optionIconContainer: {
-        width: 44,
-        height: 44,
+        width: 42,
+        height: 42,
         borderRadius: 12,
-        backgroundColor: "#F9FAFB",
+        backgroundColor: "#F3F4F6",
         alignItems: "center",
         justifyContent: "center",
-        borderWidth: 1,
-        borderColor: "#F3F4F6",
     },
 
     optionTextContainer: {
         flex: 1,
-        marginLeft: 14,
+        marginLeft: 12,
         marginRight: 8,
+    },
+
+    titleRow: {
+        flexDirection: "row",
+        alignItems: "center",
     },
 
     optionTitle: {
         fontSize: 15,
         fontWeight: "700",
-        color: COLORS.black,
+        color: COLORS.black || "#1F2937",
+    },
+
+    optionTitleSelected: {
+        color: COLORS.black || "#111827",
+    },
+
+    tagBadge: {
+        backgroundColor: "#FEF3C7",
+        paddingHorizontal: 6,
+        paddingVertical: 2,
+        borderRadius: 6,
+        marginLeft: 8,
+    },
+
+    tagText: {
+        fontSize: 10,
+        fontWeight: "700",
+        color: "#D97706",
     },
 
     optionSubtitle: {
@@ -329,9 +384,9 @@ const styles = StyleSheet.create({
     },
 
     radioOuter: {
-        width: 22,
-        height: 22,
-        borderRadius: 11,
+        width: 20,
+        height: 20,
+        borderRadius: 10,
         borderWidth: 2,
         borderColor: "#D1D5DB",
         alignItems: "center",
@@ -339,27 +394,27 @@ const styles = StyleSheet.create({
     },
 
     radioOuterSelected: {
-        borderColor: COLORS.primary,
+        borderColor: COLORS.primary || "#F59E0B",
     },
 
     radioInner: {
         width: 10,
         height: 10,
         borderRadius: 5,
-        backgroundColor: COLORS.primary,
+        backgroundColor: COLORS.primary || "#F59E0B",
     },
 
     trustBox: {
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "center",
-        marginTop: 16,
-        paddingHorizontal: 12,
+        marginTop: 20,
+        paddingHorizontal: 16,
     },
 
     trustText: {
-        marginLeft: 8,
-        color: "#6B7280",
+        marginLeft: 6,
+        color: "#9CA3AF",
         fontSize: 12,
         fontWeight: "500",
         textAlign: "center",
@@ -370,21 +425,21 @@ const styles = StyleSheet.create({
         bottom: 0,
         left: 0,
         right: 0,
-        backgroundColor: COLORS.white,
-        paddingHorizontal: SPACING.lg,
-        paddingTop: 12,
-        paddingBottom: Platform.OS === "ios" ? 28 : SPACING.lg,
+        backgroundColor: COLORS.white || "#FFFFFF",
+        paddingHorizontal: SPACING.lg || 16,
+        paddingTop: 14,
+        paddingBottom: Platform.OS === "ios" ? 30 : 16,
         borderTopWidth: 1,
         borderTopColor: "#F3F4F6",
         ...Platform.select({
             ios: {
                 shadowColor: "#000",
-                shadowOffset: { width: 0, height: -4 },
-                shadowOpacity: 0.04,
-                shadowRadius: 8,
+                shadowOffset: { width: 0, height: -6 },
+                shadowOpacity: 0.06,
+                shadowRadius: 10,
             },
             android: {
-                elevation: 8,
+                elevation: 10,
             },
         }),
     },
@@ -395,20 +450,25 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
 
+    priceContainer: {
+        flexDirection: "column",
+    },
+
     bottomLabel: {
         color: "#9CA3AF",
-        fontSize: 12,
+        fontSize: 11,
         fontWeight: "600",
+        textTransform: "uppercase",
     },
 
     bottomAmount: {
         fontSize: 22,
         fontWeight: "800",
-        color: COLORS.black,
-        marginTop: 2,
+        color: COLORS.black || "#111827",
+        marginTop: 1,
     },
 
     buttonWrapper: {
-        flex: 0.6,
+        flex: 0.65,
     },
 });

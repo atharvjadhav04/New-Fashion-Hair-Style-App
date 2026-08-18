@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import {
     ScrollView,
     View,
     Text,
     TouchableOpacity,
     StyleSheet,
+    RefreshControl,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -46,6 +47,7 @@ const BOOKINGS = [
 
 export default function MyBookingsScreen({ navigation }) {
     const [activeTab, setActiveTab] = useState("UPCOMING");
+    const [refreshing, setRefreshing] = useState(false);
 
     const upcomingBookings = BOOKINGS.filter(
         (booking) => booking.status === "CONFIRMED"
@@ -58,11 +60,27 @@ export default function MyBookingsScreen({ navigation }) {
     const bookings =
         activeTab === "UPCOMING" ? upcomingBookings : pastBookings;
 
+    const onRefresh = useCallback(() => {
+        setRefreshing(true);
+        // Simulate data fetch
+        setTimeout(() => {
+            setRefreshing(false);
+        }, 1200);
+    }, []);
+
     return (
         <AppScreen style={styles.screen}>
             <ScrollView
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={styles.content}
+                refreshControl={
+                    <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={onRefresh}
+                        tintColor={COLORS.primary || "#F59E0B"}
+                        colors={[COLORS.primary || "#F59E0B"]}
+                    />
+                }
             >
                 {/* Screen Header */}
                 <View style={styles.header}>
@@ -71,14 +89,14 @@ export default function MyBookingsScreen({ navigation }) {
                         <Text style={styles.heading}>माझ्या बुकिंग</Text>
                     </View>
                     <Text style={styles.subtitle}>
-                        तुमच्या सर्व अपॉइंटमेंट्स येथे पहा
+                        तुमच्या सर्व अपॉइंटमेंट्स आणि लाईव्ह रांग येथे पहा
                     </Text>
                 </View>
 
                 {/* Tab Switcher */}
                 <View style={styles.tabsContainer}>
                     <TouchableOpacity
-                        activeOpacity={0.8}
+                        activeOpacity={0.7}
                         style={[
                             styles.tab,
                             activeTab === "UPCOMING" && styles.activeTab,
@@ -91,12 +109,27 @@ export default function MyBookingsScreen({ navigation }) {
                                 activeTab === "UPCOMING" && styles.activeTabText,
                             ]}
                         >
-                            आगामी ({upcomingBookings.length})
+                            आगामी
                         </Text>
+                        <View
+                            style={[
+                                styles.badgeCount,
+                                activeTab === "UPCOMING" && styles.activeBadgeCount,
+                            ]}
+                        >
+                            <Text
+                                style={[
+                                    styles.badgeCountText,
+                                    activeTab === "UPCOMING" && styles.activeBadgeText,
+                                ]}
+                            >
+                                {upcomingBookings.length}
+                            </Text>
+                        </View>
                     </TouchableOpacity>
 
                     <TouchableOpacity
-                        activeOpacity={0.8}
+                        activeOpacity={0.7}
                         style={[
                             styles.tab,
                             activeTab === "PAST" && styles.activeTab,
@@ -109,21 +142,36 @@ export default function MyBookingsScreen({ navigation }) {
                                 activeTab === "PAST" && styles.activeTabText,
                             ]}
                         >
-                            मागील ({pastBookings.length})
+                            मागील
                         </Text>
+                        <View
+                            style={[
+                                styles.badgeCount,
+                                activeTab === "PAST" && styles.activeBadgeCount,
+                            ]}
+                        >
+                            <Text
+                                style={[
+                                    styles.badgeCountText,
+                                    activeTab === "PAST" && styles.activeBadgeText,
+                                ]}
+                            >
+                                {pastBookings.length}
+                            </Text>
+                        </View>
                     </TouchableOpacity>
                 </View>
 
                 {/* List Content */}
                 {bookings.length === 0 ? (
-                    <EmptyState />
+                    <EmptyState navigation={navigation} isPast={activeTab === "PAST"} />
                 ) : (
                     bookings.map((booking) => (
                         <BookingCard
                             key={booking.id}
                             booking={booking}
                             onQueue={() =>
-                                navigation.navigate("Bookings", {
+                                navigation.navigate("BookingFlow", {
                                     screen: "Queue",
                                 })
                             }
@@ -137,12 +185,17 @@ export default function MyBookingsScreen({ navigation }) {
 
 function BookingCard({ booking, onQueue }) {
     const isActive = booking.status === "CONFIRMED";
+    const tokensAhead = Math.max(0, booking.token - booking.currentToken);
+    const progress = Math.min(
+        1,
+        Math.max(0, booking.currentToken / booking.token)
+    );
 
     return (
-        <View style={styles.card}>
+        <View style={[styles.card, isActive && styles.activeCardBorder]}>
             {/* Header Row */}
             <View style={styles.cardHeader}>
-                <View>
+                <View style={styles.serviceTitleGroup}>
                     <Text style={styles.service}>{booking.service}</Text>
                     <Text style={styles.serviceEnglish}>{booking.serviceEnglish}</Text>
                 </View>
@@ -194,27 +247,58 @@ function BookingCard({ booking, onQueue }) {
                         value={booking.barber}
                     />
                     <InfoItem
-                        icon="business-outline"
-                        label="चेअर"
+                        icon="briefcase-outline"
+                        label="चेअर क्र."
                         value={`Chair ${booking.chair}`}
                     />
                 </View>
             </View>
 
-            {/* Live Queue Box */}
+            {/* Live Queue Box with Visual Progress */}
             {isActive && (
                 <View style={styles.queueBox}>
-                    <View style={styles.tokenCol}>
-                        <Text style={styles.queueLabel}>तुमचा टोकन</Text>
-                        <Text style={styles.token}>#{booking.token}</Text>
+                    <View style={styles.liveBadgeRow}>
+                        <View style={styles.liveIndicator}>
+                            <View style={styles.livePulseDot} />
+                            <Text style={styles.liveText}>LIVE QUEUE</Text>
+                        </View>
+                        {booking.waitMinutes > 0 && (
+                            <View style={styles.waitPill}>
+                                <Ionicons name="timer-outline" size={12} color="#F59E0B" />
+                                <Text style={styles.waitPillText}>~{booking.waitMinutes} min wait</Text>
+                            </View>
+                        )}
                     </View>
 
-                    <View style={styles.queueDivider} />
+                    <View style={styles.tokenRow}>
+                        <View style={styles.tokenCol}>
+                            <Text style={styles.queueLabel}>तुमचा टोकन</Text>
+                            <Text style={styles.token}>#{booking.token}</Text>
+                        </View>
 
-                    <View style={[styles.tokenCol, styles.alignRight]}>
-                        <Text style={styles.queueLabel}>सध्याचा टोकन</Text>
-                        <Text style={styles.currentToken}>#{booking.currentToken}</Text>
+                        <View style={styles.queueDivider} />
+
+                        <View style={[styles.tokenCol, styles.alignRight]}>
+                            <Text style={styles.queueLabel}>सध्याचा टोकन</Text>
+                            <Text style={styles.currentToken}>#{booking.currentToken}</Text>
+                        </View>
                     </View>
+
+                    {/* Progress Bar */}
+                    <View style={styles.progressTrack}>
+                        <View
+                            style={[
+                                styles.fillProgress,
+                                { width: `${progress * 100}%` },
+                            ]}
+                        />
+                    </View>
+
+                    <Text style={styles.tokensAheadText}>
+                        {tokensAhead === 0
+                            ? "🎉 तुमची वेळ आली आहे!"
+                            : `तुमच्या आधी ${tokensAhead} ग्राहक बाकी आहेत.`}
+                    </Text>
                 </View>
             )}
 
@@ -241,7 +325,7 @@ function BookingCard({ booking, onQueue }) {
             {isActive && (
                 <View style={styles.actionWrapper}>
                     <PrimaryButton
-                        title="💈 Live Queue पहा"
+                        title="💈 Live Queue ट्रॅक करा"
                         onPress={onQueue}
                     />
                 </View>
@@ -257,7 +341,7 @@ function InfoItem({ icon, label, value }) {
                 <Ionicons
                     name={icon}
                     size={16}
-                    color={COLORS.primary || "#F59E0B"}
+                    color={COLORS.primary || "#D97706"}
                 />
             </View>
             <View style={styles.infoText}>
@@ -268,20 +352,35 @@ function InfoItem({ icon, label, value }) {
     );
 }
 
-function EmptyState() {
+function EmptyState({ navigation, isPast }) {
     return (
         <View style={styles.emptyCard}>
             <View style={styles.emptyIconBg}>
                 <Ionicons
                     name="calendar-clear-outline"
-                    size={32}
+                    size={36}
                     color="#94A3B8"
                 />
             </View>
-            <Text style={styles.emptyTitle}>कोणतीही बुकिंग नाही</Text>
-            <Text style={styles.emptyText}>
-                तुमची कोणतीही अपॉइंटमेंट येथे दिसेल.
+            <Text style={styles.emptyTitle}>
+                {isPast ? "कोणतीही मागील बुकिंग नाही" : "कोणतीही आगामी बुकिंग नाही"}
             </Text>
+            <Text style={styles.emptyText}>
+                {isPast
+                    ? "तुमच्या पूर्ण झालेल्या अपॉइंटमेंट्स येथे दिसतील."
+                    : "तुमची कोणतीही आगामी अपॉइंटमेंट येथे दिसेल."}
+            </Text>
+
+            {!isPast && (
+                <TouchableOpacity
+                    style={styles.bookNowBtn}
+                    activeOpacity={0.8}
+                    onPress={() => navigation?.navigate("Services")}
+                >
+                    <Text style={styles.bookNowBtnText}>नवीन बुकिंग करा</Text>
+                    <Ionicons name="arrow-forward" size={16} color="#FFFFFF" />
+                </TouchableOpacity>
+            )}
         </View>
     );
 }
@@ -289,10 +388,10 @@ function EmptyState() {
 const styles = StyleSheet.create({
     screen: {
         flex: 1,
-        backgroundColor: COLORS.background || "#FAF9F6",
+        backgroundColor: COLORS.background || "#F8FAFC",
     },
     content: {
-        padding: SPACING.lg || 20,
+        padding: SPACING.lg || 16,
         paddingBottom: 40,
     },
 
@@ -303,16 +402,16 @@ const styles = StyleSheet.create({
     titleRow: {
         flexDirection: "row",
         alignItems: "center",
-        gap: 8,
+        gap: 10,
     },
     headerIndicator: {
         width: 4,
-        height: 24,
+        height: 26,
         borderRadius: 2,
-        backgroundColor: "#F59E0B",
+        backgroundColor: COLORS.primary || "#F59E0B",
     },
     heading: {
-        fontSize: 28,
+        fontSize: 26,
         fontWeight: "800",
         color: COLORS.black || "#0F172A",
         letterSpacing: -0.5,
@@ -322,29 +421,33 @@ const styles = StyleSheet.create({
         color: "#64748B",
         fontSize: 13,
         fontWeight: "500",
+        paddingLeft: 14,
     },
 
     // Segmented Control Tabs
     tabsContainer: {
         flexDirection: "row",
-        backgroundColor: "#F1F5F9",
-        borderRadius: RADIUS.xl || 16,
+        backgroundColor: "#E2E8F0",
+        borderRadius: RADIUS.xl || 14,
         padding: 4,
         marginBottom: 20,
     },
     tab: {
         flex: 1,
+        flexDirection: "row",
         alignItems: "center",
+        justifyContent: "center",
         paddingVertical: 10,
-        borderRadius: (RADIUS.xl || 16) - 4,
+        borderRadius: (RADIUS.xl || 14) - 3,
+        gap: 8,
     },
     activeTab: {
         backgroundColor: COLORS.black || "#0F172A",
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.08,
+        shadowOpacity: 0.1,
         shadowRadius: 4,
-        elevation: 2,
+        elevation: 3,
     },
     tabText: {
         color: "#64748B",
@@ -352,8 +455,25 @@ const styles = StyleSheet.create({
         fontSize: 13,
     },
     activeTabText: {
-        color: COLORS.primary || "#F59E0B",
+        color: "#FFFFFF",
         fontWeight: "700",
+    },
+    badgeCount: {
+        backgroundColor: "#CBD5E1",
+        paddingHorizontal: 7,
+        paddingVertical: 2,
+        borderRadius: 10,
+    },
+    activeBadgeCount: {
+        backgroundColor: COLORS.primary || "#F59E0B",
+    },
+    badgeCountText: {
+        fontSize: 11,
+        fontWeight: "700",
+        color: "#475569",
+    },
+    activeBadgeText: {
+        color: "#0F172A",
     },
 
     // Card Structure
@@ -363,21 +483,27 @@ const styles = StyleSheet.create({
         padding: 18,
         marginBottom: 16,
         borderWidth: 1,
-        borderColor: "#F1F5F9",
-        shadowColor: "#000",
+        borderColor: "#E2E8F0",
+        shadowColor: "#0F172A",
         shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.03,
-        shadowRadius: 10,
+        shadowOpacity: 0.04,
+        shadowRadius: 12,
         elevation: 3,
+    },
+    activeCardBorder: {
+        borderColor: "#FCD34D",
     },
     cardHeader: {
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "flex-start",
     },
+    serviceTitleGroup: {
+        flex: 1,
+    },
     service: {
         fontSize: 18,
-        fontWeight: "700",
+        fontWeight: "800",
         color: COLORS.black || "#0F172A",
     },
     serviceEnglish: {
@@ -392,9 +518,9 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         paddingHorizontal: 10,
-        paddingVertical: 4,
+        paddingVertical: 5,
         borderRadius: 20,
-        gap: 5,
+        gap: 6,
     },
     confirmedBadge: {
         backgroundColor: "#DCFCE7",
@@ -444,9 +570,9 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     iconBg: {
-        width: 32,
-        height: 32,
-        borderRadius: 8,
+        width: 34,
+        height: 34,
+        borderRadius: 10,
         backgroundColor: "#FEF3C7",
         alignItems: "center",
         justifyContent: "center",
@@ -459,23 +585,63 @@ const styles = StyleSheet.create({
         fontSize: 10,
         fontWeight: "600",
         textTransform: "uppercase",
+        letterSpacing: 0.5,
     },
     infoValue: {
-        marginTop: 1,
+        marginTop: 2,
         color: COLORS.black || "#0F172A",
         fontSize: 13,
-        fontWeight: "600",
+        fontWeight: "700",
     },
 
     // Queue Counter Display
     queueBox: {
-        backgroundColor: COLORS.black || "#0F172A",
-        borderRadius: RADIUS.lg || 14,
-        padding: 14,
+        backgroundColor: "#0F172A",
+        borderRadius: RADIUS.lg || 16,
+        padding: 16,
+        marginTop: 16,
+    },
+    liveBadgeRow: {
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        marginTop: 14,
+        marginBottom: 12,
+    },
+    liveIndicator: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 6,
+    },
+    livePulseDot: {
+        width: 8,
+        height: 8,
+        borderRadius: 4,
+        backgroundColor: "#EF4444",
+    },
+    liveText: {
+        color: "#EF4444",
+        fontSize: 10,
+        fontWeight: "800",
+        letterSpacing: 0.8,
+    },
+    waitPill: {
+        flexDirection: "row",
+        alignItems: "center",
+        backgroundColor: "#1E293B",
+        paddingHorizontal: 8,
+        paddingVertical: 3,
+        borderRadius: 12,
+        gap: 4,
+    },
+    waitPillText: {
+        color: "#F59E0B",
+        fontSize: 11,
+        fontWeight: "600",
+    },
+    tokenRow: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
     },
     tokenCol: {
         flex: 1,
@@ -490,20 +656,39 @@ const styles = StyleSheet.create({
     },
     queueLabel: {
         color: "#94A3B8",
-        fontSize: 10,
+        fontSize: 11,
         fontWeight: "600",
     },
     token: {
         color: COLORS.primary || "#F59E0B",
-        fontSize: 22,
+        fontSize: 24,
         fontWeight: "800",
         marginTop: 2,
     },
     currentToken: {
         color: "#FFFFFF",
-        fontSize: 22,
+        fontSize: 24,
         fontWeight: "800",
         marginTop: 2,
+    },
+    progressTrack: {
+        height: 6,
+        backgroundColor: "#334155",
+        borderRadius: 3,
+        marginTop: 14,
+        overflow: "hidden",
+    },
+    fillProgress: {
+        height: "100%",
+        backgroundColor: COLORS.primary || "#F59E0B",
+        borderRadius: 3,
+    },
+    tokensAheadText: {
+        marginTop: 10,
+        fontSize: 12,
+        fontWeight: "600",
+        color: "#94A3B8",
+        textAlign: "center",
     },
 
     // Payment Block
@@ -514,7 +699,7 @@ const styles = StyleSheet.create({
         marginTop: 14,
         paddingTop: 12,
         borderTopWidth: 1,
-        borderTopColor: "#F8FAFC",
+        borderTopColor: "#F1F5F9",
     },
     paymentLabel: {
         color: "#94A3B8",
@@ -523,17 +708,17 @@ const styles = StyleSheet.create({
     },
     amount: {
         marginTop: 2,
-        fontSize: 16,
-        fontWeight: "700",
+        fontSize: 17,
+        fontWeight: "800",
         color: COLORS.black || "#0F172A",
     },
     paidBadge: {
         flexDirection: "row",
         alignItems: "center",
         backgroundColor: "#F0FDF4",
-        paddingHorizontal: 8,
+        paddingHorizontal: 10,
         paddingVertical: 4,
-        borderRadius: 6,
+        borderRadius: 8,
         gap: 4,
     },
     paidText: {
@@ -550,31 +735,47 @@ const styles = StyleSheet.create({
     emptyCard: {
         backgroundColor: "#FFFFFF",
         borderRadius: RADIUS.xl || 20,
-        padding: 36,
+        padding: 32,
         alignItems: "center",
         justifyContent: "center",
         borderWidth: 1,
-        borderColor: "#F1F5F9",
+        borderColor: "#E2E8F0",
         marginTop: 10,
     },
     emptyIconBg: {
-        width: 60,
-        height: 60,
-        borderRadius: 30,
-        backgroundColor: "#F8FAFC",
+        width: 64,
+        height: 64,
+        borderRadius: 32,
+        backgroundColor: "#F1F5F9",
         alignItems: "center",
         justifyContent: "center",
         marginBottom: 14,
     },
     emptyTitle: {
         color: COLORS.black || "#0F172A",
-        fontSize: 16,
+        fontSize: 17,
         fontWeight: "700",
     },
     emptyText: {
-        marginTop: 4,
+        marginTop: 6,
         color: "#64748B",
         fontSize: 13,
         textAlign: "center",
+        lineHeight: 18,
+    },
+    bookNowBtn: {
+        marginTop: 20,
+        flexDirection: "row",
+        alignItems: "center",
+        backgroundColor: COLORS.black || "#0F172A",
+        paddingHorizontal: 18,
+        paddingVertical: 10,
+        borderRadius: 12,
+        gap: 8,
+    },
+    bookNowBtnText: {
+        color: "#FFFFFF",
+        fontSize: 13,
+        fontWeight: "700",
     },
 });

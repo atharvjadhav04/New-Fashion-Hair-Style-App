@@ -22,25 +22,25 @@ import {
 export default function BookingSummaryScreen({ navigation }) {
     const { booking } = useBooking();
 
-    const service = booking.service;
-    const barber = booking.barber;
+    const service = booking?.service;
+    const barber = booking?.barber;
 
     const serviceName =
         service?.marathi || service?.name || "Service";
 
     const barberName =
-        booking.bookingType === "FASTEST"
+        booking?.bookingType === "FASTEST"
             ? "Fastest Available"
             : barber?.name || "Not selected";
 
     const chair =
-        booking.bookingType === "FASTEST"
+        booking?.bookingType === "FASTEST"
             ? "Auto Assigned"
             : barber?.chair
                 ? `Chair ${barber.chair}`
                 : "Auto Assigned";
 
-    const total = booking.amount || service?.price || 0;
+    const total = booking?.amount || service?.price || 0;
 
     const handlePayment = () => {
         navigation.navigate("Payment");
@@ -52,20 +52,21 @@ export default function BookingSummaryScreen({ navigation }) {
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={styles.content}
             >
-                <Text style={styles.heading}>
-                    बुकिंग तपशील
-                </Text>
-
-                <Text style={styles.subtitle}>
-                    पेमेंट करण्यापूर्वी तुमची बुकिंग तपासा
-                </Text>
+                <View style={styles.headerContainer}>
+                    <Text style={styles.heading}>
+                        बुकिंग तपशील
+                    </Text>
+                    <Text style={styles.subtitle}>
+                        पेमेंट करण्यापूर्वी तुमची बुकिंग तपासा
+                    </Text>
+                </View>
 
                 {/* Service Card */}
                 <View style={styles.card}>
                     <View style={styles.iconContainer}>
                         <Ionicons
                             name="cut-outline"
-                            size={24}
+                            size={22}
                             color={COLORS.primary}
                         />
                     </View>
@@ -74,13 +75,11 @@ export default function BookingSummaryScreen({ navigation }) {
                         <Text style={styles.label}>
                             निवडलेली सेवा
                         </Text>
-
-                        <Text style={styles.value}>
+                        <Text style={styles.value} numberOfLines={1}>
                             {serviceName}
                         </Text>
-
                         <Text style={styles.secondary}>
-                            ⏱️ {service?.duration || "--"}
+                            ⏱️ {service?.duration || "-- मिनिटे"}
                         </Text>
                     </View>
 
@@ -98,13 +97,13 @@ export default function BookingSummaryScreen({ navigation }) {
                     <DetailRow
                         icon="calendar-outline"
                         label="तारीख"
-                        value={formatDate(booking.date)}
+                        value={formatDate(booking?.date)}
                     />
 
                     <DetailRow
                         icon="time-outline"
                         label="वेळ"
-                        value={booking.time || "--"}
+                        value={booking?.time || "--"}
                     />
 
                     <DetailRow
@@ -126,24 +125,23 @@ export default function BookingSummaryScreen({ navigation }) {
                     <View style={styles.typeIcon}>
                         <Ionicons
                             name={
-                                booking.bookingType === "FASTEST"
+                                booking?.bookingType === "FASTEST"
                                     ? "flash"
                                     : "person"
                             }
-                            size={20}
+                            size={18}
                             color={COLORS.primary}
                         />
                     </View>
 
                     <View style={styles.typeContent}>
                         <Text style={styles.typeTitle}>
-                            {booking.bookingType === "FASTEST"
+                            {booking?.bookingType === "FASTEST"
                                 ? "Fastest Available"
                                 : "Preferred Barber"}
                         </Text>
-
                         <Text style={styles.typeDescription}>
-                            {booking.bookingType === "FASTEST"
+                            {booking?.bookingType === "FASTEST"
                                 ? "आम्ही उपलब्धतेनुसार बार्बर आणि चेअर निवडू."
                                 : "तुम्ही निवडलेला बार्बर तुमच्यासाठी राखीव असेल."}
                         </Text>
@@ -157,10 +155,9 @@ export default function BookingSummaryScreen({ navigation }) {
                     </Text>
 
                     <View style={styles.priceRow}>
-                        <Text style={styles.priceLabel}>
+                        <Text style={styles.priceLabel} numberOfLines={1}>
                             {serviceName}
                         </Text>
-
                         <Text style={styles.priceValue}>
                             ₹{total}
                         </Text>
@@ -172,7 +169,6 @@ export default function BookingSummaryScreen({ navigation }) {
                         <Text style={styles.totalLabel}>
                             एकूण रक्कम
                         </Text>
-
                         <Text style={styles.totalValue}>
                             ₹{total}
                         </Text>
@@ -183,10 +179,9 @@ export default function BookingSummaryScreen({ navigation }) {
                 <View style={styles.notice}>
                     <Ionicons
                         name="shield-checkmark-sharp"
-                        size={20}
+                        size={18}
                         color="#15803D"
                     />
-
                     <Text style={styles.noticeText}>
                         तुमचे पेमेंट सुरक्षितपणे प्रोसेस केले जाईल.
                     </Text>
@@ -196,7 +191,7 @@ export default function BookingSummaryScreen({ navigation }) {
             {/* Bottom Bar */}
             <View style={styles.bottomContainer}>
                 <View style={styles.bottomPrice}>
-                    <View>
+                    <View style={styles.bottomLabelContainer}>
                         <Text style={styles.bottomLabel}>
                             एकूण देय रक्कम
                         </Text>
@@ -228,7 +223,7 @@ function DetailRow({
             <View style={styles.detailIcon}>
                 <Ionicons
                     name={icon}
-                    size={18}
+                    size={16}
                     color={COLORS.primary}
                 />
             </View>
@@ -237,7 +232,6 @@ function DetailRow({
                 <Text style={styles.detailLabel}>
                     {label}
                 </Text>
-
                 <Text style={styles.detailValue}>
                     {value}
                 </Text>
@@ -267,54 +261,58 @@ function formatDate(dateString) {
 const styles = StyleSheet.create({
     screen: {
         flex: 1,
-        backgroundColor: COLORS.background,
+        backgroundColor: COLORS.background || "#F9FAFB",
     },
 
     content: {
         padding: SPACING.lg,
-        paddingBottom: 160,
+        paddingBottom: 140,
+    },
+
+    headerContainer: {
+        marginBottom: SPACING.md,
     },
 
     heading: {
-        fontSize: 28,
+        fontSize: 26,
         fontWeight: "800",
         color: COLORS.black,
-        letterSpacing: -0.4,
+        letterSpacing: -0.5,
     },
 
     subtitle: {
         marginTop: 4,
         color: "#6B7280",
         fontSize: 14,
-        marginBottom: 20,
+        fontWeight: "500",
     },
 
     card: {
         backgroundColor: COLORS.white,
         borderRadius: RADIUS.xl,
-        padding: SPACING.lg,
+        padding: SPACING.md + 4,
         flexDirection: "row",
         alignItems: "center",
-        marginBottom: 16,
+        marginBottom: SPACING.md,
         borderWidth: 1,
-        borderColor: "#F3F4F6",
+        borderColor: "#E5E7EB",
         ...Platform.select({
             ios: {
                 shadowColor: "#000",
-                shadowOffset: { width: 0, height: 4 },
-                shadowOpacity: 0.04,
-                shadowRadius: 8,
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.03,
+                shadowRadius: 6,
             },
             android: {
-                elevation: 2,
+                elevation: 1,
             },
         }),
     },
 
     iconContainer: {
-        width: 48,
-        height: 48,
-        borderRadius: 14,
+        width: 44,
+        height: 44,
+        borderRadius: RADIUS.lg || 12,
         backgroundColor: COLORS.black,
         alignItems: "center",
         justifyContent: "center",
@@ -322,33 +320,34 @@ const styles = StyleSheet.create({
 
     mainInfo: {
         flex: 1,
-        marginLeft: 14,
+        marginLeft: 12,
+        marginRight: 8,
     },
 
     label: {
-        fontSize: 11,
-        fontWeight: "600",
+        fontSize: 10,
+        fontWeight: "700",
         color: "#9CA3AF",
         textTransform: "uppercase",
-        letterSpacing: 0.4,
+        letterSpacing: 0.5,
     },
 
     value: {
         marginTop: 2,
-        fontSize: 16,
+        fontSize: 15,
         fontWeight: "700",
         color: COLORS.black,
     },
 
     secondary: {
-        marginTop: 3,
+        marginTop: 2,
         color: "#6B7280",
         fontSize: 12,
         fontWeight: "500",
     },
 
     price: {
-        fontSize: 20,
+        fontSize: 18,
         fontWeight: "800",
         color: COLORS.primary,
     },
@@ -357,35 +356,35 @@ const styles = StyleSheet.create({
         backgroundColor: COLORS.white,
         borderRadius: RADIUS.xl,
         padding: SPACING.lg,
-        marginBottom: 16,
+        marginBottom: SPACING.md,
         borderWidth: 1,
-        borderColor: "#F3F4F6",
+        borderColor: "#E5E7EB",
         ...Platform.select({
             ios: {
                 shadowColor: "#000",
-                shadowOffset: { width: 0, height: 4 },
-                shadowOpacity: 0.04,
-                shadowRadius: 8,
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.03,
+                shadowRadius: 6,
             },
             android: {
-                elevation: 2,
+                elevation: 1,
             },
         }),
     },
 
     sectionTitle: {
-        fontSize: 16,
+        fontSize: 15,
         fontWeight: "700",
         color: COLORS.black,
-        marginBottom: 16,
+        marginBottom: 14,
         letterSpacing: -0.2,
     },
 
     detailRow: {
         flexDirection: "row",
         alignItems: "center",
-        paddingBottom: 12,
-        marginBottom: 12,
+        paddingBottom: 10,
+        marginBottom: 10,
         borderBottomWidth: 1,
         borderBottomColor: "#F3F4F6",
     },
@@ -397,12 +396,12 @@ const styles = StyleSheet.create({
     },
 
     detailIcon: {
-        width: 36,
-        height: 36,
+        width: 34,
+        height: 34,
         borderRadius: 10,
-        backgroundColor: "#FFFDF9",
+        backgroundColor: "#F9FAFB",
         borderWidth: 1,
-        borderColor: "#FEF3C7",
+        borderColor: "#E5E7EB",
         alignItems: "center",
         justifyContent: "center",
     },
@@ -419,7 +418,7 @@ const styles = StyleSheet.create({
     },
 
     detailValue: {
-        marginTop: 2,
+        marginTop: 1,
         fontSize: 14,
         fontWeight: "700",
         color: COLORS.black,
@@ -428,16 +427,16 @@ const styles = StyleSheet.create({
     typeCard: {
         backgroundColor: COLORS.black,
         borderRadius: RADIUS.xl,
-        padding: SPACING.lg,
+        padding: SPACING.md + 4,
         flexDirection: "row",
         alignItems: "center",
-        marginBottom: 16,
+        marginBottom: SPACING.md,
     },
 
     typeIcon: {
-        width: 42,
-        height: 42,
-        borderRadius: 12,
+        width: 38,
+        height: 38,
+        borderRadius: 10,
         backgroundColor: "#262626",
         alignItems: "center",
         justifyContent: "center",
@@ -450,14 +449,14 @@ const styles = StyleSheet.create({
 
     typeTitle: {
         color: COLORS.primary,
-        fontSize: 15,
+        fontSize: 14,
         fontWeight: "700",
     },
 
     typeDescription: {
-        color: "#D1D5DB",
+        color: "#9CA3AF",
         fontSize: 12,
-        lineHeight: 18,
+        lineHeight: 16,
         marginTop: 2,
     },
 
@@ -465,18 +464,18 @@ const styles = StyleSheet.create({
         backgroundColor: COLORS.white,
         borderRadius: RADIUS.xl,
         padding: SPACING.lg,
-        marginBottom: 16,
+        marginBottom: SPACING.md,
         borderWidth: 1,
-        borderColor: "#F3F4F6",
+        borderColor: "#E5E7EB",
         ...Platform.select({
             ios: {
                 shadowColor: "#000",
-                shadowOffset: { width: 0, height: 4 },
-                shadowOpacity: 0.04,
-                shadowRadius: 8,
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.03,
+                shadowRadius: 6,
             },
             android: {
-                elevation: 2,
+                elevation: 1,
             },
         }),
     },
@@ -491,6 +490,8 @@ const styles = StyleSheet.create({
         color: "#4B5563",
         fontSize: 14,
         fontWeight: "500",
+        flex: 1,
+        marginRight: 8,
     },
 
     priceValue: {
@@ -502,7 +503,7 @@ const styles = StyleSheet.create({
     divider: {
         height: 1,
         backgroundColor: "#F3F4F6",
-        marginVertical: 14,
+        marginVertical: 12,
     },
 
     totalRow: {
@@ -512,13 +513,13 @@ const styles = StyleSheet.create({
     },
 
     totalLabel: {
-        fontSize: 16,
+        fontSize: 15,
         fontWeight: "700",
         color: COLORS.black,
     },
 
     totalValue: {
-        fontSize: 20,
+        fontSize: 18,
         fontWeight: "800",
         color: COLORS.primary,
     },
@@ -529,7 +530,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#F0FDF4",
         borderWidth: 1,
         borderColor: "#DCFCE7",
-        padding: 14,
+        padding: 12,
         borderRadius: RADIUS.lg,
     },
 
@@ -537,7 +538,7 @@ const styles = StyleSheet.create({
         flex: 1,
         marginLeft: 10,
         color: "#166534",
-        fontSize: 13,
+        fontSize: 12,
         fontWeight: "600",
     },
 
@@ -548,19 +549,19 @@ const styles = StyleSheet.create({
         right: 0,
         backgroundColor: COLORS.white,
         paddingHorizontal: SPACING.lg,
-        paddingTop: 12,
-        paddingBottom: Platform.OS === "ios" ? 28 : SPACING.lg,
+        paddingTop: 14,
+        paddingBottom: Platform.OS === "ios" ? 32 : SPACING.lg,
         borderTopWidth: 1,
-        borderTopColor: "#F3F4F6",
+        borderTopColor: "#E5E7EB",
         ...Platform.select({
             ios: {
                 shadowColor: "#000",
                 shadowOffset: { width: 0, height: -4 },
-                shadowOpacity: 0.04,
+                shadowOpacity: 0.05,
                 shadowRadius: 8,
             },
             android: {
-                elevation: 8,
+                elevation: 10,
             },
         }),
     },
@@ -571,20 +572,26 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
 
+    bottomLabelContainer: {
+        flex: 1,
+        marginRight: 12,
+    },
+
     bottomLabel: {
         color: "#9CA3AF",
-        fontSize: 12,
+        fontSize: 11,
         fontWeight: "600",
+        textTransform: "uppercase",
     },
 
     bottomAmount: {
-        fontSize: 22,
+        fontSize: 20,
         fontWeight: "800",
         color: COLORS.black,
-        marginTop: 2,
+        marginTop: 1,
     },
 
     buttonWrapper: {
-        flex: 0.55,
+        flex: 1.2,
     },
 });

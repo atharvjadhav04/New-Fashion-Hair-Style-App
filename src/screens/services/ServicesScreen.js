@@ -12,7 +12,7 @@ import AppScreen from "../../components/common/AppScreen";
 import SearchBar from "../../components/services/SearchBar";
 import CategoryChip from "../../components/services/CategoryChip";
 import ServiceCard from "../../components/services/ServiceCard";
-
+import { useBooking } from "../../context/BookingContext";
 import { SERVICES } from "../../constants/DummyData";
 import { COLORS, SPACING, RADIUS } from "../../theme";
 
@@ -24,6 +24,7 @@ const categories = [
 ];
 
 export default function ServicesScreen({ navigation }) {
+    const { addService } = useBooking();
     const [search, setSearch] = useState("");
     const [selectedCategory, setSelectedCategory] = useState("All");
 
@@ -109,11 +110,10 @@ export default function ServicesScreen({ navigation }) {
                             <ServiceCard
                                 service={service}
                                 onBook={(selectedService) => {
+                                    addService(selectedService);
+
                                     navigation.navigate("BookingFlow", {
                                         screen: "BookingDetails",
-                                        params: {
-                                            service: selectedService,
-                                        },
                                     });
                                 }}
                             />

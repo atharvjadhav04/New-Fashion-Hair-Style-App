@@ -1,35 +1,97 @@
-import React, { createContext, useContext, useState } from "react";
+import React, {
+    createContext,
+    useContext,
+    useState,
+} from "react";
 
 const BookingContext = createContext();
 
-export function BookingProvider({ children }) {
+const INITIAL_BOOKING = {
+    services: [],
 
-    const [booking, setBooking] = useState({
-        service: null,
-        bookingType: "FASTEST",
-        barber: null,
-        chair: null,
-        date: null,
-        time: null,
-        amount: 0,
-    });
+    bookingType: "FASTEST",
+
+    barber: null,
+    chair: null,
+
+    date: null,
+    time: null,
+
+    amount: 0,
+};
+
+export function BookingProvider({
+    children,
+}) {
+    const [booking, setBooking] =
+        useState(INITIAL_BOOKING);
 
     const updateBooking = (data) => {
-        setBooking(prev => ({
+        setBooking((prev) => ({
             ...prev,
             ...data,
         }));
     };
 
+    const addService = (service) => {
+        setBooking((prev) => {
+            const alreadyAdded =
+                prev.services.some(
+                    (item) =>
+                        item.id === service.id
+                );
+
+            if (alreadyAdded) {
+                return prev;
+            }
+
+            const services = [
+                ...prev.services,
+                service,
+            ];
+
+            const amount = services.reduce(
+                (total, item) =>
+                    total +
+                    Number(item.price || 0),
+                0
+            );
+
+            return {
+                ...prev,
+                services,
+                amount,
+            };
+        });
+    };
+
+    const removeService = (serviceId) => {
+        setBooking((prev) => {
+            const services =
+                prev.services.filter(
+                    (item) =>
+                        item.id !== serviceId
+                );
+
+            const amount = services.reduce(
+                (total, item) =>
+                    total +
+                    Number(item.price || 0),
+                0
+            );
+
+            return {
+                ...prev,
+                services,
+                amount,
+            };
+        });
+    };
+
     const resetBooking = () => {
         setBooking({
-            service: null,
-            bookingType: "FASTEST",
-            barber: null,
-            chair: null,
-            date: null,
-            time: null,
-            amount: 0,
+            ...INITIAL_BOOKING,
+            services: [],
         });
     };
 
@@ -38,6 +100,8 @@ export function BookingProvider({ children }) {
             value={{
                 booking,
                 updateBooking,
+                addService,
+                removeService,
                 resetBooking,
             }}
         >
@@ -46,4 +110,5 @@ export function BookingProvider({ children }) {
     );
 }
 
-export const useBooking = () => useContext(BookingContext);
+export const useBooking = () =>
+    useContext(BookingContext);

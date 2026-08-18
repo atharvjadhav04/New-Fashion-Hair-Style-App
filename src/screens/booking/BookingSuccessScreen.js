@@ -1,4 +1,5 @@
 import React from "react";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
     View,
     Text,
@@ -20,7 +21,19 @@ import {
     RADIUS,
 } from "../../theme";
 
+// Success Theme Color Palette Constants
+const SUCCESS_COLORS = {
+    primaryGreen: "#059669",     // Rich Emerald Green
+    lightGreen: "#10B981",       // Bright Accent Green
+    softGreenBg: "#ECFDF5",      // Subtle Mint Background
+    borderGreen: "#A7F3D0",      // Light Green Border
+    darkGreenHeader: "#064E3B",  // Deep Forest Green for Ticket Header
+    mintPill: "#D1FAE5",         // Token Pill Background
+    textDark: "#065F46",         // Dark Green Text Accent
+};
+
 export default function BookingSuccessScreen({ navigation }) {
+    const insets = useSafeAreaInsets();
     const { booking } = useBooking();
 
     const serviceName =
@@ -40,11 +53,8 @@ export default function BookingSuccessScreen({ navigation }) {
                 ? `Chair ${booking.chair}`
                 : "Auto Assigned";
 
-    // Demo values for now.
-    // Backend will provide these after real booking confirmation.
     const tokenNumber = 18;
-    const estimatedMinutes =
-        booking.barber?.eta || 20;
+    const estimatedMinutes = booking.barber?.eta || 20;
 
     return (
         <AppScreen style={styles.screen}>
@@ -52,18 +62,20 @@ export default function BookingSuccessScreen({ navigation }) {
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={styles.content}
             >
-                {/* Success Animated Badge */}
+                {/* Layered Animated Success Badge */}
                 <View style={styles.successWrapper}>
-                    <View style={styles.successGlow} />
+                    <View style={styles.outerGlowRing} />
+                    <View style={styles.innerGlowRing} />
                     <View style={styles.successCircle}>
                         <Ionicons
                             name="checkmark-sharp"
-                            size={44}
-                            color={COLORS.black}
+                            size={48}
+                            color={COLORS.white}
                         />
                     </View>
                 </View>
 
+                {/* Main Titles */}
                 <Text style={styles.heading}>
                     बुकिंग निश्चित झाली! 🎉
                 </Text>
@@ -72,9 +84,15 @@ export default function BookingSuccessScreen({ navigation }) {
                     तुमची अपॉइंटमेंट यशस्वीरित्या बुक झाली आहे.
                 </Text>
 
-                {/* Main Digital Ticket / Token */}
+                {/* Digital Ticket Card */}
                 <View style={styles.ticketCard}>
+                    {/* Ticket Header Block */}
                     <View style={styles.ticketTop}>
+                        <View style={styles.confirmedBadge}>
+                            <Ionicons name="checkmark-circle" size={14} color={SUCCESS_COLORS.primaryGreen} />
+                            <Text style={styles.confirmedBadgeText}>कन्फर्म झाले</Text>
+                        </View>
+
                         <Text style={styles.tokenLabel}>
                             तुमचा टोकन नंबर
                         </Text>
@@ -82,13 +100,14 @@ export default function BookingSuccessScreen({ navigation }) {
                             #{tokenNumber}
                         </Text>
                         <View style={styles.tokenTag}>
+                            <Ionicons name="information-circle-outline" size={12} color={SUCCESS_COLORS.textDark} />
                             <Text style={styles.tokenHint}>
-                                हा नंबर लक्षात ठेवा
+                                हा नंबर सलूनमध्ये दाखवा
                             </Text>
                         </View>
                     </View>
 
-                    {/* Ticket Notches */}
+                    {/* Perforated Ticket Notches */}
                     <View style={styles.notchContainer}>
                         <View style={styles.leftNotch} />
                         <View style={styles.dashedLine} />
@@ -102,31 +121,31 @@ export default function BookingSuccessScreen({ navigation }) {
                         </Text>
 
                         <DetailRow
-                            icon="cut-outline"
+                            icon="cut"
                             label="सेवा"
                             value={serviceName}
                         />
 
                         <DetailRow
-                            icon="person-outline"
+                            icon="person"
                             label="बार्बर"
                             value={barberName}
                         />
 
                         <DetailRow
-                            icon="business-outline"
+                            icon="business"
                             label="चेअर"
                             value={chair}
                         />
 
                         <DetailRow
-                            icon="calendar-outline"
+                            icon="calendar"
                             label="तारीख"
                             value={booking.date || "--"}
                         />
 
                         <DetailRow
-                            icon="time-outline"
+                            icon="time"
                             label="वेळ"
                             value={booking.time || "--"}
                             isLast
@@ -138,9 +157,9 @@ export default function BookingSuccessScreen({ navigation }) {
                 <View style={styles.queueCard}>
                     <View style={styles.queueIcon}>
                         <Ionicons
-                            name="hourglass-outline"
+                            name="hourglass"
                             size={22}
-                            color={COLORS.primary}
+                            color={SUCCESS_COLORS.primaryGreen}
                         />
                     </View>
 
@@ -148,34 +167,47 @@ export default function BookingSuccessScreen({ navigation }) {
                         <Text style={styles.queueTitle}>
                             अंदाजे प्रतीक्षा वेळ
                         </Text>
-
                         <Text style={styles.queueTime}>
                             {estimatedMinutes} मिनिटे
                         </Text>
                     </View>
                 </View>
-            </ScrollView>
 
-            {/* Bottom Actions */}
-            <View style={styles.bottomContainer}>
-                <PrimaryButton
-                    title="💈 Live Queue पहा"
-                    onPress={() => navigation.navigate("Queue")}
-                />
-
-                <TouchableOpacity
-                    activeOpacity={0.7}
-                    style={styles.homeButton}
-                    onPress={() => {
-                        navigation.popToTop();
-                        navigation.getParent()?.navigate("Home");
-                    }}
+                {/* Inline Action Buttons (Scrolls with Screen) */}
+                <View
+                    style={[
+                        styles.actionContainer,
+                        {
+                            marginBottom: Math.max(insets.bottom, 16),
+                        },
+                    ]}
                 >
-                    <Text style={styles.homeButtonText}>
-                        मुख्य पृष्ठावर जा
-                    </Text>
-                </TouchableOpacity>
-            </View>
+                    <PrimaryButton
+                        title="💈 Live Queue पहा"
+                        onPress={() => navigation.navigate("Queue")}
+                        style={styles.primaryBtnOverride}
+                    />
+
+                    <TouchableOpacity
+                        activeOpacity={0.7}
+                        style={styles.homeButton}
+                        onPress={() => {
+                            navigation.getParent()?.reset({
+                                index: 0,
+                                routes: [
+                                    {
+                                        name: "CustomerTabs",
+                                    },
+                                ],
+                            });
+                        }}
+                    >
+                        <Text style={styles.homeButtonText}>
+                            मुख्य पृष्ठावर जा
+                        </Text>
+                    </TouchableOpacity>
+                </View>
+            </ScrollView>
         </AppScreen>
     );
 }
@@ -192,7 +224,7 @@ function DetailRow({
                 <Ionicons
                     name={icon}
                     size={18}
-                    color={COLORS.primary}
+                    color={SUCCESS_COLORS.primaryGreen}
                 />
             </View>
 
@@ -212,46 +244,56 @@ function DetailRow({
 const styles = StyleSheet.create({
     screen: {
         flex: 1,
-        backgroundColor: COLORS.background,
+        backgroundColor: "#F9FAFB",
     },
 
     content: {
         padding: SPACING.lg,
         alignItems: "center",
-        paddingBottom: 170,
+        paddingBottom: SPACING.lg,
     },
 
+    /* Success Header Rings */
     successWrapper: {
         alignItems: "center",
         justifyContent: "center",
-        marginTop: 12,
+        marginTop: 16,
     },
 
-    successGlow: {
+    outerGlowRing: {
         position: "absolute",
-        width: 100,
-        height: 100,
-        borderRadius: 50,
-        backgroundColor: COLORS.primary,
-        opacity: 0.18,
+        width: 110,
+        height: 110,
+        borderRadius: 55,
+        backgroundColor: SUCCESS_COLORS.lightGreen,
+        opacity: 0.15,
+    },
+
+    innerGlowRing: {
+        position: "absolute",
+        width: 92,
+        height: 92,
+        borderRadius: 46,
+        backgroundColor: SUCCESS_COLORS.primaryGreen,
+        opacity: 0.25,
     },
 
     successCircle: {
-        width: 80,
-        height: 80,
-        borderRadius: 40,
-        backgroundColor: COLORS.primary,
+        width: 76,
+        height: 76,
+        borderRadius: 38,
+        backgroundColor: SUCCESS_COLORS.primaryGreen,
         alignItems: "center",
         justifyContent: "center",
         ...Platform.select({
             ios: {
-                shadowColor: COLORS.primary,
-                shadowOffset: { width: 0, height: 6 },
-                shadowOpacity: 0.35,
-                shadowRadius: 10,
+                shadowColor: SUCCESS_COLORS.primaryGreen,
+                shadowOffset: { width: 0, height: 8 },
+                shadowOpacity: 0.4,
+                shadowRadius: 12,
             },
             android: {
-                elevation: 6,
+                elevation: 8,
             },
         }),
     },
@@ -260,19 +302,20 @@ const styles = StyleSheet.create({
         marginTop: 20,
         fontSize: 26,
         fontWeight: "800",
-        color: COLORS.black,
+        color: "#111827",
         textAlign: "center",
         letterSpacing: -0.4,
     },
 
     subtitle: {
         marginTop: 6,
-        color: "#6B7280",
+        color: "#4B5563",
         textAlign: "center",
         fontSize: 14,
         lineHeight: 20,
     },
 
+    /* Ticket Container */
     ticketCard: {
         width: "100%",
         backgroundColor: COLORS.white,
@@ -280,85 +323,107 @@ const styles = StyleSheet.create({
         marginTop: 24,
         borderWidth: 1,
         borderColor: "#E5E7EB",
+        overflow: "hidden",
         ...Platform.select({
             ios: {
                 shadowColor: "#000",
-                shadowOffset: { width: 0, height: 6 },
-                shadowOpacity: 0.05,
-                shadowRadius: 12,
+                shadowOffset: { width: 0, height: 8 },
+                shadowOpacity: 0.07,
+                shadowRadius: 16,
             },
             android: {
-                elevation: 3,
+                elevation: 4,
             },
         }),
     },
 
     ticketTop: {
-        backgroundColor: COLORS.black,
-        borderTopLeftRadius: RADIUS.xl,
-        borderTopRightRadius: RADIUS.xl,
-        padding: 24,
+        backgroundColor: SUCCESS_COLORS.darkGreenHeader,
+        padding: 22,
         alignItems: "center",
+        position: "relative",
+    },
+
+    confirmedBadge: {
+        flexDirection: "row",
+        alignItems: "center",
+        backgroundColor: SUCCESS_COLORS.softGreenBg,
+        paddingHorizontal: 10,
+        paddingVertical: 4,
+        borderRadius: 20,
+        marginBottom: 10,
+    },
+
+    confirmedBadgeText: {
+        color: SUCCESS_COLORS.textDark,
+        fontSize: 12,
+        fontWeight: "700",
+        marginLeft: 4,
     },
 
     tokenLabel: {
-        color: "#9CA3AF",
+        color: "#A7F3D0",
         fontSize: 13,
         fontWeight: "600",
         letterSpacing: 0.3,
     },
 
     tokenNumber: {
-        color: COLORS.primary,
-        fontSize: 54,
-        fontWeight: "800",
+        color: "#34D399",
+        fontSize: 52,
+        fontWeight: "900",
         marginVertical: 2,
         letterSpacing: -1,
     },
 
     tokenTag: {
-        backgroundColor: "#262626",
+        flexDirection: "row",
+        alignItems: "center",
+        backgroundColor: "rgba(209, 250, 229, 0.2)",
         paddingHorizontal: 12,
-        paddingVertical: 4,
-        borderRadius: 12,
+        paddingVertical: 5,
+        borderRadius: 14,
+        borderWidth: 1,
+        borderColor: "rgba(167, 243, 208, 0.3)",
+        marginTop: 4,
     },
 
     tokenHint: {
-        color: "#E5E7EB",
+        color: "#ECFDF5",
         fontSize: 11,
         fontWeight: "600",
+        marginLeft: 5,
     },
 
     notchContainer: {
         height: 20,
-        backgroundColor: COLORS.black,
+        backgroundColor: SUCCESS_COLORS.darkGreenHeader,
         flexDirection: "row",
         alignItems: "center",
-        overflow: "hidden",
     },
 
     leftNotch: {
-        width: 16,
-        height: 16,
-        borderRadius: 8,
-        backgroundColor: COLORS.background,
-        marginLeft: -8,
+        width: 18,
+        height: 18,
+        borderRadius: 9,
+        backgroundColor: "#F9FAFB",
+        marginLeft: -9,
     },
 
     dashedLine: {
         flex: 1,
         borderStyle: "dashed",
         borderWidth: 1,
-        borderColor: "#374151",
+        borderColor: "rgba(167, 243, 208, 0.4)",
         marginHorizontal: 8,
     },
 
     rightNotch: {
-        width: 16,
-        height: 16,
-        borderRadius: 8,
-        backgroundColor: COLORS.background,
-        marginRight: -8,
+        width: 18,
+        height: 18,
+        borderRadius: 9,
+        backgroundColor: "#F9FAFB",
+        marginRight: -9,
     },
 
     ticketBottom: {
@@ -366,9 +431,9 @@ const styles = StyleSheet.create({
     },
 
     sectionTitle: {
-        fontSize: 16,
+        fontSize: 15,
         fontWeight: "700",
-        color: COLORS.black,
+        color: "#111827",
         marginBottom: 16,
         letterSpacing: -0.2,
     },
@@ -389,12 +454,12 @@ const styles = StyleSheet.create({
     },
 
     detailIcon: {
-        width: 36,
-        height: 36,
-        borderRadius: 10,
-        backgroundColor: "#FFFDF9",
+        width: 38,
+        height: 38,
+        borderRadius: 12,
+        backgroundColor: SUCCESS_COLORS.softGreenBg,
         borderWidth: 1,
-        borderColor: "#FEF3C7",
+        borderColor: SUCCESS_COLORS.borderGreen,
         alignItems: "center",
         justifyContent: "center",
     },
@@ -405,65 +470,67 @@ const styles = StyleSheet.create({
     },
 
     detailLabel: {
-        color: "#9CA3AF",
+        color: "#6B7280",
         fontSize: 11,
         fontWeight: "500",
     },
 
     detailValue: {
         marginTop: 2,
-        color: COLORS.black,
+        color: "#111827",
         fontSize: 14,
         fontWeight: "700",
     },
 
+    /* Queue Wait Card */
     queueCard: {
         width: "100%",
-        backgroundColor: COLORS.black,
+        backgroundColor: SUCCESS_COLORS.softGreenBg,
         borderRadius: RADIUS.lg,
         padding: 16,
         marginTop: 16,
         flexDirection: "row",
         alignItems: "center",
+        borderWidth: 1,
+        borderColor: SUCCESS_COLORS.borderGreen,
     },
 
     queueIcon: {
-        width: 42,
-        height: 42,
+        width: 44,
+        height: 44,
         borderRadius: 12,
-        backgroundColor: "#1F2937",
+        backgroundColor: COLORS.white,
+        borderWidth: 1,
+        borderColor: SUCCESS_COLORS.borderGreen,
         alignItems: "center",
         justifyContent: "center",
     },
 
     queueContent: {
-        marginLeft: 12,
+        marginLeft: 14,
     },
 
     queueTitle: {
-        color: "#9CA3AF",
+        color: "#047857",
         fontSize: 12,
-        fontWeight: "500",
+        fontWeight: "600",
     },
 
     queueTime: {
-        color: COLORS.primary,
-        fontSize: 18,
+        color: SUCCESS_COLORS.darkGreenHeader,
+        fontSize: 19,
         fontWeight: "800",
-        marginTop: 2,
+        marginTop: 1,
     },
 
-    bottomContainer: {
-        position: "absolute",
-        left: 0,
-        right: 0,
-        bottom: 0,
-        backgroundColor: COLORS.background,
-        paddingHorizontal: SPACING.lg,
-        paddingBottom: Platform.OS === "ios" ? 28 : SPACING.lg,
-        paddingTop: 12,
-        borderTopWidth: 1,
-        borderTopColor: "#F3F4F6",
+    /* In-scroll Action Container */
+    actionContainer: {
+        width: "100%",
+        marginTop: 24,
+    },
+
+    primaryBtnOverride: {
+        backgroundColor: SUCCESS_COLORS.primaryGreen,
     },
 
     homeButton: {
