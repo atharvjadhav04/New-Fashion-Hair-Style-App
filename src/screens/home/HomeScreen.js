@@ -6,22 +6,47 @@ import {
     TouchableOpacity,
     StyleSheet,
     FlatList,
+    Image,
+    Platform,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-
+import { LinearGradient } from "expo-linear-gradient";
+import BarberStatusCard from "../../components/home/BarberStatusCard";
 import AppScreen from "../../components/common/AppScreen";
-
-import HeroBanner from "../../components/home/HeroBanner";
-import AppointmentCard from "../../components/home/AppointmentCard";
-import LiveQueueCard from "../../components/home/LiveQueueCard";
-import BookNowCard from "../../components/home/BookNowCard";
-import PopularServiceCard from "../../components/home/PopularServiceCard";
-
 import { SERVICES } from "../../constants/DummyData";
-import { COLORS, SPACING, RADIUS } from "../../theme";
 
 export default function HomeScreen({ navigation }) {
     const popularServices = SERVICES ? SERVICES.slice(0, 5) : [];
+    const barbers = [
+        {
+            id: "1",
+            name: "Barber 1",
+            chair: "Chair 1",
+            status: "FREE",
+            waiting: 0,
+            currentCustomer: null,
+        },
+        {
+            id: "2",
+            name: "Barber 2",
+            chair: "Chair 2",
+            status: "BUSY",
+            waiting: 3,
+            currentCustomer: "Rahul",
+        },
+        {
+            id: "3",
+            name: "Barber 3",
+            chair: "Chair 3",
+            status: "NEXT",
+            waiting: 1,
+            currentCustomer: "Amit",
+        },
+    ];
+
+    const freeCount = barbers.filter((b) => b.status === "FREE").length;
+    const nextCount = barbers.filter((b) => b.status === "NEXT").length;
+    const busyCount = barbers.filter((b) => b.status === "BUSY").length;
 
     return (
         <AppScreen style={styles.screen}>
@@ -29,338 +54,456 @@ export default function HomeScreen({ navigation }) {
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={styles.content}
             >
-                {/* Dark Header Panel */}
-                <View style={styles.headerPanel}>
-                    <View style={styles.topHeader}>
-                        <View style={styles.brandContainer}>
-                            <View style={styles.logoBadge}>
-                                <Ionicons name="sparkles" size={16} color="#0D1B1A" />
-                            </View>
-                            <View>
-                                <Text style={styles.brandTitle}>Luxe Studio</Text>
-                                <Text style={styles.brandSubtitle}>Premium Hair & Grooming</Text>
-                            </View>
-                        </View>
-
-                        <TouchableOpacity
-                            style={styles.notificationBtn}
-                            activeOpacity={0.75}
-                            onPress={() => navigation.navigate("Notifications")}
-                        >
-                            <Ionicons name="notifications-outline" size={19} color="#F4F7F6" />
-                            <View style={styles.notificationPulse} />
-                        </TouchableOpacity>
+                {/* Modern Header */}
+                <View style={styles.header}>
+                    <View>
+                        <Text style={styles.greetingText}>नमस्कार, ग्राहक! 👋</Text>
+                        <Text style={styles.brandTitle}>New Fashion Hair Style</Text>
                     </View>
-
-                    {/* Hero Showcase Banner */}
-                    <HeroBanner />
+                    <TouchableOpacity
+                        style={styles.profileBtn}
+                        activeOpacity={0.85}
+                        onPress={() => navigation.navigate("Profile")}
+                    >
+                        <Ionicons
+                            name="person"
+                            size={18}
+                            color="#1F2937"
+                        />
+                    </TouchableOpacity>
                 </View>
 
-                {/* Floating Metric Card — overlaps header/hero seam */}
-                <View style={styles.metricsFloatWrapper}>
-                    <View style={styles.metricsContainer}>
-                        <View style={styles.metricCard}>
-                            <View style={styles.metricIconBg}>
-                                <Ionicons name="time-outline" size={17} color="#0F766E" />
-                            </View>
-                            <View>
-                                <Text style={styles.metricVal}>20 Min</Text>
-                                <Text style={styles.metricLbl}>Wait Time</Text>
-                            </View>
+                {/* Hero Banner */}
+                <LinearGradient
+                    colors={["#2C2013", "#1A130B", "#0D0A07"]}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={styles.heroBanner}
+                >
+                    {/* Subtle Ambient Glow */}
+                    <LinearGradient
+                        colors={["rgba(240, 199, 117, 0.25)", "transparent"]}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 0.8, y: 0.8 }}
+                        style={styles.heroGlowOverlay}
+                    />
+
+                    <View style={styles.heroTextContainer}>
+                        <View style={styles.badgeContainer}>
+                            <Text style={styles.heroTagline}>PREMIUM GROOMING</Text>
                         </View>
 
-                        <View style={styles.metricDivider} />
+                        <Text style={styles.heroTitle}>
+                            Style that shines{"\n"}with confidence
+                        </Text>
 
-                        <View style={styles.metricCard}>
-                            <View style={styles.metricIconBg}>
-                                <Ionicons name="people-outline" size={17} color="#0F766E" />
-                            </View>
-                            <View>
-                                <Text style={styles.metricVal}>4 Ahead</Text>
-                                <Text style={styles.metricLbl}>Live Queue</Text>
-                            </View>
-                        </View>
+                        <Text style={styles.heroSubtitle}>
+                            Expert cuts, beard styling, & luxury care tailored for you.
+                        </Text>
                     </View>
-                </View>
 
-                {/* Express Booking Card */}
-                <View style={styles.sectionWrapper}>
-                    <BookNowCard
+                    <View style={styles.heroIconBadge}>
+                        <Ionicons name="cut-outline" size={32} color="#F0C775" />
+                    </View>
+                </LinearGradient>
+
+                {/* CTA Button */}
+                <TouchableOpacity
+                    style={styles.bookBtn}
+                    activeOpacity={0.88}
+                    onPress={() => navigation.navigate("Services")}
+                >
+                    <Text style={styles.bookBtnText}>Book Appointment</Text>
+                    <View style={styles.btnIconCircle}>
+                        <Ionicons name="arrow-forward" size={16} color="#000000" />
+                    </View>
+                </TouchableOpacity>
+
+                {/* Popular Services Section Header */}
+                <View style={styles.sectionHeader}>
+                    <Text style={styles.sectionTitle}>Popular Services</Text>
+                    <TouchableOpacity
+                        style={styles.exploreBtn}
+                        activeOpacity={0.7}
                         onPress={() => navigation.navigate("Services")}
-                    />
-                </View>
-
-                {/* Live Chair Status Section */}
-                <View style={styles.sectionWrapper}>
-                    <View style={styles.sectionHeader}>
-                        <View style={styles.pillTag}>
-                            <Text style={styles.pillTagText}>Live Queue</Text>
-                        </View>
-                        <View style={styles.liveChip}>
-                            <View style={styles.livePulseDot} />
-                            <Text style={styles.liveChipText}>IN PROGRESS</Text>
-                        </View>
-                    </View>
-
-                    <LiveQueueCard
-                        barberName="Rajesh"
-                        chairNumber={2}
-                        currentToken={14}
-                        yourToken={18}
-                        estimatedMinutes={20}
-                    />
-                </View>
-
-                {/* Active Appointments Section */}
-                <View style={styles.sectionWrapper}>
-                    <View style={styles.sectionHeader}>
-                        <View style={[styles.pillTag, styles.pillTagAlt]}>
-                            <Text style={[styles.pillTagText, styles.pillTagTextAlt]}>Active Booking</Text>
-                        </View>
-                    </View>
-
-                    <AppointmentCard />
+                    >
+                        <Text style={styles.swipeText}>Explore all</Text>
+                        <Ionicons name="chevron-forward" size={14} color="#6B7280" />
+                    </TouchableOpacity>
                 </View>
 
                 {/* Popular Services Horizontal Carousel */}
-                <View style={[styles.sectionWrapper, { marginBottom: 8 }]}>
-                    <View style={styles.sectionHeader}>
-                        <Text style={styles.sectionHeadingLarge}>Popular Services</Text>
+                <FlatList
+                    data={popularServices}
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    keyExtractor={(item) => item.id.toString()}
+                    contentContainerStyle={styles.carouselContainer}
+                    renderItem={({ item }) => (
                         <TouchableOpacity
-                            activeOpacity={0.7}
+                            style={styles.serviceCard}
+                            activeOpacity={0.82}
                             onPress={() => navigation.navigate("Services")}
-                            style={styles.exploreLinkBtn}
                         >
-                            <Text style={styles.exploreLink}>See all</Text>
-                            <Ionicons name="chevron-forward" size={14} color="#0F766E" />
+                            <View style={styles.imageWrapper}>
+                                {item.image ? (
+                                    <Image source={{ uri: item.image }} style={styles.cardImage} />
+                                ) : (
+                                    <View style={styles.placeholderImage}>
+                                        <Ionicons name="cut-outline" size={26} color="#9CA3AF" />
+                                    </View>
+                                )}
+                                <View style={styles.priceTag}>
+                                    <Text style={styles.priceTagText}>₹{item.price}</Text>
+                                </View>
+                            </View>
+                            <Text style={styles.serviceName} numberOfLines={1}>
+                                {item.name}
+                            </Text>
+                            <Text style={styles.serviceCategory}>Popular Choice</Text>
                         </TouchableOpacity>
+                    )}
+                />
+
+                {/* Today's Queue Status Section */}
+                <View style={styles.queueHeader}>
+                    <Text style={styles.queueTitle}>Today's Queue Status</Text>
+                    <View style={styles.liveIndicator}>
+                        <View style={styles.liveDot} />
+                        <Text style={styles.liveText}>LIVE</Text>
+                    </View>
+                </View>
+
+                {/* Queue Summary Chips */}
+                <View style={styles.queueSummaryContainer}>
+                    <View style={[styles.statusChip, styles.chipFree]}>
+                        <View style={[styles.statusDot, { backgroundColor: "#10B981" }]} />
+                        <Text style={styles.chipText}>{freeCount} Free</Text>
                     </View>
 
-                    <FlatList
-                        data={popularServices}
-                        horizontal
-                        showsHorizontalScrollIndicator={false}
-                        keyExtractor={(item) => item.id.toString()}
-                        contentContainerStyle={styles.carouselContainer}
-                        renderItem={({ item }) => (
-                            <View style={styles.carouselItemWrapper}>
-                                <PopularServiceCard
-                                    name={item.marathi || item.name}
-                                    price={item.price}
-                                    duration={item.duration}
-                                    onPress={() => navigation.navigate("Services")}
-                                />
-                            </View>
-                        )}
-                    />
+                    <View style={[styles.statusChip, styles.chipNext]}>
+                        <View style={[styles.statusDot, { backgroundColor: "#F59E0B" }]} />
+                        <Text style={styles.chipText}>{nextCount} Next</Text>
+                    </View>
+
+                    <View style={[styles.statusChip, styles.chipBusy]}>
+                        <View style={[styles.statusDot, { backgroundColor: "#EF4444" }]} />
+                        <Text style={styles.chipText}>{busyCount} Busy</Text>
+                    </View>
                 </View>
+
+                {/* Barber Cards */}
+                {barbers.map((barber) => (
+                    <BarberStatusCard key={barber.id} barber={barber} />
+                ))}
             </ScrollView>
         </AppScreen>
     );
 }
 
-const ACCENT = "#0F766E"; // deep teal — spa/salon aesthetic
-const INK = "#0D1B1A";
-
 const styles = StyleSheet.create({
     screen: {
         flex: 1,
-        backgroundColor: COLORS.background || "#F5F5F2",
+        backgroundColor: "#FAFAFA",
     },
     content: {
-        paddingBottom: 56,
+        paddingHorizontal: 20,
+        paddingTop: 16,
+        paddingBottom: 40,
     },
 
-    // Dark Header Panel — replaces flat top bar
-    headerPanel: {
-        backgroundColor: INK,
-        borderBottomLeftRadius: 28,
-        borderBottomRightRadius: 28,
-        paddingHorizontal: SPACING.lg || 20,
-        paddingTop: 14,
-        paddingBottom: 28,
-    },
-    topHeader: {
+    // Header
+    header: {
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between",
-        marginBottom: 18,
+        marginBottom: 20,
     },
-    brandContainer: {
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 11,
-    },
-    logoBadge: {
-        width: 38,
-        height: 38,
-        borderRadius: 12,
-        backgroundColor: "#4ADE9D",
-        alignItems: "center",
-        justifyContent: "center",
+    greetingText: {
+        fontSize: 13,
+        color: "#6B7280",
+        fontWeight: "600",
+        marginBottom: 2,
     },
     brandTitle: {
-        fontSize: 16,
-        fontWeight: "800",
-        color: "#F4F7F6",
-        letterSpacing: 0.2,
+        fontSize: 22,
+        fontWeight: "900",
+        color: "#111827",
+        letterSpacing: -0.4,
     },
-    brandSubtitle: {
-        fontSize: 11.5,
-        color: "#9FB3AF",
-        fontWeight: "500",
-        marginTop: 2,
-    },
-    notificationBtn: {
-        width: 40,
-        height: 40,
-        borderRadius: 13,
-        backgroundColor: "rgba(255,255,255,0.08)",
+    profileBtn: {
+        width: 42,
+        height: 42,
+        borderRadius: 21,
+        backgroundColor: "#F3F4F6",
+        borderWidth: 1,
+        borderColor: "#E5E7EB",
         alignItems: "center",
         justifyContent: "center",
     },
-    notificationPulse: {
-        position: "absolute",
-        top: 9,
-        right: 10,
-        width: 7,
-        height: 7,
-        borderRadius: 3.5,
-        backgroundColor: "#F87171",
-        borderWidth: 1.5,
-        borderColor: INK,
-    },
 
-    // Floating metric card, overlapping the header/content seam
-    metricsFloatWrapper: {
-        paddingHorizontal: SPACING.lg || 20,
-        marginTop: -22,
-        marginBottom: 22,
-    },
-    metricsContainer: {
+    // Hero Banner
+    heroBanner: {
+        borderRadius: 24,
+        padding: 22,
         flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-around",
-        backgroundColor: "#FFFFFF",
-        borderRadius: RADIUS.xl || 20,
-        paddingVertical: 16,
-        paddingHorizontal: 18,
-        shadowColor: "#000000",
-        shadowOffset: { width: 0, height: 8 },
-        shadowOpacity: 0.10,
-        shadowRadius: 16,
-        elevation: 6,
-    },
-    metricCard: {
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 10,
-    },
-    metricIconBg: {
-        width: 36,
-        height: 36,
-        borderRadius: 11,
-        backgroundColor: "#E6F5F2",
-        alignItems: "center",
-        justifyContent: "center",
-    },
-    metricVal: {
-        fontSize: 14,
-        fontWeight: "800",
-        color: INK,
-    },
-    metricLbl: {
-        fontSize: 10.5,
-        color: "#8A938F",
-        fontWeight: "500",
-        marginTop: 1,
-    },
-    metricDivider: {
-        width: 1,
-        height: 28,
-        backgroundColor: "#EAEDEC",
-    },
-
-    // Section Layout
-    sectionWrapper: {
-        paddingHorizontal: SPACING.lg || 20,
-        marginBottom: 26,
-    },
-    sectionHeader: {
-        flexDirection: "row",
-        alignItems: "center",
         justifyContent: "space-between",
-        marginBottom: 14,
+        alignItems: "flex-end",
+        marginBottom: 16,
+        position: "relative",
+        overflow: "hidden",
+        minHeight: 185,
     },
-    sectionHeadingLarge: {
-        fontSize: 17,
+    heroGlowOverlay: {
+        ...StyleSheet.absoluteFillObject,
+    },
+    heroTextContainer: {
+        flex: 1,
+        paddingRight: 12,
+        zIndex: 1,
+    },
+    badgeContainer: {
+        alignSelf: "flex-start",
+        backgroundColor: "rgba(240, 199, 117, 0.15)",
+        paddingHorizontal: 10,
+        paddingVertical: 4,
+        borderRadius: 8,
+        borderWidth: 1,
+        borderColor: "rgba(240, 199, 117, 0.3)",
+        marginBottom: 10,
+    },
+    heroTagline: {
+        fontSize: 10,
+        fontWeight: "900",
+        color: "#F0C775",
+        letterSpacing: 1.2,
+    },
+    heroTitle: {
+        fontSize: 21,
         fontWeight: "800",
-        color: INK,
+        color: "#FFFFFF",
+        lineHeight: 26,
+        marginBottom: 8,
+        letterSpacing: -0.3,
+    },
+    heroSubtitle: {
+        fontSize: 12,
+        color: "#D1D5DB",
+        lineHeight: 17,
+        fontWeight: "400",
+    },
+    heroIconBadge: {
+        width: 64,
+        height: 64,
+        borderRadius: 32,
+        backgroundColor: "rgba(255, 255, 255, 0.08)",
+        borderWidth: 1,
+        borderColor: "rgba(240, 199, 117, 0.3)",
+        alignItems: "center",
+        justifyContent: "center",
+        zIndex: 1,
+    },
+
+    // CTA Button
+    bookBtn: {
+        backgroundColor: "#111827",
+        borderRadius: 18,
+        paddingVertical: 16,
+        paddingHorizontal: 20,
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+        marginBottom: 28,
+        gap: 10,
+        ...Platform.select({
+            ios: {
+                shadowColor: "#000",
+                shadowOffset: { width: 0, height: 6 },
+                shadowOpacity: 0.15,
+                shadowRadius: 10,
+            },
+            android: {
+                elevation: 4,
+            },
+        }),
+    },
+    bookBtnText: {
+        color: "#FFFFFF",
+        fontSize: 16,
+        fontWeight: "700",
         letterSpacing: -0.2,
     },
-
-    // Pill-style section tags — replaces the old bar-indicator pattern
-    pillTag: {
-        backgroundColor: "#E6F5F2",
-        paddingHorizontal: 12,
-        paddingVertical: 6,
-        borderRadius: 20,
-    },
-    pillTagText: {
-        fontSize: 12.5,
-        fontWeight: "800",
-        color: ACCENT,
-        letterSpacing: 0.2,
-    },
-    pillTagAlt: {
-        backgroundColor: "#F1EAFB",
-    },
-    pillTagTextAlt: {
-        color: "#7C3AED",
-    },
-
-    // Live Pill Chip
-    liveChip: {
-        flexDirection: "row",
+    btnIconCircle: {
+        width: 26,
+        height: 26,
+        borderRadius: 13,
+        backgroundColor: "#F0C775",
         alignItems: "center",
-        backgroundColor: "#E4F7E9",
-        paddingHorizontal: 10,
-        paddingVertical: 5,
-        borderRadius: 20,
-        gap: 6,
-    },
-    livePulseDot: {
-        width: 6,
-        height: 6,
-        borderRadius: 3,
-        backgroundColor: "#1DA34A",
-    },
-    liveChipText: {
-        fontSize: 10,
-        fontWeight: "800",
-        color: "#127A38",
-        letterSpacing: 0.5,
+        justifyContent: "center",
     },
 
-    // Explore Link
-    exploreLinkBtn: {
+    // Section Headers
+    sectionHeader: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginBottom: 14,
+    },
+    sectionTitle: {
+        fontSize: 18,
+        fontWeight: "800",
+        color: "#111827",
+        letterSpacing: -0.3,
+    },
+    exploreBtn: {
         flexDirection: "row",
         alignItems: "center",
         gap: 2,
     },
-    exploreLink: {
+    swipeText: {
         fontSize: 13,
-        fontWeight: "700",
-        color: ACCENT,
+        color: "#6B7280",
+        fontWeight: "600",
     },
 
-    // Carousel Layout
+    // Services Carousel
     carouselContainer: {
-        paddingLeft: SPACING.lg || 20,
-        paddingRight: 10,
         gap: 14,
+        paddingBottom: 28,
     },
-    carouselItemWrapper: {
-        width: 215,
+    serviceCard: {
+        width: 156,
+        backgroundColor: "#FFFFFF",
+        borderRadius: 20,
+        padding: 10,
+        ...Platform.select({
+            ios: {
+                shadowColor: "#000",
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.05,
+                shadowRadius: 10,
+            },
+            android: {
+                elevation: 2,
+            },
+        }),
+        borderWidth: 1,
+        borderColor: "#F3F4F6",
+    },
+    imageWrapper: {
+        width: "100%",
+        height: 115,
+        borderRadius: 14,
+        overflow: "hidden",
+        backgroundColor: "#F3F4F6",
+        marginBottom: 10,
+        position: "relative",
+    },
+    cardImage: {
+        width: "100%",
+        height: "100%",
+        resizeMode: "cover",
+    },
+    placeholderImage: {
+        flex: 1,
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    priceTag: {
+        position: "absolute",
+        bottom: 8,
+        right: 8,
+        backgroundColor: "rgba(17, 24, 39, 0.85)",
+        paddingHorizontal: 8,
+        paddingVertical: 4,
+        borderRadius: 8,
+    },
+    priceTagText: {
+        color: "#FFFFFF",
+        fontSize: 11,
+        fontWeight: "700",
+    },
+    serviceName: {
+        fontSize: 14,
+        fontWeight: "700",
+        color: "#111827",
+        marginBottom: 2,
+    },
+    serviceCategory: {
+        fontSize: 11,
+        fontWeight: "500",
+        color: "#9CA3AF",
+    },
+
+    // Queue Section
+    queueHeader: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        marginBottom: 12,
+    },
+    queueTitle: {
+        fontSize: 18,
+        fontWeight: "800",
+        color: "#111827",
+        letterSpacing: -0.3,
+    },
+    liveIndicator: {
+        flexDirection: "row",
+        alignItems: "center",
+        backgroundColor: "#FEF2F2",
+        paddingHorizontal: 8,
+        paddingVertical: 4,
+        borderRadius: 12,
+        gap: 5,
+        borderWidth: 1,
+        borderColor: "#FEE2E2",
+    },
+    liveDot: {
+        width: 6,
+        height: 6,
+        borderRadius: 3,
+        backgroundColor: "#EF4444",
+    },
+    liveText: {
+        fontSize: 10,
+        fontWeight: "800",
+        color: "#EF4444",
+        letterSpacing: 0.5,
+    },
+
+    // Queue Chips Summary
+    queueSummaryContainer: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 8,
+        marginBottom: 16,
+    },
+    statusChip: {
+        flexDirection: "row",
+        alignItems: "center",
+        paddingHorizontal: 12,
+        paddingVertical: 6,
+        borderRadius: 20,
+        gap: 6,
+    },
+    chipFree: {
+        backgroundColor: "#ECFDF5",
+    },
+    chipNext: {
+        backgroundColor: "#FFFBEB",
+    },
+    chipBusy: {
+        backgroundColor: "#FEF2F2",
+    },
+    statusDot: {
+        width: 6,
+        height: 6,
+        borderRadius: 3,
+    },
+    chipText: {
+        fontSize: 12,
+        fontWeight: "700",
+        color: "#374151",
     },
 });

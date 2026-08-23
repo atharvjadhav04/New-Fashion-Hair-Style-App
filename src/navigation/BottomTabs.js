@@ -54,7 +54,7 @@ export default function BottomTabs() {
                             icon = "home";
                             break;
                         case "Services":
-                            icon = "construct";
+                            icon = "cut";
                             break;
                         case "Bookings":
                             icon = "calendar";

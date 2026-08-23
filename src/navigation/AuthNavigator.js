@@ -4,7 +4,7 @@ import SplashScreen from "../screens/auth/SplashScreen";
 import LoginScreen from "../screens/auth/LoginScreen";
 import OtpScreen from "../screens/auth/OtpScreen";
 import CompleteProfileScreen from "../screens/auth/CompleteProfileScreen";
-
+import LanguageScreen from "../screens/auth/LanguageScreen";
 const Stack = createNativeStackNavigator();
 
 export default function AuthNavigator() {
@@ -28,6 +28,10 @@ export default function AuthNavigator() {
             <Stack.Screen
                 name="Otp"
                 component={OtpScreen}
+            />
+            <Stack.Screen
+                name="Language"
+                component={LanguageScreen}
             />
             <Stack.Screen
                 name="CompleteProfile"

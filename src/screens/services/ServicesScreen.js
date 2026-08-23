@@ -4,11 +4,11 @@ import {
     StyleSheet,
     Text,
     View,
+    Platform,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 import AppScreen from "../../components/common/AppScreen";
-
 import SearchBar from "../../components/services/SearchBar";
 import CategoryChip from "../../components/services/CategoryChip";
 import ServiceCard from "../../components/services/ServiceCard";
@@ -56,16 +56,18 @@ export default function ServicesScreen({ navigation }) {
                         <Text style={styles.title}>सेवा</Text>
                     </View>
                     <Text style={styles.subtitle}>
-                        तुम्हाच्या आवडीनुसार Salon Services निवडा
+                        तुमच्या आवडीनुसार Salon Services निवडा
                     </Text>
                 </View>
 
-                {/* Sticky Search Container */}
+                {/* Sticky Search Container with Improved Contrast & Shadow */}
                 <View style={styles.searchWrapper}>
-                    <SearchBar
-                        value={search}
-                        onChangeText={setSearch}
-                    />
+                    <View style={styles.searchBarBox}>
+                        <SearchBar
+                            value={search}
+                            onChangeText={setSearch}
+                        />
+                    </View>
                 </View>
 
                 {/* Horizontal Category Selector */}
@@ -128,7 +130,7 @@ export default function ServicesScreen({ navigation }) {
 const styles = StyleSheet.create({
     screen: {
         flex: 1,
-        backgroundColor: COLORS.background || "#FAF9F6",
+        backgroundColor: COLORS.background || "#FAFAFA",
     },
     container: {
         padding: SPACING.lg || 20,
@@ -163,11 +165,30 @@ const styles = StyleSheet.create({
         fontWeight: "500",
     },
 
-    // Search Wrapper (Sticky Support)
+    // Sticky Search Wrapper (High Contrast & Seamless Floating Header)
     searchWrapper: {
-        backgroundColor: COLORS.background || "#FAF9F6",
+        backgroundColor: COLORS.background || "#FAFAFA",
         paddingVertical: 6,
         marginBottom: 16,
+        zIndex: 10,
+    },
+    searchBarBox: {
+        backgroundColor: "#FFFFFF",
+        borderRadius: RADIUS.lg || 16,
+        borderWidth: 1,
+        borderColor: "#E2E8F0",
+        overflow: "hidden",
+        ...Platform.select({
+            ios: {
+                shadowColor: "#0F172A",
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.06,
+                shadowRadius: 8,
+            },
+            android: {
+                elevation: 3,
+            },
+        }),
     },
 
     // Categories ScrollView
@@ -208,11 +229,17 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: "#F1F5F9",
         marginTop: 20,
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.03,
-        shadowRadius: 8,
-        elevation: 2,
+        ...Platform.select({
+            ios: {
+                shadowColor: "#000",
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.03,
+                shadowRadius: 8,
+            },
+            android: {
+                elevation: 2,
+            },
+        }),
     },
     emptyIconBg: {
         width: 60,

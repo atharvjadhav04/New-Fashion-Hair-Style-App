@@ -11,32 +11,53 @@ import {
     TouchableWithoutFeedback,
     Keyboard,
 } from "react-native";
+
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Ionicons } from "@expo/vector-icons";
-
+import { useTranslation } from "../../context/LanguageContext";
 import { COLORS, SPACING, RADIUS } from "../../theme";
 
 import AuthCard from "../../components/auth/AuthCard";
 import InputField from "../../components/common/InputField";
 import PrimaryButton from "../../components/common/PrimaryButton";
 import AppScreen from "../../components/common/AppScreen";
-
+import { useAuth } from "../../context/AuthContext";
 const GENDER_OPTIONS = [
-    { label: "पुरुष", value: "Male", icon: "male-outline" },
-    { label: "स्त्री", value: "Female", icon: "female-outline" },
-    { label: "इतर", value: "Other", icon: "transgender-outline" },
+    {
+        labelKey: "male",
+        value: "Male",
+        icon: "male-outline",
+    },
+    {
+        labelKey: "female",
+        value: "Female",
+        icon: "female-outline",
+    },
+    {
+        labelKey: "other",
+        value: "Other",
+        icon: "transgender-outline",
+    },
 ];
 
 export default function CompleteProfileScreen({ navigation }) {
+    const { t, language } = useTranslation();
     const [name, setName] = useState("");
     const [gender, setGender] = useState("Male");
     const [dob, setDob] = useState(null);
     const [showDatePicker, setShowDatePicker] = useState(false);
+    const { login } = useAuth();
 
-    const isFormValid = name.trim().length >= 2 && dob !== null;
+    const isFormValid =
+        name.trim().length >= 2 &&
+        dob !== null;
 
     const formatDate = (date) => {
-        if (!date) return "जन्म तारीख निवडा";
+        if (!date) {
+            return language === "mr"
+                ? "जन्म तारीख निवडा"
+                : "Select date of birth";
+        }
         const day = date.getDate().toString().padStart(2, "0");
         const month = (date.getMonth() + 1).toString().padStart(2, "0");
         const year = date.getFullYear();
@@ -70,10 +91,10 @@ export default function CompleteProfileScreen({ navigation }) {
                                 />
                             </View>
                             <Text style={styles.screenTitle}>
-                                प्रोफाइल पूर्ण करा
+                                {t("completeProfile")}
                             </Text>
                             <Text style={styles.screenSubtitle}>
-                                तुमची माहिती फक्त एकदाच भरावी लागेल.
+                                {t("profileSubtitle")}
                             </Text>
                         </View>
 
@@ -81,8 +102,12 @@ export default function CompleteProfileScreen({ navigation }) {
                         <AuthCard style={styles.cardOverride}>
                             {/* Full Name Input */}
                             <InputField
-                                label="पूर्ण नाव"
-                                placeholder="उदा. राहुल पाटील"
+                                label={t("fullName")}
+                                placeholder={
+                                    language === "mr"
+                                        ? "उदा. राहुल पाटील"
+                                        : "e.g. Rahul Patil"
+                                }
                                 value={name}
                                 onChangeText={setName}
                             />
@@ -90,7 +115,7 @@ export default function CompleteProfileScreen({ navigation }) {
                             {/* Date of Birth Picker Button */}
                             <View style={styles.fieldGroup}>
                                 <Text style={styles.fieldLabel}>
-                                    जन्म तारीख
+                                    {t("dateOfBirth")}
                                 </Text>
                                 <TouchableOpacity
                                     activeOpacity={0.7}
@@ -145,7 +170,9 @@ export default function CompleteProfileScreen({ navigation }) {
 
                             {/* Gender Selection */}
                             <View style={styles.fieldGroup}>
-                                <Text style={styles.fieldLabel}>लिंग</Text>
+                                <Text style={styles.fieldLabel}>
+                                    {t("gender")}
+                                </Text>
                                 <View style={styles.genderRow}>
                                     {GENDER_OPTIONS.map((item) => {
                                         const isSelected =
@@ -179,7 +206,7 @@ export default function CompleteProfileScreen({ navigation }) {
                                                         styles.selectedGenderText,
                                                     ]}
                                                 >
-                                                    {item.label}
+                                                    {t(item.labelKey)}
                                                 </Text>
                                             </TouchableOpacity>
                                         );
@@ -189,9 +216,16 @@ export default function CompleteProfileScreen({ navigation }) {
 
                             {/* Action Button */}
                             <PrimaryButton
-                                title="पुढे जा"
+                                title={t("continue")}
                                 disabled={!isFormValid}
-                                onPress={() => navigation.replace("Home")}
+                                onPress={() => {
+                                    login({
+                                        role: "CUSTOMER",
+                                        name,
+                                        dateOfBirth: dob,
+                                        gender,
+                                    });
+                                }}
                             />
                         </AuthCard>
 
@@ -203,7 +237,7 @@ export default function CompleteProfileScreen({ navigation }) {
                                 color="#6B7280"
                             />
                             <Text style={styles.privacyText}>
-                                तुमची माहिती पूर्णपणे सुरक्षित राहील
+                                {t("privacyNote")}
                             </Text>
                         </View>
                     </ScrollView>

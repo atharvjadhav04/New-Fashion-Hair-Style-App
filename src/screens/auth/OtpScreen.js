@@ -162,7 +162,7 @@ export default function OtpScreen({ navigation, route }) {
                                 title="पडताळणी करा"
                                 disabled={!isOtpComplete}
                                 onPress={() =>
-                                    navigation.navigate("CompleteProfile")
+                                    navigation.navigate("Language")
                                 }
                             />
                         </AuthCard>
