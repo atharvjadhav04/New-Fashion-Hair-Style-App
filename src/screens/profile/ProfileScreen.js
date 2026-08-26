@@ -11,7 +11,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 
 import AppScreen from "../../components/common/AppScreen";
-
+import { useAuth } from "../../context/AuthContext";
 import {
     COLORS,
     SPACING,
@@ -20,12 +20,22 @@ import {
 
 export default function ProfileScreen({ navigation }) {
 
-    // Demo customer data.
-    // Later this will come from AuthContext / backend.
+    const { user } = useAuth();
+
+    const formatDate = (date) => {
+        if (!date) {
+            return "जन्मतारीख उपलब्ध नाही";
+        }
+
+        const parsedDate = new Date(date);
+
+        return parsedDate.toLocaleDateString("en-GB");
+    };
+
     const customer = {
-        name: "अथर्व जाधव",
-        phone: "9876543210",
-        dob: "15 जून 2000",
+        name: user?.name || "ग्राहक",
+        phone: user?.phone || "9876543210",
+        dob: formatDate(user?.dateOfBirth),
     };
 
     return (
@@ -81,7 +91,11 @@ export default function ProfileScreen({ navigation }) {
                     <TouchableOpacity
                         activeOpacity={0.8}
                         style={styles.editButton}
-                        onPress={() => { }}
+                        onPress={() =>
+                            navigation.navigate("EditProfile", {
+                                customer,
+                            })
+                        }
                     >
                         <Ionicons
                             name="create-outline"

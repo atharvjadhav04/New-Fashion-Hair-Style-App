@@ -3,7 +3,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import AddReviewScreen from "../screens/reviews/AddReviewScreen";
 import BottomTabs from "./BottomTabs";
 import BookingNavigator from "./BookingNavigator";
-
+import EditProfileScreen from "../screens/profile/EditProfileScreen";
 const Stack = createNativeStackNavigator();
 
 export default function CustomerNavigator() {
@@ -25,6 +25,10 @@ export default function CustomerNavigator() {
             <Stack.Screen
                 name="AddReview"
                 component={AddReviewScreen}
+            />
+            <Stack.Screen
+                name="EditProfile"
+                component={EditProfileScreen}
             />
         </Stack.Navigator>
     );
