@@ -9,7 +9,7 @@ import {
 } from "react-native";
 
 import { Ionicons } from "@expo/vector-icons";
-
+import { useTranslation } from "../../context/LanguageContext";
 import AppScreen from "../../components/common/AppScreen";
 import { useAuth } from "../../context/AuthContext";
 import {
@@ -21,7 +21,7 @@ import {
 export default function ProfileScreen({ navigation }) {
 
     const { user } = useAuth();
-
+    const { t } = useTranslation();
     const formatDate = (date) => {
         if (!date) {
             return "जन्मतारीख उपलब्ध नाही";
@@ -49,11 +49,11 @@ export default function ProfileScreen({ navigation }) {
                 {/* Header */}
 
                 <Text style={styles.heading}>
-                    माझे प्रोफाइल
+                    {t("profileTitle")}
                 </Text>
 
                 <Text style={styles.subtitle}>
-                    तुमची माहिती आणि सेटिंग्ज
+                    {t("profileSubtitle")}
                 </Text>
 
                 {/* Profile Card */}
@@ -107,28 +107,27 @@ export default function ProfileScreen({ navigation }) {
                 </View>
 
                 {/* Personal Information */}
-
                 <Text style={styles.sectionTitle}>
-                    वैयक्तिक माहिती
+                    {t("personalInformation")}
                 </Text>
 
                 <View style={styles.infoCard}>
 
                     <InfoRow
                         icon="person-outline"
-                        label="नाव"
+                        label={t("name")}
                         value={customer.name}
                     />
 
                     <InfoRow
                         icon="call-outline"
-                        label="मोबाईल नंबर"
+                        label={t("mobileNumber")}
                         value={`+91 ${customer.phone}`}
                     />
 
                     <InfoRow
                         icon="calendar-outline"
-                        label="जन्मतारीख"
+                        label={t("dateOfBirth")}
                         value={customer.dob}
                         last
                     />
@@ -138,15 +137,15 @@ export default function ProfileScreen({ navigation }) {
                 {/* Account */}
 
                 <Text style={styles.sectionTitle}>
-                    अकाउंट
+                    {t("account")}
                 </Text>
 
                 <View style={styles.menuCard}>
 
                     <MenuItem
                         icon="calendar-outline"
-                        title="माझ्या बुकिंग"
-                        subtitle="तुमच्या सर्व अपॉइंटमेंट्स"
+                        title={t("myBookings")}
+                        subtitle={t("myBookingsSubtitle")}
                         onPress={() =>
                             navigation.navigate("Bookings")
                         }
@@ -154,8 +153,8 @@ export default function ProfileScreen({ navigation }) {
 
                     <MenuItem
                         icon="star-outline"
-                        title="माझे रिव्ह्यू"
-                        subtitle="तुमचे दिलेले रिव्ह्यू"
+                        title={t("myReviews")}
+                        subtitle={t("myReviewsSubtitle")}
                         onPress={() =>
                             navigation.navigate("Reviews")
                         }
@@ -163,8 +162,8 @@ export default function ProfileScreen({ navigation }) {
 
                     <MenuItem
                         icon="notifications-outline"
-                        title="नोटिफिकेशन्स"
-                        subtitle="अपॉइंटमेंट आणि Queue अपडेट्स"
+                        title={t("notifications")}
+                        subtitle={t("notificationsSubtitle")}
                         onPress={() => { }}
                     />
 
@@ -173,24 +172,16 @@ export default function ProfileScreen({ navigation }) {
                 {/* Support */}
 
                 <Text style={styles.sectionTitle}>
-                    मदत
+                    {t("support")}
                 </Text>
 
                 <View style={styles.menuCard}>
 
                     <MenuItem
                         icon="help-circle-outline"
-                        title="मदत आणि सपोर्ट"
-                        subtitle="काही समस्या असल्यास आम्हाला सांगा"
+                        title={t("helpSupport")}
+                        subtitle={t("helpSupportSubtitle")}
                         onPress={() => { }}
-                    />
-
-                    <MenuItem
-                        icon="information-circle-outline"
-                        title="New Fashion Hair Style"
-                        subtitle="Premium Grooming Experience"
-                        onPress={() => { }}
-                        last
                     />
 
                 </View>
@@ -210,7 +201,7 @@ export default function ProfileScreen({ navigation }) {
                     />
 
                     <Text style={styles.logoutText}>
-                        लॉगआउट
+                        {t("logout")}
                     </Text>
 
                 </TouchableOpacity>

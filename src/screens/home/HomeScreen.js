@@ -14,9 +14,10 @@ import { LinearGradient } from "expo-linear-gradient";
 import BarberStatusCard from "../../components/home/BarberStatusCard";
 import AppScreen from "../../components/common/AppScreen";
 import { SERVICES } from "../../constants/DummyData";
-
+import { useTranslation } from "../../context/LanguageContext";
 export default function HomeScreen({ navigation }) {
     const popularServices = SERVICES ? SERVICES.slice(0, 5) : [];
+    const { t } = useTranslation();
     const barbers = [
         {
             id: "1",
@@ -57,7 +58,9 @@ export default function HomeScreen({ navigation }) {
                 {/* Modern Header */}
                 <View style={styles.header}>
                     <View>
-                        <Text style={styles.greetingText}>नमस्कार, ग्राहक! 👋</Text>
+                        <Text style={styles.greetingText}>
+                            {t("greeting")}, Customer!
+                        </Text>
                         <Text style={styles.brandTitle}>New Fashion Hair Style</Text>
                     </View>
                     <TouchableOpacity
@@ -113,7 +116,9 @@ export default function HomeScreen({ navigation }) {
                     activeOpacity={0.88}
                     onPress={() => navigation.navigate("Services")}
                 >
-                    <Text style={styles.bookBtnText}>Book Appointment</Text>
+                    <Text style={styles.bookBtnText}>
+                        {t("bookAppointment")}
+                    </Text>
                     <View style={styles.btnIconCircle}>
                         <Ionicons name="arrow-forward" size={16} color="#000000" />
                     </View>
@@ -121,13 +126,17 @@ export default function HomeScreen({ navigation }) {
 
                 {/* Popular Services Section Header */}
                 <View style={styles.sectionHeader}>
-                    <Text style={styles.sectionTitle}>Popular Services</Text>
+                    <Text style={styles.sectionTitle}>
+                        {t("popularServices")}
+                    </Text>
                     <TouchableOpacity
                         style={styles.exploreBtn}
                         activeOpacity={0.7}
                         onPress={() => navigation.navigate("Services")}
                     >
-                        <Text style={styles.swipeText}>Explore all</Text>
+                        <Text style={styles.swipeText}>
+                            {t("swipeToExplore")}
+                        </Text>
                         <Ionicons name="chevron-forward" size={14} color="#6B7280" />
                     </TouchableOpacity>
                 </View>
@@ -167,7 +176,9 @@ export default function HomeScreen({ navigation }) {
 
                 {/* Today's Queue Status Section */}
                 <View style={styles.queueHeader}>
-                    <Text style={styles.queueTitle}>Today's Queue Status</Text>
+                    <Text style={styles.queueTitle}>
+                        {t("queueStatus")}
+                    </Text>
                     <View style={styles.liveIndicator}>
                         <View style={styles.liveDot} />
                         <Text style={styles.liveText}>LIVE</Text>

@@ -10,8 +10,7 @@ const LanguageContext = createContext();
 
 export function LanguageProvider({ children }) {
 
-    const [language, setLanguage] =
-        useState("mr");
+    const [language, setLanguage] = useState("mr");
 
     const changeLanguage = (newLanguage) => {
         setLanguage(newLanguage);
@@ -35,18 +34,18 @@ export function useLanguage() {
 
 export function useTranslation() {
 
-    const { language } =
-        useLanguage();
+    const { language } = useLanguage();
 
     const t = (key) => {
-
         return (
             translations[language]?.[key] ||
             translations.en?.[key] ||
             key
         );
-
     };
 
-    return { t };
+    return {
+        t,
+        language,
+    };
 }

@@ -52,7 +52,7 @@ export default function LanguageScreen({ navigation }) {
                 </Text>
 
                 <Text style={styles.subtitle}>
-                    {t("languageSubtitle")}
+                    {t("selectLanguageSubtitle")}
                 </Text>
 
 
@@ -75,7 +75,7 @@ export default function LanguageScreen({ navigation }) {
                     </Text>
 
                     <Text style={styles.languageText}>
-                        English
+                        {t("english")}
                     </Text>
 
                     {language === "en" && (
@@ -108,7 +108,7 @@ export default function LanguageScreen({ navigation }) {
                     </Text>
 
                     <Text style={styles.languageText}>
-                        मराठी
+                        {t("marathi")}
                     </Text>
 
                     {language === "mr" && (

@@ -15,7 +15,9 @@ import { Ionicons } from "@expo/vector-icons";
 
 import Images from "../../constants/Images";
 import { COLORS, SPACING, RADIUS } from "../../theme";
-
+import {
+    useTranslation,
+} from "../../context/LanguageContext";
 import AuthCard from "../../components/auth/AuthCard";
 import InputField from "../../components/common/InputField";
 import PrimaryButton from "../../components/common/PrimaryButton";
@@ -23,7 +25,7 @@ import AppScreen from "../../components/common/AppScreen";
 
 export default function LoginScreen({ navigation }) {
     const [phone, setPhone] = useState("");
-
+    const { t } = useTranslation();
     const isPhoneValid = phone.trim().length === 10;
 
     return (
@@ -69,15 +71,17 @@ export default function LoginScreen({ navigation }) {
                         {/* Login Form Card */}
                         <AuthCard style={styles.cardOverride}>
                             <View style={styles.cardHeader}>
-                                <Text style={styles.heading}>स्वागत आहे 👋</Text>
+                                <Text style={styles.heading}>
+                                    {t("loginWelcome")}
+                                </Text>
                                 <Text style={styles.subheading}>
-                                    लॉगिन करण्यासाठी तुमचा मोबाईल नंबर टाका
+                                    {t("loginSubtitle")}
                                 </Text>
                             </View>
 
                             <View style={styles.inputContainer}>
                                 <InputField
-                                    label="मोबाईल नंबर"
+                                    label={t("mobileNumber")}
                                     placeholder="98765 43210"
                                     keyboardType="phone-pad"
                                     maxLength={10}
@@ -92,7 +96,7 @@ export default function LoginScreen({ navigation }) {
                             </View>
 
                             <PrimaryButton
-                                title="OTP पाठवा"
+                                title={t("sendOtp")}
                                 disabled={!isPhoneValid}
                                 onPress={() => navigation.navigate("Otp")}
                             />
@@ -106,7 +110,9 @@ export default function LoginScreen({ navigation }) {
                                     size={14}
                                     color="#6B7280"
                                 />
-                                <Text style={styles.trustText}>सुरक्षित</Text>
+                                <Text style={styles.trustText}>
+                                    {t("secure")}
+                                </Text>
                             </View>
                             <Text style={styles.dotSeparator}>•</Text>
                             <View style={styles.trustItem}>
@@ -115,7 +121,9 @@ export default function LoginScreen({ navigation }) {
                                     size={14}
                                     color="#6B7280"
                                 />
-                                <Text style={styles.trustText}>जलद</Text>
+                                <Text style={styles.trustText}>
+                                    {t("fast")}
+                                </Text>
                             </View>
                             <Text style={styles.dotSeparator}>•</Text>
                             <View style={styles.trustItem}>
@@ -124,7 +132,9 @@ export default function LoginScreen({ navigation }) {
                                     size={14}
                                     color="#6B7280"
                                 />
-                                <Text style={styles.trustText}>विश्वासार्ह</Text>
+                                <Text style={styles.trustText}>
+                                    {t("trusted")}
+                                </Text>
                             </View>
                         </View>
                     </ScrollView>
