@@ -176,6 +176,7 @@ const styles = StyleSheet.create({
         borderWidth: 1.5,
         borderColor: COLORS.primary,
         marginBottom: 16,
+        overflow: "hidden", // Clips any square edges extending beyond the circle
         ...Platform.select({
             ios: {
                 shadowColor: COLORS.primary,
@@ -190,8 +191,9 @@ const styles = StyleSheet.create({
     },
 
     logo: {
-        width: 68,
-        height: 68,
+        width: "100%", // Fills the container smoothly
+        height: "100%",
+        borderRadius: 50, // Rounds the image itself into a matching circle
     },
 
     shopName: {
