@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "new-fashion-hair-style",
+    "name": "New Fashion Hair Style",
     "slug": "new-fashion-hair-style",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -16,6 +16,7 @@
       "supportsTablet": true
     },
     "android": {
+      "package": "com.newfashionhairstyle.app",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -27,7 +28,13 @@
     },
     "plugins": [
       "expo-font",
-      "@react-native-community/datetimepicker"
-    ]
+      "@react-native-community/datetimepicker",
+      "expo-asset"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "0a614524-afbb-4a97-bcfd-a11aa54ae0c0"
+      }
+    }
   }
 }

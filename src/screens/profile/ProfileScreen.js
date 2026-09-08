@@ -49,7 +49,7 @@ export default function ProfileScreen({ navigation }) {
                 {/* Header */}
 
                 <Text style={styles.heading}>
-                    {t("profileTitle")}
+                    {t("Profile")}
                 </Text>
 
                 <Text style={styles.subtitle}>
