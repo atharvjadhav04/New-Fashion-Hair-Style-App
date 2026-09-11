@@ -9,15 +9,32 @@ const BookingContext = createContext();
 const INITIAL_BOOKING = {
     services: [],
 
-    bookingType: "FASTEST",
+    // Customer's preferred booking option
+    bookingType: "PREFERRED",
 
     barber: null,
     chair: null,
 
+    // Customer requested time
     date: null,
     time: null,
 
+    // Salon-confirmed time
+    confirmedDate: null,
+    confirmedTime: null,
+
+    // Appointment lifecycle
+    status: "DRAFT",
+
+    // Queue information
+    queueNumber: null,
+    queuePosition: null,
+
     amount: 0,
+
+    // Appointment information
+    appointmentId: null,
+    rescheduleCount: 0,
 };
 
 export function BookingProvider({
@@ -87,6 +104,51 @@ export function BookingProvider({
             };
         });
     };
+    const setAppointmentStatus = (status) => {
+        setBooking((prev) => ({
+            ...prev,
+            status,
+        }));
+    };
+
+    const setConfirmedAppointment = ({
+        confirmedDate,
+        confirmedTime,
+        appointmentId = null,
+    }) => {
+        setBooking((prev) => ({
+            ...prev,
+            confirmedDate,
+            confirmedTime,
+            appointmentId,
+            status: "CONFIRMED",
+        }));
+    };
+
+    const rescheduleAppointment = ({
+        confirmedDate,
+        confirmedTime,
+    }) => {
+        setBooking((prev) => ({
+            ...prev,
+            confirmedDate,
+            confirmedTime,
+            status: "RESCHEDULED",
+            rescheduleCount: prev.rescheduleCount + 1,
+        }));
+    };
+
+    const setQueueDetails = ({
+        queueNumber,
+        queuePosition,
+    }) => {
+        setBooking((prev) => ({
+            ...prev,
+            queueNumber,
+            queuePosition,
+            status: "WAITING",
+        }));
+    };
 
     const resetBooking = () => {
         setBooking({
@@ -102,6 +164,12 @@ export function BookingProvider({
                 updateBooking,
                 addService,
                 removeService,
+
+                setAppointmentStatus,
+                setConfirmedAppointment,
+                rescheduleAppointment,
+                setQueueDetails,
+
                 resetBooking,
             }}
         >

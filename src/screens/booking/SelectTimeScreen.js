@@ -84,7 +84,7 @@ export default function SelectTimeScreen({ navigation }) {
                 <View style={styles.headerContainer}>
                     <Text style={styles.heading}>वेळ निवडा</Text>
                     <Text style={styles.subtitle}>
-                        तुमच्या सोयीनुसार मोकळा स्लॉट निवडा
+                        तुमच्या सोयीनुसार पसंतीची वेळ निवडा
                     </Text>
                 </View>
 
@@ -120,11 +120,31 @@ export default function SelectTimeScreen({ navigation }) {
                     </View>
                     <View style={styles.legendItem}>
                         <View style={[styles.legendDot, styles.legendSelected]} />
-                        <Text style={styles.legendText}>निवडलेले</Text>
+                        <Text style={styles.legendText}>सुचवलेली वेळ</Text>
                     </View>
                     <View style={styles.legendItem}>
                         <View style={[styles.legendDot, styles.legendFull]} />
-                        <Text style={styles.legendText}>फुल (Full)</Text>
+                        <Text style={styles.legendText}>उपलब्ध नाही</Text>
+                    </View>
+                </View>
+                <View style={styles.requestInfoCard}>
+                    <View style={styles.requestInfoIcon}>
+                        <Ionicons
+                            name="information-circle-outline"
+                            size={20}
+                            color={COLORS.primary || "#F59E0B"}
+                        />
+                    </View>
+
+                    <View style={styles.requestInfoContent}>
+                        <Text style={styles.requestInfoTitle}>
+                            ही तुमची पसंतीची वेळ आहे
+                        </Text>
+
+                        <Text style={styles.requestInfoText}>
+                            अंतिम अपॉइंटमेंटची वेळ सलूनच्या उपलब्धतेनुसार आणि
+                            सध्याच्या ग्राहकांच्या संख्येनुसार निश्चित केली जाईल.
+                        </Text>
                     </View>
                 </View>
 
@@ -171,7 +191,7 @@ export default function SelectTimeScreen({ navigation }) {
                                         {!slot.available && (
                                             <View style={styles.fullBadge}>
                                                 <Text style={styles.fullText}>
-                                                    फुल
+                                                    उपलब्ध नाही
                                                 </Text>
                                             </View>
                                         )}
@@ -186,7 +206,7 @@ export default function SelectTimeScreen({ navigation }) {
             {/* Sticky Bottom Action Footer */}
             <View style={styles.bottomButtonContainer}>
                 <PrimaryButton
-                    title={selectedTime ? `${selectedTime} - बुकिंग तपासा` : "वेळ निवडा"}
+                    title={selectedTime ? `${selectedTime} - पुढे जा` : "वेळ निवडा"}
                     disabled={!selectedTime}
                     onPress={handleContinue}
                 />
@@ -196,6 +216,43 @@ export default function SelectTimeScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
+    requestInfoCard: {
+        backgroundColor: "#FFFBEB",
+        borderRadius: RADIUS.xl || 16,
+        padding: 14,
+        marginBottom: 22,
+        flexDirection: "row",
+        borderWidth: 1,
+        borderColor: "#FEF3C7",
+    },
+
+    requestInfoIcon: {
+        width: 34,
+        height: 34,
+        borderRadius: 10,
+        backgroundColor: "#FFFFFF",
+        alignItems: "center",
+        justifyContent: "center",
+    },
+
+    requestInfoContent: {
+        flex: 1,
+        marginLeft: 10,
+    },
+
+    requestInfoTitle: {
+        fontSize: 13,
+        fontWeight: "700",
+        color: "#92400E",
+    },
+
+    requestInfoText: {
+        marginTop: 3,
+        fontSize: 11.5,
+        lineHeight: 17,
+        fontWeight: "500",
+        color: "#B45309",
+    },
     screen: {
         flex: 1,
         backgroundColor: COLORS.background || "#F9FAFB",

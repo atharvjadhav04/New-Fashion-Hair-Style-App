@@ -89,7 +89,7 @@ export default function SelectDateScreen({ navigation }) {
                 <View style={styles.headerContainer}>
                     <Text style={styles.heading}>तारीख निवडा</Text>
                     <Text style={styles.subtitle}>
-                        तुमच्या अपॉइंटमेंटसाठी सोयीस्कर तारीख निवडा
+                        तुमच्या अपॉइंटमेंटसाठी तुम्हाला सोयीची तारीख निवडा
                     </Text>
                 </View>
 
@@ -207,8 +207,8 @@ export default function SelectDateScreen({ navigation }) {
                     <View style={styles.infoContent}>
                         <Text style={styles.infoTitle}>लक्षात ठेवा</Text>
                         <Text style={styles.infoText}>
-                            निवडलेल्या तारखेनुसार उपलब्ध वेळा आणि बार्बरचे स्लॉट्स
-                            पुढील स्क्रीनवर बदलू शकतात.
+                            ही तुमची पसंतीची तारीख आहे. अंतिम अपॉइंटमेंटची वेळ
+                            सलूनच्या उपलब्धतेनुसार निश्चित केली जाईल.
                         </Text>
                     </View>
                 </View>

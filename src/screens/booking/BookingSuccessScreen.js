@@ -17,9 +17,8 @@ export default function BookingSuccessScreen({ navigation }) {
     const insets = useSafeAreaInsets();
     const { booking } = useBooking();
 
-    const bookingDate = booking?.date || "12 Aug 2026";
-    const bookingTime = booking?.time || "10:30 AM";
-    const tokenNumber = booking?.tokenNumber || "A-024";
+    const bookingDate = booking?.date || "--";
+    const bookingTime = booking?.time || "--";
 
     const handleNavigateToBookings = () => {
         navigation.getParent()?.reset({
@@ -54,21 +53,32 @@ export default function BookingSuccessScreen({ navigation }) {
                 </View>
 
                 {/* Titles */}
-                <Text style={styles.heading}>आपले बुकिंग यशस्वी झाले.</Text>
+                <Text style={styles.heading}>
+                    अपॉइंटमेंट विनंती पाठवली!
+                </Text>
+
                 <Text style={styles.subtitle}>
-                    तुमचे पेमेंट सुरक्षितपणे पूर्ण झाले आहे आणि{"\n"}
-                    अपॉइंटमेंट निश्चित करण्यात आली आहे.
+                    तुमची पसंतीची तारीख आणि वेळ सलूनकडे पाठवली आहे.{"\n"}
+                    सलून उपलब्धतेनुसार तुमची अंतिम वेळ निश्चित करेल.
                 </Text>
 
                 {/* Appointment Card */}
                 <View style={styles.card}>
                     <View style={styles.cardHeader}>
                         <View>
-                            <Text style={styles.headerLabel}>Appointment Details</Text>
-                            <Text style={styles.headerTitle}>Confirmed Booking</Text>
+                            <Text style={styles.headerLabel}>
+                                अपॉइंटमेंट तपशील
+                            </Text>
+
+                            <Text style={styles.headerTitle}>
+                                विनंती प्रलंबित
+                            </Text>
                         </View>
-                        <View style={styles.paidBadge}>
-                            <Text style={styles.paidText}>PAID</Text>
+
+                        <View style={styles.pendingBadge}>
+                            <Text style={styles.pendingText}>
+                                REQUESTED
+                            </Text>
                         </View>
                     </View>
 
@@ -78,7 +88,7 @@ export default function BookingSuccessScreen({ navigation }) {
                             <Ionicons name="calendar-outline" size={20} color="#111827" />
                         </View>
                         <View style={styles.infoTextContainer}>
-                            <Text style={styles.infoLabel}>Appointment Date</Text>
+                            <Text style={styles.infoLabel}>पसंतीची तारीख</Text>
                             <Text style={styles.infoValue}>{bookingDate}</Text>
                         </View>
                     </View>
@@ -89,20 +99,30 @@ export default function BookingSuccessScreen({ navigation }) {
                             <Ionicons name="time-outline" size={22} color="#111827" />
                         </View>
                         <View style={styles.infoTextContainer}>
-                            <Text style={styles.infoLabel}>Time</Text>
+                            <Text style={styles.infoLabel}>पसंतीची वेळ</Text>
                             <Text style={styles.infoValue}>{bookingTime}</Text>
                         </View>
                     </View>
 
-                    {/* Token Row */}
-                    <View style={styles.infoRow}>
-                        <View style={styles.iconCircle}>
-                            <Text style={styles.hashIcon}>#</Text>
-                        </View>
-                        <View style={styles.infoTextContainer}>
-                            <Text style={styles.infoLabel}>Token Number</Text>
-                            <Text style={styles.infoValue}>{tokenNumber}</Text>
-                        </View>
+                </View>
+                <View style={styles.statusCard}>
+                    <View style={styles.statusIcon}>
+                        <Ionicons
+                            name="time-outline"
+                            size={22}
+                            color="#D97706"
+                        />
+                    </View>
+
+                    <View style={styles.statusContent}>
+                        <Text style={styles.statusTitle}>
+                            सलूनच्या पुष्टीची प्रतीक्षा आहे
+                        </Text>
+
+                        <Text style={styles.statusText}>
+                            सलून तुमची विनंती तपासून उपलब्धतेनुसार
+                            अंतिम अपॉइंटमेंट वेळ निश्चित करेल.
+                        </Text>
                     </View>
                 </View>
 
@@ -112,7 +132,9 @@ export default function BookingSuccessScreen({ navigation }) {
                     activeOpacity={0.88}
                     onPress={handleNavigateToBookings}
                 >
-                    <Text style={styles.actionBtnText}>माझ्या बुकिंग्स पहा</Text>
+                    <Text style={styles.actionBtnText}>
+                        माझ्या अपॉइंटमेंट्स पहा
+                    </Text>
                 </TouchableOpacity>
             </ScrollView>
         </AppScreen>
@@ -200,6 +222,44 @@ const styles = StyleSheet.create({
             },
         }),
     },
+    statusCard: {
+        width: "100%",
+        backgroundColor: "#FFFBEB",
+        borderRadius: 20,
+        padding: 16,
+        marginTop: 14,
+        flexDirection: "row",
+        borderWidth: 1,
+        borderColor: "#FEF3C7",
+    },
+
+    statusIcon: {
+        width: 40,
+        height: 40,
+        borderRadius: 12,
+        backgroundColor: "#FFFFFF",
+        alignItems: "center",
+        justifyContent: "center",
+    },
+
+    statusContent: {
+        flex: 1,
+        marginLeft: 12,
+    },
+
+    statusTitle: {
+        fontSize: 13,
+        fontWeight: "700",
+        color: "#92400E",
+    },
+
+    statusText: {
+        marginTop: 4,
+        fontSize: 12,
+        lineHeight: 17,
+        fontWeight: "500",
+        color: "#B45309",
+    },
 
     cardHeader: {
         flexDirection: "row",
@@ -222,16 +282,18 @@ const styles = StyleSheet.create({
         letterSpacing: -0.2,
     },
 
-    paidBadge: {
+    pendingBadge: {
         backgroundColor: "#FFFBEB",
-        paddingHorizontal: 12,
+        paddingHorizontal: 10,
         paddingVertical: 5,
         borderRadius: 14,
+        borderWidth: 1,
+        borderColor: "#FEF3C7",
     },
 
-    paidText: {
+    pendingText: {
         color: "#D97706",
-        fontSize: 11,
+        fontSize: 10,
         fontWeight: "800",
         letterSpacing: 0.5,
     },

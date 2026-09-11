@@ -22,28 +22,32 @@ import {
 export default function BookingSummaryScreen({ navigation }) {
     const { booking } = useBooking();
 
-    const service = booking?.service;
+    const services = booking?.services || [];
+
     const barber = booking?.barber;
 
     const serviceName =
-        service?.marathi || service?.name || "Service";
+        services.length > 0
+            ? services.map(
+                (item) =>
+                    item?.marathi ||
+                    item?.name ||
+                    "Service"
+            ).join(", ")
+            : "Service";
 
     const barberName =
-        booking?.bookingType === "FASTEST"
-            ? "Fastest Available"
-            : barber?.name || "Not selected";
+        barber?.name || "सलून उपलब्धतेनुसार निश्चित करेल";
 
     const chair =
-        booking?.bookingType === "FASTEST"
-            ? "Auto Assigned"
-            : barber?.chair
-                ? `Chair ${barber.chair}`
-                : "Auto Assigned";
+        booking?.chair
+            ? `Chair ${booking.chair}`
+            : "सलून उपलब्धतेनुसार निश्चित करेल";
 
-    const total = booking?.amount || service?.price || 0;
+    const total = booking?.amount || 0;
 
-    const handlePayment = () => {
-        navigation.navigate("Payment");
+    const handleSubmitRequest = () => {
+        navigation.navigate("BookingSuccess");
     };
 
     return (
@@ -54,10 +58,11 @@ export default function BookingSummaryScreen({ navigation }) {
             >
                 <View style={styles.headerContainer}>
                     <Text style={styles.heading}>
-                        बुकिंग तपशील
+                        अपॉइंटमेंट तपासा
                     </Text>
+
                     <Text style={styles.subtitle}>
-                        पेमेंट करण्यापूर्वी तुमची बुकिंग तपासा
+                        विनंती पाठवण्यापूर्वी तुमचे तपशील तपासा
                     </Text>
                 </View>
 
@@ -79,7 +84,14 @@ export default function BookingSummaryScreen({ navigation }) {
                             {serviceName}
                         </Text>
                         <Text style={styles.secondary}>
-                            ⏱️ {service?.duration || "-- मिनिटे"}
+                            ⏱️{" "}
+                            {services.length > 0
+                                ? `${services.reduce(
+                                    (total, item) =>
+                                        total + Number(item?.duration || 0),
+                                    0
+                                )} मिनिटे`
+                                : "-- मिनिटे"}
                         </Text>
                     </View>
 
@@ -120,15 +132,11 @@ export default function BookingSummaryScreen({ navigation }) {
                     />
                 </View>
 
-                {/* Booking Type Banner */}
+                {/* Appointment Request Notice */}
                 <View style={styles.typeCard}>
                     <View style={styles.typeIcon}>
                         <Ionicons
-                            name={
-                                booking?.bookingType === "FASTEST"
-                                    ? "flash"
-                                    : "person"
-                            }
+                            name="time-outline"
                             size={18}
                             color={COLORS.primary}
                         />
@@ -136,14 +144,13 @@ export default function BookingSummaryScreen({ navigation }) {
 
                     <View style={styles.typeContent}>
                         <Text style={styles.typeTitle}>
-                            {booking?.bookingType === "FASTEST"
-                                ? "Fastest Available"
-                                : "Preferred Barber"}
+                            पसंतीची वेळ
                         </Text>
+
                         <Text style={styles.typeDescription}>
-                            {booking?.bookingType === "FASTEST"
-                                ? "आम्ही उपलब्धतेनुसार बार्बर आणि चेअर निवडू."
-                                : "तुम्ही निवडलेला बार्बर तुमच्यासाठी राखीव असेल."}
+                            तुम्ही निवडलेली तारीख आणि वेळ ही तुमची
+                            पसंती आहे. अंतिम वेळ सलूनच्या उपलब्धतेनुसार
+                            निश्चित केली जाईल.
                         </Text>
                     </View>
                 </View>
@@ -151,7 +158,7 @@ export default function BookingSummaryScreen({ navigation }) {
                 {/* Price Summary */}
                 <View style={styles.priceCard}>
                     <Text style={styles.sectionTitle}>
-                        पेमेंट सारांश
+                        सेवा आणि शुल्क
                     </Text>
 
                     <View style={styles.priceRow}>
@@ -175,37 +182,36 @@ export default function BookingSummaryScreen({ navigation }) {
                     </View>
                 </View>
 
-                {/* Payment Notice */}
                 <View style={styles.notice}>
                     <Ionicons
-                        name="shield-checkmark-sharp"
+                        name="information-circle-outline"
                         size={18}
                         color="#15803D"
                     />
+
                     <Text style={styles.noticeText}>
-                        तुमचे पेमेंट सुरक्षितपणे प्रोसेस केले जाईल.
+                        अपॉइंटमेंटची अंतिम वेळ सलूनकडून निश्चित केल्यानंतर
+                        तुम्हाला त्याची माहिती दिली जाईल.
                     </Text>
                 </View>
             </ScrollView>
 
-            {/* Bottom Bar */}
-            <View style={styles.bottomContainer}>
-                <View style={styles.bottomPrice}>
-                    <View style={styles.bottomLabelContainer}>
-                        <Text style={styles.bottomLabel}>
-                            एकूण देय रक्कम
-                        </Text>
-                        <Text style={styles.bottomAmount}>
-                            ₹{total}
-                        </Text>
-                    </View>
+            <View style={styles.bottomPrice}>
+                <View style={styles.bottomLabelContainer}>
+                    <Text style={styles.bottomLabel}>
+                        सेवा शुल्क
+                    </Text>
 
-                    <View style={styles.buttonWrapper}>
-                        <PrimaryButton
-                            title="पेमेंट करा"
-                            onPress={handlePayment}
-                        />
-                    </View>
+                    <Text style={styles.bottomAmount}>
+                        ₹{total}
+                    </Text>
+                </View>
+
+                <View style={styles.buttonWrapper}>
+                    <PrimaryButton
+                        title="अपॉइंटमेंट विनंती पाठवा"
+                        onPress={handleSubmitRequest}
+                    />
                 </View>
             </View>
         </AppScreen>

@@ -23,18 +23,16 @@ import {
 export default function BookingPreferenceScreen({ navigation }) {
     const { updateBooking } = useBooking();
 
-    const [selected, setSelected] = useState("FASTEST");
+    const [selected, setSelected] = useState("PREFERRED_TIME");
 
     const handleContinue = () => {
         updateBooking({
-            bookingType: selected,
+            bookingType: "PREFERRED_TIME",
+            barber: null,
+            chair: null,
         });
 
-        if (selected === "FASTEST") {
-            navigation.navigate("SelectDate");
-        } else {
-            navigation.navigate("BarberSelection");
-        }
+        navigation.navigate("SelectDate");
     };
 
     return (
@@ -51,96 +49,50 @@ export default function BookingPreferenceScreen({ navigation }) {
                             size={12}
                             color={COLORS.primary || "#D97706"}
                         />
-                        <Text style={styles.stepBadgeText}>प्राधान्य</Text>
+                        <Text style={styles.stepBadgeText}>वेळ निवडा</Text>
                     </View>
-                    <Text style={styles.heading}>Booking Preference</Text>
-                    <Text style={styles.subHeading}>Choose how you want to book</Text>
+                    <Text style={styles.heading}>
+                        Appointment Preference
+                    </Text>
+
+                    <Text style={styles.subHeading}>
+                        Choose when you would like to visit
+                    </Text>
                 </View>
 
-                {/* Option 1: Fastest Available */}
+                {/* Preferred Time */}
                 <TouchableOpacity
                     activeOpacity={0.88}
                     style={[
                         styles.card,
-                        selected === "FASTEST" && styles.activeCard,
+                        selected === "PREFERRED_TIME" && styles.activeCard,
                     ]}
-                    onPress={() => setSelected("FASTEST")}
+                    onPress={() => setSelected("PREFERRED_TIME")}
                 >
                     <View style={styles.cardHeader}>
                         <View
                             style={[
                                 styles.iconContainer,
-                                selected === "FASTEST" && styles.activeIconContainer,
+                                selected === "PREFERRED_TIME" &&
+                                styles.activeIconContainer,
                             ]}
                         >
                             <Ionicons
-                                name="flash"
+                                name="calendar-outline"
                                 size={18}
-                                color={selected === "FASTEST" ? (COLORS.white || "#FFFFFF") : (COLORS.primary || "#D97706")}
+                                color={
+                                    selected === "PREFERRED_TIME"
+                                        ? COLORS.white || "#FFFFFF"
+                                        : COLORS.primary || "#D97706"
+                                }
                             />
                         </View>
 
-                        <Text style={styles.title}>Fastest Available</Text>
-
-                        {selected === "FASTEST" ? (
-                            <View style={styles.radioSelected}>
-                                <Ionicons
-                                    name="checkmark"
-                                    size={14}
-                                    color={COLORS.white || "#FFFFFF"}
-                                />
-                            </View>
-                        ) : (
-                            <View style={styles.radioUnselected} />
-                        )}
-                    </View>
-
-                    <Text style={styles.desc}>
-                        We&apos;ll assign the barber with the shortest waiting time.
-                    </Text>
-
-                    <View style={styles.divider} />
-
-                    <View style={styles.waitBadge}>
-                        <View style={styles.waitIconWrapper}>
-                            <Ionicons
-                                name="time-outline"
-                                size={13}
-                                color={COLORS.primary || "#D97706"}
-                            />
-                        </View>
-                        <Text style={styles.waitText}>
-                            Approx Wait: <Text style={styles.waitHighlight}>10 Minutes</Text>
+                        <Text style={styles.title}>
+                            Choose Preferred Time
                         </Text>
-                    </View>
-                </TouchableOpacity>
 
-                {/* Option 2: Choose My Barber */}
-                <TouchableOpacity
-                    activeOpacity={0.88}
-                    style={[
-                        styles.card,
-                        selected === "CUSTOM" && styles.activeCard,
-                    ]}
-                    onPress={() => setSelected("CUSTOM")}
-                >
-                    <View style={styles.cardHeader}>
-                        <View
-                            style={[
-                                styles.iconContainer,
-                                selected === "CUSTOM" && styles.activeIconContainer,
-                            ]}
-                        >
-                            <Ionicons
-                                name="person"
-                                size={18}
-                                color={selected === "CUSTOM" ? (COLORS.white || "#FFFFFF") : (COLORS.primary || "#D97706")}
-                            />
-                        </View>
-
-                        <Text style={styles.title}>Choose My Barber</Text>
-
-                        {selected === "CUSTOM" ? (
+                        {selected === "PREFERRED_TIME" ? (
                             <View style={styles.radioSelected}>
                                 <Ionicons
                                     name="checkmark"
@@ -154,21 +106,23 @@ export default function BookingPreferenceScreen({ navigation }) {
                     </View>
 
                     <Text style={styles.desc}>
-                        Select your preferred barber from the available staff.
+                        तुमची आवडती तारीख आणि वेळ निवडा. सलून तुमच्या विनंतीनुसार
+                        उपलब्ध वेळ निश्चित करेल.
                     </Text>
 
                     <View style={styles.divider} />
 
-                    <View style={styles.waitBadge}>
+                    <View style={styles.infoBadge}>
                         <View style={styles.waitIconWrapper}>
                             <Ionicons
-                                name="time-outline"
-                                size={13}
+                                name="information-circle-outline"
+                                size={14}
                                 color={COLORS.primary || "#D97706"}
                             />
                         </View>
-                        <Text style={styles.waitText}>
-                            Approx Wait: <Text style={styles.waitHighlight}>20 Minutes</Text>
+
+                        <Text style={styles.infoText}>
+                            Preferred time is not guaranteed
                         </Text>
                     </View>
                 </TouchableOpacity>
@@ -329,31 +283,26 @@ const styles = StyleSheet.create({
         marginVertical: 14,
     },
 
-    waitBadge: {
-        flexDirection: "row",
-        alignItems: "center",
-        backgroundColor: "#F9FAFB",
-        alignSelf: "flex-start",
-        paddingHorizontal: 10,
-        paddingVertical: 6,
-        borderRadius: 10,
-        borderWidth: 1,
-        borderColor: "#F3F4F6",
-    },
-
     waitIconWrapper: {
         marginRight: 6,
     },
-
-    waitText: {
-        color: "#4B5563",
-        fontSize: 12,
-        fontWeight: "500",
+    infoBadge: {
+        flexDirection: "row",
+        alignItems: "center",
+        backgroundColor: "#FFFBEB",
+        alignSelf: "flex-start",
+        paddingHorizontal: 10,
+        paddingVertical: 7,
+        borderRadius: 10,
+        borderWidth: 1,
+        borderColor: "#FEF3C7",
     },
 
-    waitHighlight: {
-        color: COLORS.black || "#111827",
-        fontWeight: "700",
+    infoText: {
+        color: "#92400E",
+        fontSize: 12,
+        fontWeight: "600",
+        marginLeft: 6,
     },
 
     footer: {
